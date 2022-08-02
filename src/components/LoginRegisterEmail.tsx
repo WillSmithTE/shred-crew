@@ -1,4 +1,4 @@
-import React, { } from "react"
+import React, { useState } from "react"
 import { Text, StyleSheet, View, } from "react-native"
 import { Button, IconButton, TextInput } from 'react-native-paper'
 import { useDispatch } from "react-redux";
@@ -6,13 +6,34 @@ import { useNavigation } from "@react-navigation/native";
 import { MainStackParams } from "../navigation/Navigation";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useForm, Controller } from "react-hook-form";
+import { v4 as uuid } from 'uuid';
+import { AuthState, LoginState, setLoginState } from "../services/authReducer";
+import { LoginRegisterResponse, LoginType } from "../types";
+import { setUserState, UserDetails } from "../services/userReducer";
+import { Loading } from "./Loading";
 
-const loader = (idToken: string) => {
+type RegisterRequest = { name: string, email: string, password: string }
+const registerAction: (request: RegisterRequest) => Promise<LoginRegisterResponse> = async ({ name, email, password }) => {
+    await new Promise(r => setTimeout(r, 2000));
     return {
-        accessToken: '123',
-        refreshToken: '456',
-        name: 'herp derp',
-        imageUri: 'https://asodia',
+        user: { name, email, id: uuid(), imageUri: 'https://asda', loginType: LoginType.EMAIL },
+        auth: {
+            accessToken: '123',
+            refreshToken: '999',
+            loginType: LoginType.EMAIL,
+        }
+    }
+
+}
+type LoginRequest = { email: string, password: string }
+const loginAction: (request: LoginRequest) => Promise<LoginRegisterResponse> = async ({ email, password }) => {
+    await new Promise(r => setTimeout(r, 2000));
+    return {
+        user: { name: 'Herb Jones', email, id: uuid(), imageUri: 'https://asda', loginType: LoginType.EMAIL },
+        auth: {
+            accessToken: '123',
+            refreshToken: '999',
+        }
     }
 }
 
@@ -22,10 +43,10 @@ type Props = {
     mode: Mode
 }
 export const LoginRegisterEmail = ({ mode }: Props) => {
-    console.log({mode})
     const loginMode = mode === 'login'
     const dispatch = useDispatch()
-    const { navigate, goBack } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+    const { goBack } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+    const [loading, setLoading] = useState(false)
 
     const { control, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
@@ -34,8 +55,15 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
             password: '',
         }
     });
-    const onSubmit = (data: {}) => console.log(data)
+    const onSubmit = async (data: LoginRequest | RegisterRequest) => {
+        setLoading(true)
+        const response = await (loginMode ? loginAction(data) : registerAction(data as RegisterRequest))
+        setLoading(false)
+        dispatch(setLoginState((response).auth))
+        dispatch(setUserState((response).user))
+    }
     return <>
+        {loading && <Loading />}
         <View style={styles.container}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 20, }}>
                 <IconButton onPress={() => goBack()} icon='close' color='white' size={40} style={styles.closeButton} />

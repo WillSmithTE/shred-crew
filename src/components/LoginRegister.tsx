@@ -12,19 +12,29 @@ import * as WebBrowser from 'expo-web-browser';
 import { onGoogleSignInButtonPress } from "../components/GoogleSignInButton";
 import { useDispatch } from "react-redux";
 import { setLoginState } from "../services/authReducer";
-import { LoginType } from "../types";
+import { LoginRegisterResponse, LoginType } from "../types";
 import Constants from "expo-constants";
 import { jsonString } from "../util/jsonString";
 import { useNavigation } from "@react-navigation/native";
 import { MainStackParams } from "../navigation/Navigation";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { v4 as uuid } from 'uuid'
+import { setUserState } from "../services/userReducer";
 
-const loader = (idToken: string) => {
+const loader: (idToken: string) => Promise<LoginRegisterResponse> = async (idToken: string) => {
+    await new Promise(r => setTimeout(r, 2000));
     return {
-        accessToken: '123',
-        refreshToken: '456',
-        name: 'herp derp',
-        imageUri: 'https://asodia',
+        auth: {
+            accessToken: '123',
+            refreshToken: '456',
+        },
+        user: {
+            name: 'herp derp',
+            imageUri: 'https://asodia',
+            id: uuid(),
+            loginType: LoginType.GOOGLE,
+            email: 'me@gmail.com',
+        }
     }
 }
 
@@ -50,8 +60,9 @@ export const LoginRegister = ({ mode }: Props) => {
             if (response.type === 'error') throw new Error(response.error?.message);
             if (response.type !== 'success') return;
             if (!!!response.params.id_token) throw new Error(`no id_token (response=${jsonString(response)})`)
-            const result = loader(response.params.id_token)
-            dispatch(setLoginState({ ...result, loginType: LoginType.GOOGLE }))
+            const { user, auth } = await loader(response.params.id_token)
+            dispatch(setLoginState(auth))
+            dispatch(setUserState(user))
         } catch (err) {
             showError2({ message: `google login failed`, description: (err as any).toString() });
         }
@@ -78,7 +89,6 @@ export const LoginRegister = ({ mode }: Props) => {
 
 const styles = StyleSheet.create({
     background: {
-        // alignSelf: 'center',
         width: '100%',
         height: '100%',
         position: 'absolute',

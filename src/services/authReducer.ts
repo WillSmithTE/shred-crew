@@ -5,7 +5,6 @@ import { LoginType } from '../types'
 export type LoginState = {
     accessToken: string,
     refreshToken: string,
-    loginType: LoginType,
 }
 export interface AuthState {
     loginState?: LoginState,
