@@ -5,14 +5,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import colors from '../constants/colors';
 import { ListItem, ListSeparator } from '../components/List';
 import { MainStackParams } from '../navigation/Main';
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    paddingVertical: 20,
-  },
-});
+import { useDispatch } from 'react-redux';
+import { clearAuth } from '../services/authReducer';
 
 const screens = [
   {
@@ -32,11 +26,8 @@ const screens = [
   },
 ];
 
-type Props = {
-  navigation: StackNavigationProp<MainStackParams, 'List'>;
-};
-
-export const List = ({ navigation }: Props) => {
+export const Home = ({ navigation }: Props) => {
+  const dispatch = useDispatch()
   return (
     <FlatList
       style={styles.container}
@@ -44,12 +35,9 @@ export const List = ({ navigation }: Props) => {
       keyExtractor={item => item.title}
       renderItem={({ item }) => (
         <ListItem
-          title={item.title}
-          subtitle={item.subtitle}
-          // @ts-ignore
-          // Disabling the next line because all the item.targets are valid - that data just
-          // isn't getting picked up by TypeScript
-          onPress={() => navigation.push(item.target)}
+          title={'Logout'}
+          subtitle={'click me to logout :)'}
+          onPress={() => dispatch(clearAuth())}
         />
       )}
       ItemSeparatorComponent={ListSeparator}
@@ -58,3 +46,17 @@ export const List = ({ navigation }: Props) => {
     />
   );
 };
+
+type Props = {
+  navigation: StackNavigationProp<MainStackParams, 'List'>;
+};
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    paddingVertical: 20,
+  },
+});
+

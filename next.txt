@@ -1,0 +1,3 @@
+- android standalone google https://github.com/expo/expo/issues/12044
+   - someone says remove scheme from app.json
+    - someone says set scheme and package same (com....)

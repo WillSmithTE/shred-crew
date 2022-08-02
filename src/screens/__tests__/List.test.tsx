@@ -1,14 +1,14 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 
-import { List } from '../List';
+import { Home } from '../Home';
 
 it('renders tappable items', () => {
   const push = jest.fn();
   // @ts-ignore
   // Ignoring next line because we don't need to pass all React Navigation related props down to the
   // screen for this test to work.
-  const out = render(<List navigation={{ push }} />);
+  const out = render(<Home navigation={{ push }} />);
 
   fireEvent.press(out.getByText('Text'));
   expect(push).toBeCalledWith('TextDemo');
