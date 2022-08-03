@@ -9,14 +9,14 @@ import {
 } from 'react-native';
 
 import { Text } from './Text';
-import colors from '../constants/colors';
+import { colors } from '../constants/colors';
 
 const styles = StyleSheet.create({
   inputContainer: {
     marginBottom: 20,
   },
   labelText: {
-    color: colors.gray,
+    color: colors.gray300,
     fontSize: 18,
     marginBottom: 10,
   },

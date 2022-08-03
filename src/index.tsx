@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { DarkTheme, NavigationContainer } from '@react-navigation/native';
+import { DefaultTheme, DarkTheme, NavigationContainer } from '@react-navigation/native';
 import { Navigation } from './navigation/Navigation';
 import { Provider } from 'react-redux';
 import { store } from './redux/reduxStore';
@@ -7,7 +7,7 @@ import FlashMessage from "react-native-flash-message";
 import * as SplashScreen from 'expo-splash-screen'
 import { useUserLoginCheck } from './services/useUserLoginCheck';
 import { View } from 'react-native';
-import { DefaultTheme, DarkTheme as PaperDarkTheme, Provider as PaperProvider } from 'react-native-paper';
+import { DefaultTheme as PaperDefaultTheme, DarkTheme as PaperDarkTheme, Provider as PaperProvider } from 'react-native-paper';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -48,7 +48,7 @@ const AppInternals = () => {
 
   return <>
     <View style={{ flex: 1, }} onLayout={onLayoutRootView}>
-      <NavigationContainer theme={DarkTheme}>
+      <NavigationContainer theme={DefaultTheme}>
         <Navigation />
       </NavigationContainer>
       <FlashMessage position='bottom' duration={3000} style={{ alignItems: 'center' }} />
@@ -57,11 +57,11 @@ const AppInternals = () => {
 }
 
 const theme = {
-  ...PaperDarkTheme,
+  ...PaperDefaultTheme,
   // roundness: 2,
   // version: 3,
   colors: {
-    ...PaperDarkTheme.colors,
+    ...PaperDefaultTheme.colors,
     primary: '#2CBBE9',
     secondary: '#7ED6F2',
     // tertiary: '#a1b2c3'

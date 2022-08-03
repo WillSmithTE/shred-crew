@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text as RNText, StyleProp, TextStyle } from 'react-native';
 
-import colors from '../constants/colors';
+import {colors} from '../constants/colors';
 
 const styles = StyleSheet.create({
   text: {
@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   subHeaderText: {
-    color: colors.gray,
+    color: colors.gray300,
     fontSize: 20,
     marginBottom: 12,
     marginTop: -12, // assum this shows up under a headerText

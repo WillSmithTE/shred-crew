@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Alert } from 'react-native';
 
-import colors from '../constants/colors';
+import {colors} from '../constants/colors';
 import { Text } from '../components/Text';
 import { Button } from '../components/Button';
 import { TextInput } from '../components/Form';

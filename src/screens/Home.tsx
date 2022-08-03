@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, FlatList } from 'react-native';
 
-import colors from '../constants/colors';
+import {colors} from '../constants/colors';
 import { ListItem, ListSeparator } from '../components/List';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearAuth, logoutUser } from '../redux/userReducer';

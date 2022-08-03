@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, FlatList, View, TouchableOpacity, Text } from 'react-native';
 
-import colors from '../constants/colors';
+import {colors} from '../constants/colors';
 import { ListItem } from './List';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearAuth, logoutUser } from '../redux/userReducer';
@@ -82,11 +82,12 @@ const itemStyles = StyleSheet.create({
   row: {
     paddingHorizontal: 15,
     paddingVertical: 10,
-    backgroundColor: 'black',
+    backgroundColor: 'silver',
+    // backgroundColor: 'black',
     // color: 'white',
   },
   itemText: {
-    color: 'white',
+    // color: 'white',
     // fontWeight: 'bold',
   },
   separator: {

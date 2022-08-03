@@ -51,13 +51,13 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
     return <>
         <View style={styles.container}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 20, }}>
-                <IconButton onPress={() => goBack()} icon='close' color='white' size={40} style={styles.closeButton} />
-                <Text style={{ color: 'white', flex: 1, justifyContent: 'center', textAlign: 'center' }}>Icon</Text>
+                <IconButton onPress={() => goBack()} icon='close' size={40} style={styles.closeButton} />
+                <Text style={{  flex: 1, justifyContent: 'center', textAlign: 'center' }}>Icon</Text>
                 <IconButton icon='close' size={40} style={[styles.closeButton, { opacity: 0 }]}
                 />
             </View>
             <View style={{ paddingHorizontal: 20, width: '100%' }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 30, color: 'white' }}>{loginMode ? 'Login' : 'Create your account'}</Text>
+                <Text style={{ fontWeight: 'bold', fontSize: 30 }}>{loginMode ? 'Login' : 'Create your account'}</Text>
                 {!loginMode && <View style={styles.inputContainer}>
                     <Controller control={control} rules={{ required: requiredRule, maxLength: maxLenRule, }}
                         render={({ field: { onChange, onBlur, value } }) => (

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { Text } from './Text';
-import colors from '../constants/colors';
+import {colors} from '../constants/colors';
 
 const styles = StyleSheet.create({
   row: {
