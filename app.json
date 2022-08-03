@@ -28,7 +28,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "googleServicesFile": "./credentials.json",
       "package": "com.willsmithte.shredcrew"
     },
     "web": {

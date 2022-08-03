@@ -11,18 +11,18 @@ import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import { onGoogleSignInButtonPress } from "../components/GoogleSignInButton";
 import { useDispatch } from "react-redux";
-import { setLoginState } from "../services/authReducer";
+import { loginUser,  } from "../redux/userReducer";
 import { LoginRegisterResponse, LoginType } from "../types";
 import Constants from "expo-constants";
 import { jsonString } from "../util/jsonString";
 import { useNavigation } from "@react-navigation/native";
 import { MainStackParams } from "../navigation/Navigation";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { v4 as uuid } from 'uuid'
-import { setUserState } from "../services/userReducer";
+import { setUserState } from "../redux/userReducer";
+import { myUuid } from "../services/myUuid";
 
 const loader: (idToken: string) => Promise<LoginRegisterResponse> = async (idToken: string) => {
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 1000));
     return {
         auth: {
             accessToken: '123',
@@ -31,7 +31,7 @@ const loader: (idToken: string) => Promise<LoginRegisterResponse> = async (idTok
         user: {
             name: 'herp derp',
             imageUri: 'https://asodia',
-            id: uuid(),
+            id: myUuid(),
             loginType: LoginType.GOOGLE,
             email: 'me@gmail.com',
         }
@@ -61,8 +61,7 @@ export const LoginRegister = ({ mode }: Props) => {
             if (response.type !== 'success') return;
             if (!!!response.params.id_token) throw new Error(`no id_token (response=${jsonString(response)})`)
             const { user, auth } = await loader(response.params.id_token)
-            dispatch(setLoginState(auth))
-            dispatch(setUserState(user))
+            dispatch(loginUser({ user, loginState: auth }))
         } catch (err) {
             showError2({ message: `google login failed`, description: (err as any).toString() });
         }

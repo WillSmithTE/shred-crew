@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, FlatList } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
 
 import colors from '../constants/colors';
 import { ListItem, ListSeparator } from '../components/List';
-import { MainStackParams } from '../navigation/Main';
-import { useDispatch } from 'react-redux';
-import { clearAuth } from '../services/authReducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearAuth, logoutUser } from '../redux/userReducer';
+import { MainStackParams } from '../navigation/Navigation';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootState } from '../redux/reduxStore';
+import { useNavigation } from '@react-navigation/native';
 
 const screens = [
   {
@@ -26,8 +28,13 @@ const screens = [
   },
 ];
 
-export const Home = ({ navigation }: Props) => {
+export const Home = ({ }: Props) => {
   const dispatch = useDispatch()
+  const user = useSelector((state: RootState) => state.user.user)
+  const { navigate } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+  const logout = () => {
+    dispatch(logoutUser())
+  }
   return (
     <FlatList
       style={styles.container}
@@ -37,18 +44,17 @@ export const Home = ({ navigation }: Props) => {
         <ListItem
           title={'Logout'}
           subtitle={'click me to logout :)'}
-          onPress={() => dispatch(clearAuth())}
+          onPress={logout}
         />
       )}
       ItemSeparatorComponent={ListSeparator}
       ListHeaderComponent={ListSeparator}
-      ListFooterComponent={ListSeparator}
-    />
-  );
+      ListFooterComponent={ListSeparator} />
+  )
 };
 
 type Props = {
-  navigation: StackNavigationProp<MainStackParams, 'List'>;
+  // navigation: NativeStackNavigationProp<MainStackParams, 'Home'>;
 };
 
 

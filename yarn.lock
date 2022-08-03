@@ -2058,6 +2058,11 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
+"@types/debounce-promise@^3.1.1":
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/@types/debounce-promise/-/debounce-promise-3.1.4.tgz#bf10eead11724e666ea541df1c9d3969677a505b"
+  integrity sha512-9SEVY3nsz+uMN2DwDocftB5TAgZe7D0cOzxxRhpotWs6T4QFqRaTXpXbOSzbk31/7iYcfCkJJPwWGzTxyuGhCg==
+
 "@types/graceful-fs@^4.1.2":
   version "4.1.5"
   resolved "https://registry.yarnpkg.com/@types/graceful-fs/-/graceful-fs-4.1.5.tgz#21ffba0d98da4350db64891f92a9e5db3cdb4e15"
@@ -2169,11 +2174,6 @@
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@types/use-sync-external-store/-/use-sync-external-store-0.0.3.tgz#b6725d5f4af24ace33b36fafd295136e75509f43"
   integrity sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==
-
-"@types/uuid@^8.3.4":
-  version "8.3.4"
-  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.4.tgz#bd86a43617df0594787d38b735f55c805becf1bc"
-  integrity sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==
 
 "@types/yargs-parser@*":
   version "21.0.0"
@@ -2531,6 +2531,28 @@ available-typed-arrays@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
+
+awesome-debounce-promise@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/awesome-debounce-promise/-/awesome-debounce-promise-2.1.0.tgz#7c21cadf2eaa1fa0a29449dd4dfdbd5004811e53"
+  integrity sha512-0Dv4j2wKk5BrNZh4jgV2HUdznaeVgEK/WTvcHhZWUElhmQ1RR+iURRoLEwICFyR0S/5VtxfcvY6gR+qSe95jNg==
+  dependencies:
+    "@types/debounce-promise" "^3.1.1"
+    awesome-imperative-promise "^1.0.1"
+    awesome-only-resolves-last-promise "^1.0.3"
+    debounce-promise "^3.1.0"
+
+awesome-imperative-promise@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/awesome-imperative-promise/-/awesome-imperative-promise-1.0.1.tgz#be143d89615b9110ac310345457f37e9791ddac9"
+  integrity sha512-EmPr3FqbQGqlNh+WxMNcF9pO9uDQJnOC4/3rLBQNH9m4E9qI+8lbfHCmHpVAsmGqPJPKhCjJLHUQzQW/RBHRdQ==
+
+awesome-only-resolves-last-promise@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/awesome-only-resolves-last-promise/-/awesome-only-resolves-last-promise-1.0.3.tgz#f2dac3ff7df238e48b818b423483031750f13ef0"
+  integrity sha512-7q4WPsYiD8Omvi/yHL314DkvsD/lM//Z2/KcU1vWk0xJotiV0GMJTgHTpWl3n90HJqpXKg7qX+VVNs5YbQyPRQ==
+  dependencies:
+    awesome-imperative-promise "^1.0.1"
 
 axe-core@^4.4.3:
   version "4.4.3"
@@ -3406,6 +3428,11 @@ dayjs@^1.8.15:
   version "1.11.4"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.4.tgz#3b3c10ca378140d8917e06ebc13a4922af4f433e"
   integrity sha512-Zj/lPM5hOvQ1Bf7uAvewDaUcsJoI6JmNqmHhHl3nyumwe0XHwt8sWdOVAPACJzCebL8gQCi+K49w7iKWnGwX9g==
+
+debounce-promise@^3.1.0:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/debounce-promise/-/debounce-promise-3.1.2.tgz#320fb8c7d15a344455cd33cee5ab63530b6dc7c5"
+  integrity sha512-rZHcgBkbYavBeD9ej6sP56XfG53d51CD4dnaw989YX/nZ/ZJfgRx/9ePKmTNiUiyQvh4mtrMoS3OAWW+yoYtpg==
 
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.9:
   version "2.6.9"
@@ -7237,6 +7264,11 @@ rc@~1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+react-async-hook@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-async-hook/-/react-async-hook-4.0.0.tgz#1f0467586654e1f33b7433bd98c300a0c5f9b3d0"
+  integrity sha512-97lgjFkOcHCTYSrsKBpsXg3iVWM0LnzedB749iP76sb3/8Ouu4nHIkCLEOrQWHVYqrYxjF05NN6GHoXWFkB3Kw==
+
 react-devtools-core@^4.23.0:
   version "4.25.0"
   resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.25.0.tgz#78b11a2c9f81dd9ebff3745ab4ee2147cc96c12a"
@@ -7364,6 +7396,11 @@ react-native-sensitive-info@^5.5.8:
   version "5.5.8"
   resolved "https://registry.yarnpkg.com/react-native-sensitive-info/-/react-native-sensitive-info-5.5.8.tgz#6ebb67eed83d1c2867bd435630ef2c41eef204ed"
   integrity sha512-p99oaEW4QG1RdUNrkvd/c6Qdm856dQw/Rk81f9fA6Y3DlPs6ADNdU+jbPuTz3CcOUJwuKBDNenX6LR9KfmGFEg==
+
+react-native-uuid@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-uuid/-/react-native-uuid-2.0.1.tgz#ed4e2dfb1683eddb66967eb5dca140dfe1abddb9"
+  integrity sha512-cptnoIbL53GTCrWlb/+jrDC6tvb7ypIyzbXNJcpR3Vab0mkeaaVd5qnB3f0whXYzS+SMoSQLcUUB0gEWqkPC0g==
 
 react-native-web@0.17.7:
   version "0.17.7"
@@ -8799,6 +8836,11 @@ url-parse@^1.5.9:
   dependencies:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
+
+use-constant@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/use-constant/-/use-constant-1.1.1.tgz#e1a21b260251879a11c1f4a42793e28e678270cf"
+  integrity sha512-sy2ttlE4kuAnNbp2P6a5aTZiGYwsZojkqaGZ31yDDjIurteUS8GOcYiPGmJ3y/LHOHkdazDdVRBZPzH3RZHffA==
 
 "use-subscription@>=1.0.0 <1.6.0":
   version "1.5.1"

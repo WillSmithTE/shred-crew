@@ -11,7 +11,6 @@ import {
   REGISTER,
 } from "redux-persist";
 // import createSensitiveStorage from "redux-persist-sensitive-storage";
-import { authReducer } from './authReducer';
 import createSecureStore from "redux-persist-expo-securestore";
 import { userReducer } from './userReducer';
 
@@ -36,7 +35,7 @@ const securePersistConfig = {
 
 const rootReducer = combineReducers({
   user: persistReducer(unsecurePersistConfig, userReducer),
-  auth: persistReducer(securePersistConfig, authReducer)
+  // auth: persistReducer(securePersistConfig, authReducer)
 })
 
 export const store = configureStore({

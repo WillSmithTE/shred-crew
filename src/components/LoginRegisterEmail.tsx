@@ -6,35 +6,22 @@ import { useNavigation } from "@react-navigation/native";
 import { MainStackParams } from "../navigation/Navigation";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useForm, Controller } from "react-hook-form";
-import { v4 as uuid } from 'uuid';
-import { AuthState, LoginState, setLoginState } from "../services/authReducer";
-import { LoginRegisterResponse, LoginType } from "../types";
-import { setUserState, UserDetails } from "../services/userReducer";
+import { loginUser, setLoginState } from "../redux/userReducer";
+import { dummyLoginRegisterResponse, LoginRegisterResponse, LoginType } from "../types";
+import { setUserState, UserDetails } from "../redux/userReducer";
 import { Loading } from "./Loading";
+import { myUuid } from "../services/myUuid";
 
 type RegisterRequest = { name: string, email: string, password: string }
 const registerAction: (request: RegisterRequest) => Promise<LoginRegisterResponse> = async ({ name, email, password }) => {
-    await new Promise(r => setTimeout(r, 2000));
-    return {
-        user: { name, email, id: uuid(), imageUri: 'https://asda', loginType: LoginType.EMAIL },
-        auth: {
-            accessToken: '123',
-            refreshToken: '999',
-            loginType: LoginType.EMAIL,
-        }
-    }
+    await new Promise(r => setTimeout(r, 1000));
+    return dummyLoginRegisterResponse({ name, email })
 
 }
 type LoginRequest = { email: string, password: string }
 const loginAction: (request: LoginRequest) => Promise<LoginRegisterResponse> = async ({ email, password }) => {
-    await new Promise(r => setTimeout(r, 2000));
-    return {
-        user: { name: 'Herb Jones', email, id: uuid(), imageUri: 'https://asda', loginType: LoginType.EMAIL },
-        auth: {
-            accessToken: '123',
-            refreshToken: '999',
-        }
-    }
+    await new Promise(r => setTimeout(r, 1000));
+    return dummyLoginRegisterResponse({ email })
 }
 
 type Mode = 'login' | 'register'
@@ -57,13 +44,11 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
     });
     const onSubmit = async (data: LoginRequest | RegisterRequest) => {
         setLoading(true)
-        const response = await (loginMode ? loginAction(data) : registerAction(data as RegisterRequest))
+        const { user, auth } = await (loginMode ? loginAction(data) : registerAction(data as RegisterRequest))
         setLoading(false)
-        dispatch(setLoginState((response).auth))
-        dispatch(setUserState((response).user))
+        dispatch(loginUser({ user, loginState: auth }))
     }
     return <>
-        {loading && <Loading />}
         <View style={styles.container}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 20, }}>
                 <IconButton onPress={() => goBack()} icon='close' color='white' size={40} style={styles.closeButton} />
@@ -132,6 +117,7 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
                 <Button onPress={handleSubmit(onSubmit)} style={{ backgroundColor: 'white', borderRadius: 40 }}>Next</Button>
             </View>
         </View>
+        {loading && <Loading />}
     </>
 }
 
