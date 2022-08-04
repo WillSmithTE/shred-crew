@@ -8,9 +8,10 @@ export type UserDetails = {
     email: string,
     id: string,
     hasDoneInitialSetup?: boolean,
-    imageUri: string,
+    imageUri?: string,
     loginType: LoginType,
-    ski?: SkiDetails
+    ski: SkiDetails,
+    bio: string,
 }
 export type LoginState = {
     accessToken: string,

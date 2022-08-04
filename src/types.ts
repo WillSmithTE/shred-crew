@@ -12,8 +12,15 @@ export type LoginRegisterResponse = {
 }
 
 export const dummyLoginRegisterResponse: ({ name, email }: { name?: string, email?: string }) => LoginRegisterResponse =
-    ({ name = 'John Bob', email = 'John@gmail.com' }) => ({
-        user: { name, email, id: myUuid(), imageUri: 'https://asda', loginType: LoginType.EMAIL, ski: { disciplines: {}, styles: {} } },
+    ({ name = 'John Bob', email = 'John@gmail.com' } = {}) => ({
+        user: {
+            name,
+            email,
+            id: myUuid(),
+            imageUri: 'https://asda',
+            loginType: LoginType.EMAIL,
+            ski: { disciplines: {}, styles: {}, skillLevel: 3 }, bio: '',
+        },
         auth: {
             accessToken: '123',
             refreshToken: '999',
@@ -26,6 +33,7 @@ export type SkiDetails = {
     homeMountain?: string,
     disciplines: UserDisciplines,
     styles: UserStyles,
+    skillLevel: number, // 1-5
 }
 export type SkiDiscipline = 'ski' | 'snowboard' | 'ski-skate'
 export type UserDisciplines = { [key in SkiDiscipline]?: boolean }

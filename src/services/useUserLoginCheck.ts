@@ -3,17 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearAuth, isAuthEqual, LoginState, loginUser, setLoginState } from "../redux/userReducer";
 import { RootState } from "../redux/reduxStore";
 import { myUuid } from "./myUuid";
-import { LoginType } from "../types";
+import { dummyLoginRegisterResponse, LoginRegisterResponse, LoginType } from "../types";
 
-const refreshAuth = async (auth: LoginState) => {
+const refreshAuth = async function (auth: LoginState): Promise<LoginRegisterResponse> {
     await new Promise(r => setTimeout(r, 1000));
-    return {
-        user: { name: 'Herb Jones', email: 'Herby', id: myUuid(), imageUri: 'https://asda', loginType: LoginType.EMAIL },
-        auth: {
-            accessToken: '123',
-            refreshToken: '999',
-        }
-    }
+    return dummyLoginRegisterResponse({})
 }
 export function useUserLoginCheck() {
     const dispatch = useDispatch()

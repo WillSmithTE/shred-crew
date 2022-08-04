@@ -52,7 +52,7 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
         <View style={styles.container}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 20, }}>
                 <IconButton onPress={() => goBack()} icon='close' size={40} style={styles.closeButton} />
-                <Text style={{  flex: 1, justifyContent: 'center', textAlign: 'center' }}>Icon</Text>
+                <Text style={{ flex: 1, justifyContent: 'center', textAlign: 'center' }}>Icon</Text>
                 <IconButton icon='close' size={40} style={[styles.closeButton, { opacity: 0 }]}
                 />
             </View>

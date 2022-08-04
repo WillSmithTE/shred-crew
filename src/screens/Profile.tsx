@@ -1,20 +1,18 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, FlatList, View, Text, TouchableOpacity, ScrollView } from 'react-native';
-
-import { ListItem, ListSeparator } from '../components/List';
-import { MainStackParams } from '../navigation/Navigation';
+import React, { useMemo, useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/reduxStore';
 import { Button } from 'react-native-paper';
-import { useForm, Controller, Control, FieldValues } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { MyTextInput, requiredRule } from '../components/MyTextInput';
-import { Home } from './Home'
 import { SearchSuggestions } from '../components/SearchSuggestions';
 import { useDebouncedSearch } from '../services/useDebouncedSearch';
 import { Slider } from '@sharcoux/slider'
 import { colors } from '../constants/colors';
 import { SkiDiscipline, SkiStyle, UserDisciplines, UserStyles } from '../types';
-import { logoutUser, } from '../redux/userReducer';
+import { FullScreenLoader } from '../components/Loading';
+import { logoutUser } from '../redux/userReducer';
+import { ImagePicker } from '../components/ImagePicker';
 
 const resorts = [
   { id: 'whistler', label: 'Whistler' },
@@ -27,19 +25,22 @@ const searchResorts = async (place: string) => {
   return resorts.filter(({ label }) => label.toLowerCase().includes(place.toLowerCase()))
 }
 export const Profile = ({ }: Props) => {
-  const user = useSelector((state: RootState) => state.user.user)
-  const isFirstTimeSetup = !!!user?.hasDoneInitialSetup
   const dispatch = useDispatch()
+  const user = useSelector((state: RootState) => state.user.user)
+  if (user === undefined) return <FullScreenLoader />
+  const isFirstTimeSetup = !!!user?.hasDoneInitialSetup
 
-  const [skillLevel, setSkillLevel] = useState<number | undefined>()
-  const [disciplines, setDisciplines] = useState<UserDisciplines>(user?.ski?.disciplines ?? {})
-  const [skiStyles, setSkiStyles] = useState<UserStyles>(user?.ski?.styles ?? {})
+  const [imageUri, setImageUri] = useState(user!!.imageUri)
+  const [skillLevel, setSkillLevel] = useState<number>(user!!.ski.skillLevel)
+  const [disciplines, setDisciplines] = useState<UserDisciplines>(user.ski.disciplines ?? {})
+  const [skiStyles, setSkiStyles] = useState<UserStyles>(user.ski.styles ?? {})
   const { setInputText, searchResults } = useDebouncedSearch((place) => searchResorts(place));
 
   const { control, handleSubmit, formState: { errors }, watch } = useForm({
     defaultValues: {
       name: user?.name ?? '',
-      homeMountain: user?.ski?.homeMountain ?? ''
+      bio: user?.bio ?? '',
+      homeMountain: user?.ski?.homeMountain ?? '',
     }
   });
   const homeMountainSearchQuery = watch('homeMountain')
@@ -48,7 +49,6 @@ export const Profile = ({ }: Props) => {
 
   const NextButton = () => <Button onPress={handleSubmit(onSubmit)} mode='contained' style={styles.nextButton}
     icon='arrow-right' contentStyle={{ flexDirection: 'row-reverse' }}>Next</Button>
-
   return (<ScrollView  >
     <View style={styles.container}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20, }}>
@@ -56,6 +56,7 @@ export const Profile = ({ }: Props) => {
         <NextButton />
       </View>
       <View style={{ paddingHorizontal: 20, }}>
+        <ImagePicker {...{ imageUri, setImageUri }} />
         <MyTextInput {...{ fieldName: 'name', placeholder: 'Name', rules: { required: requiredRule }, control, errors, }} />
         <MyTextInput {...{
           multiline: true, fieldName: 'bio', placeholder: 'Tell us about yourself...', rules: { required: requiredRule },
@@ -102,9 +103,8 @@ const styles = StyleSheet.create({
 });
 
 const UNTOUCHED_COLOR = colors.gray300
-type SliderProps = { skillLevel?: number, setSkillLevel: (num: number) => void }
+type SliderProps = { skillLevel: number, setSkillLevel: (num: number) => void }
 const SkillLevelSlider = ({ skillLevel, setSkillLevel }: SliderProps) => {
-  const isTouched = !!skillLevel
   return < View >
     <Slider
       style={{ width: '100%', height: 40, paddingHorizontal: 7 }}
@@ -122,7 +122,7 @@ const SkillLevelSlider = ({ skillLevel, setSkillLevel }: SliderProps) => {
       {Array.from(Array(5).keys()).map((index) => {
         const dotColor = 'black' // isTouched && index < skillLevel ? colors.secondary : colors.gray300
         return (
-          <View style={{ backgroundColor: isTouched ? dotColor : colors.gray300, width: 6, height: 10, borderRadius: 3 }} key={index} />
+          <View style={{ backgroundColor: dotColor, width: 6, height: 10, borderRadius: 3 }} key={index} />
         )
       })}
     </View>

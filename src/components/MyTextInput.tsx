@@ -5,6 +5,7 @@ import {
     Controller, DeepRequired, FieldErrorsImpl,
     RegisterOptions, FieldPath
 } from "react-hook-form";
+import { useTheme } from 'react-native-paper';
 
 type Props = {
     control: any,
@@ -17,13 +18,15 @@ type Props = {
     style?: StyleProp<TextStyle>,
 }
 export const MyTextInput = ({ control, errors, rules = {}, fieldName, label, placeholder, multiline, style }: Props) => {
+    const theme = useTheme()
+
     return <>
         <>
             <Controller control={control} rules={rules as any}
                 render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
                         label={label}
-                        style={{ ...styles.input, ...(style as {}) }}
+                        style={{ ...styles(theme).input, ...(style as {}) }}
                         onBlur={onBlur}
                         onChangeText={onChange}
                         value={value}
@@ -49,7 +52,7 @@ export const MyTextInput = ({ control, errors, rules = {}, fieldName, label, pla
                 )}
                 name={fieldName}
             />
-            <Text style={styles.errorText}>{(errors as any)[fieldName]?.message ?? ' '}</Text>
+            <Text style={styles(theme).errorText}>{(errors as any)[fieldName]?.message ?? ' '}</Text>
         </>
     </>
 }
@@ -61,15 +64,19 @@ export const emailRule = {
     value: /\S+@\S+\.\S+/,
     message: "Invalid email"
 }
-const styles = StyleSheet.create({
+const styles = (theme: ReactNativePaper.Theme) => StyleSheet.create({
     inputContainer: {
     },
     input: {
     },
     errorText: {
-        shadowOffset: { width: 0, height: 0 },
-        shadowColor: 'black',
-        shadowOpacity: .7,
+        paddingBottom: 5,
         color: 'red',
+        fontWeight: 'bold',
+        ...(theme.dark ? {
+            shadowOffset: { width: 0, height: 0 },
+            shadowColor: 'black',
+            shadowOpacity: .7,
+        } : {}),
     }
 })

@@ -12,7 +12,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { onGoogleSignInButtonPress } from "../components/GoogleSignInButton";
 import { useDispatch } from "react-redux";
 import { loginUser,  } from "../redux/userReducer";
-import { LoginRegisterResponse, LoginType } from "../types";
+import { dummyLoginRegisterResponse, LoginRegisterResponse, LoginType } from "../types";
 import Constants from "expo-constants";
 import { jsonString } from "../util/jsonString";
 import { useNavigation } from "@react-navigation/native";
@@ -23,19 +23,7 @@ import { myUuid } from "../services/myUuid";
 
 const loader: (idToken: string) => Promise<LoginRegisterResponse> = async (idToken: string) => {
     await new Promise(r => setTimeout(r, 1000));
-    return {
-        auth: {
-            accessToken: '123',
-            refreshToken: '456',
-        },
-        user: {
-            name: 'herp derp',
-            imageUri: 'https://asodia',
-            id: myUuid(),
-            loginType: LoginType.GOOGLE,
-            email: 'me@gmail.com',
-        }
-    }
+    return dummyLoginRegisterResponse({})
 }
 
 type Mode = 'login' | 'register'
