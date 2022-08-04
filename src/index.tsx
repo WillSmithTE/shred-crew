@@ -8,6 +8,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { useUserLoginCheck } from './services/useUserLoginCheck';
 import { View } from 'react-native';
 import { DefaultTheme as PaperDefaultTheme, DarkTheme as PaperDarkTheme, Provider as PaperProvider } from 'react-native-paper';
+import { colors } from './constants/colors';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -62,8 +63,8 @@ const theme = {
   // version: 3,
   colors: {
     ...PaperDefaultTheme.colors,
-    primary: '#2CBBE9',
-    secondary: '#7ED6F2',
+    primary: colors.primary,
+    secondary: colors.secondary,
     // tertiary: '#a1b2c3'
   },
 };

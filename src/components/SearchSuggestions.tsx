@@ -26,21 +26,22 @@ export const SearchSuggestions = ({ items }: Props) => {
     dispatch(logoutUser())
   }
   return (
-    <FlatList
-      style={styles.container}
-      data={items}
-      keyExtractor={item => item.id}
-      renderItem={({ item }) => (
-        <SearchItem
-          label={item.label}
-          id={item.id}
-          key={item.id}
-          onPress={logout}
-        />
-      )}
-      ItemSeparatorComponent={ListSeparator}
-      ListHeaderComponent={ListSeparator}
-      ListFooterComponent={ListSeparator} />
+    <></>
+    // <FlatList
+    //   style={styles.container}
+    //   data={items}
+    //   keyExtractor={item => item.id}
+    //   renderItem={({ item }) => (
+    //     <SearchItem
+    //       label={item.label}
+    //       id={item.id}
+    //       key={item.id}
+    //       onPress={logout}
+    //     />
+    //   )}
+    //   ItemSeparatorComponent={ListSeparator}
+    //   ListHeaderComponent={ListSeparator}
+    //   ListFooterComponent={ListSeparator} />
   )
 };
 

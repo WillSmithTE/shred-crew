@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, FlatList, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, FlatList, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 
 import { ListItem, ListSeparator } from '../components/List';
 import { MainStackParams } from '../navigation/Navigation';
@@ -49,32 +49,34 @@ export const Profile = ({ }: Props) => {
   const NextButton = () => <Button onPress={handleSubmit(onSubmit)} mode='contained' style={styles.nextButton}
     icon='arrow-right' contentStyle={{ flexDirection: 'row-reverse' }}>Next</Button>
 
-  return (<View style={styles.container}>
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20, }}>
-      <Text style={styles.header}>{isFirstTimeSetup ? 'Create' : 'Update'} your profile</Text>
-      <NextButton />
-    </View>
-    <View style={{ paddingHorizontal: 20, }}>
-      <MyTextInput {...{ fieldName: 'name', placeholder: 'Name', rules: { required: requiredRule }, control, errors, }} />
-      <MyTextInput {...{
-        multiline: true, fieldName: 'bio', placeholder: 'Tell us about yourself...', rules: { required: requiredRule },
-        control, errors, style: { height: 100 }
-      }} />
-      <View>
-        <MyTextInput {...{ fieldName: 'homeMountain', placeholder: 'Home mountain', control, errors, }} />
-        {searchResults.result &&
-          <View style={{ zIndex: 100, position: 'absolute', top: 64, width: '100%' }}><SearchSuggestions items={searchResults.result} /></View>
-        }
+  return (<ScrollView  >
+    <View style={styles.container}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20, }}>
+        <Text style={styles.header}>{isFirstTimeSetup ? 'Create' : 'Update'} your profile</Text>
+        <NextButton />
       </View>
-      <Text style={styles.subHeader}>Ability level</Text>
-      <SkillLevelSlider {...{ skillLevel, setSkillLevel }} />
-      <Text style={styles.subHeader}>Type of shredder</Text>
-      <SkiDisciplineSelector {...{ selected: disciplines, set: setDisciplines }} />
-      <Text style={styles.subHeader}>Style</Text>
-      <SkiStylesSelector {...{ selected: skiStyles, set: setSkiStyles }} />
+      <View style={{ paddingHorizontal: 20, }}>
+        <MyTextInput {...{ fieldName: 'name', placeholder: 'Name', rules: { required: requiredRule }, control, errors, }} />
+        <MyTextInput {...{
+          multiline: true, fieldName: 'bio', placeholder: 'Tell us about yourself...', rules: { required: requiredRule },
+          control, errors, style: { height: 100 }
+        }} />
+        <View>
+          <MyTextInput {...{ fieldName: 'homeMountain', placeholder: 'Home mountain', control, errors, }} />
+          {searchResults.result &&
+            <View style={{ zIndex: 100, position: 'absolute', top: 64, width: '100%' }}><SearchSuggestions items={searchResults.result} /></View>
+          }
+        </View>
+        <Text style={styles.subHeader}>Ability level</Text>
+        <SkillLevelSlider {...{ skillLevel, setSkillLevel }} />
+        <Text style={styles.subHeader}>Type of shredder</Text>
+        <SkiDisciplineSelector {...{ selected: disciplines, set: setDisciplines }} />
+        <Text style={styles.subHeader}>Style</Text>
+        <SkiStylesSelector {...{ selected: skiStyles, set: setSkiStyles }} />
 
+      </View>
     </View>
-  </View>
+  </ScrollView>
   );
 };
 
@@ -84,7 +86,7 @@ type Props = {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
+    flex: 1,
     padding: 20,
     paddingVertical: 50,
   },
@@ -145,20 +147,7 @@ type SkiDisciplineSelectorProps = {
   set: (types: UserDisciplines) => void,
 }
 const SkiDisciplineSelector = ({ selected, set }: SkiDisciplineSelectorProps) => {
-  return < View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingTop: 10, }}>
-    {skiDisciplines.map(({ id, label }, index) => {
-      const isSelected = selected[id] === true
-      const onPress = () => set({ ...selected, [id]: isSelected ? undefined : true })
-      return <TouchableOpacity onPress={onPress} style={{
-        backgroundColor: isSelected ? colors.secondary : colors.gray300,
-        borderRadius: 10, padding: 10, marginRight: 10,
-      }} key={index}>
-        <Text style={{ color: 'black' }}>{label}</Text>
-      </TouchableOpacity>
-    }
-    )}
-  </View >
-
+  return <MultiSelector {...{ options: skiDisciplines, selected, set }} />
 }
 const skiStyles: { id: SkiStyle, label: string }[] = [
   { id: 'moguls', label: 'Moguls' },
@@ -171,13 +160,27 @@ type SkiStylesSelectorProps = {
   set: (types: UserStyles) => void,
 }
 const SkiStylesSelector = ({ selected, set }: SkiStylesSelectorProps) => {
+  return <MultiSelector {...{ options: skiStyles, selected, set }} />
+}
+
+type MultiSelectorOptions<S extends string> = {
+  id: S,
+  label: string,
+}
+type Thing<S extends string> = { [key in S]?: boolean }
+type MultiSelectorProps<S extends string> = {
+  selected: Thing<S>,
+  set: (types: Thing<S>) => void,
+  options: MultiSelectorOptions<S>[]
+}
+function MultiSelector<S extends string>({ selected, set, options }: MultiSelectorProps<S>) {
   return < View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingTop: 10, }}>
-    {skiStyles.map(({ id, label }, index) => {
+    {options.map(({ id, label }, index) => {
       const isSelected = selected[id] === true
       const onPress = () => set({ ...selected, [id]: isSelected ? undefined : true })
       return <TouchableOpacity onPress={onPress} style={{
         backgroundColor: isSelected ? colors.secondary : colors.gray300,
-        borderRadius: 10, padding: 10, marginRight: 10,
+        borderRadius: 10, padding: 10, marginRight: 10, marginBottom: 10,
       }} key={index}>
         <Text style={{ color: 'black' }}>{label}</Text>
       </TouchableOpacity>
@@ -186,27 +189,4 @@ const SkiStylesSelector = ({ selected, set }: SkiStylesSelectorProps) => {
   </View >
 
 }
-
-// type MultiSelectorProps<S, T i> = {
-//   selected: S,
-//   set: (types: S) => void,
-//   options: { id: [key in SkiType], label: string }
-
-// }
-// function MultiSelector<T>({ selected, set, options }: MultiSelectorProps<T>) {
-//   return < View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingTop: 10, }}>
-//     {skiDisciplines.map(({ id, label }, index) => {
-//       const isSelected = selected[id] === true
-//       const onPress = () => set({ ...selected, [id]: isSelected ? undefined : true })
-//       return <TouchableOpacity onPress={onPress} style={{
-//         backgroundColor: isSelected ? colors.secondary : colors.gray300,
-//         borderRadius: 10, padding: 10, marginRight: 10,
-//       }} key={index}>
-//         <Text style={{ color: 'black' }}>{label}</Text>
-//       </TouchableOpacity>
-//     }
-//     )}
-//   </View >
-
-// }
 
