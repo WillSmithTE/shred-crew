@@ -55,7 +55,7 @@ export const Profile = ({ }: Props) => {
         <Text style={styles.header}>{isFirstTimeSetup ? 'Create' : 'Update'} your profile</Text>
         <NextButton />
       </View>
-      <View style={{ paddingHorizontal: 20, }}>
+      <View style={{ paddingHorizontal: 20 }}>
         <ImagePicker {...{ imageUri, setImageUri }} />
         <MyTextInput {...{ fieldName: 'name', placeholder: 'Name', rules: { required: requiredRule }, control, errors, }} />
         <MyTextInput {...{

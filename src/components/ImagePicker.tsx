@@ -1,6 +1,6 @@
 import { Avatar, IconButton } from 'react-native-paper';
 import * as ExpoImagePicker from 'expo-image-picker';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { colors } from '../constants/colors';
