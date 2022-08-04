@@ -13,8 +13,8 @@ import { SearchSuggestions } from '../components/SearchSuggestions';
 import { useDebouncedSearch } from '../services/useDebouncedSearch';
 import { Slider } from '@sharcoux/slider'
 import { colors } from '../constants/colors';
-import { SkiType } from '../types';
-import { logoutUser, UserSkiTypes } from '../redux/userReducer';
+import { SkiDiscipline, SkiStyle, UserDisciplines, UserStyles } from '../types';
+import { logoutUser, } from '../redux/userReducer';
 
 const resorts = [
   { id: 'whistler', label: 'Whistler' },
@@ -32,7 +32,8 @@ export const Profile = ({ }: Props) => {
   const dispatch = useDispatch()
 
   const [skillLevel, setSkillLevel] = useState<number | undefined>()
-  const [skiTypes, setSkiTypes] = useState<UserSkiTypes>(user?.ski?.skiTypes ?? {})
+  const [disciplines, setDisciplines] = useState<UserDisciplines>(user?.ski?.disciplines ?? {})
+  const [skiStyles, setSkiStyles] = useState<UserStyles>(user?.ski?.styles ?? {})
   const { setInputText, searchResults } = useDebouncedSearch((place) => searchResorts(place));
 
   const { control, handleSubmit, formState: { errors }, watch } = useForm({
@@ -68,8 +69,9 @@ export const Profile = ({ }: Props) => {
       <Text style={styles.subHeader}>Ability level</Text>
       <SkillLevelSlider {...{ skillLevel, setSkillLevel }} />
       <Text style={styles.subHeader}>Type of shredder</Text>
-      <SkiTypeSelector {...{ selected: skiTypes, set: setSkiTypes }} />
+      <SkiDisciplineSelector {...{ selected: disciplines, set: setDisciplines }} />
       <Text style={styles.subHeader}>Style</Text>
+      <SkiStylesSelector {...{ selected: skiStyles, set: setSkiStyles }} />
 
     </View>
   </View>
@@ -103,7 +105,7 @@ const SkillLevelSlider = ({ skillLevel, setSkillLevel }: SliderProps) => {
   const isTouched = !!skillLevel
   return < View >
     <Slider
-      style={{ width: '100%', height: 40 }}
+      style={{ width: '100%', height: 40, paddingHorizontal: 7 }}
       minimumValue={1}
       maximumValue={5}
       step={1}
@@ -114,7 +116,7 @@ const SkillLevelSlider = ({ skillLevel, setSkillLevel }: SliderProps) => {
       thumbTintColor={colors.secondary}
       thumbSize={20}
     />
-    <View style={{ justifyContent: 'space-between', top: - 25, zIndex: -1, flexDirection: 'row' }}>
+    <View style={{ paddingHorizontal: 3, justifyContent: 'space-between', top: - 25, zIndex: -1, flexDirection: 'row' }}>
       {Array.from(Array(5).keys()).map((index) => {
         const dotColor = 'black' // isTouched && index < skillLevel ? colors.secondary : colors.gray300
         return (
@@ -133,18 +135,18 @@ const SkillLevelSlider = ({ skillLevel, setSkillLevel }: SliderProps) => {
 
 }
 
-const skiTypes: { id: SkiType, label: string }[] = [
+const skiDisciplines: { id: SkiDiscipline, label: string }[] = [
   { id: 'ski', label: 'Skiier' },
   { id: 'snowboard', label: 'Snowboarder' },
   { id: 'ski-skate', label: 'Ski Skater' },
 ]
-type SkiTypeSelectorProps = {
-  selected: UserSkiTypes,
-  set: (types: UserSkiTypes) => void,
+type SkiDisciplineSelectorProps = {
+  selected: UserDisciplines,
+  set: (types: UserDisciplines) => void,
 }
-const SkiTypeSelector = ({ selected, set }: SkiTypeSelectorProps) => {
+const SkiDisciplineSelector = ({ selected, set }: SkiDisciplineSelectorProps) => {
   return < View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingTop: 10, }}>
-    {skiTypes.map(({ id, label }, index) => {
+    {skiDisciplines.map(({ id, label }, index) => {
       const isSelected = selected[id] === true
       const onPress = () => set({ ...selected, [id]: isSelected ? undefined : true })
       return <TouchableOpacity onPress={onPress} style={{
@@ -158,4 +160,53 @@ const SkiTypeSelector = ({ selected, set }: SkiTypeSelectorProps) => {
   </View >
 
 }
+const skiStyles: { id: SkiStyle, label: string }[] = [
+  { id: 'moguls', label: 'Moguls' },
+  { id: 'piste', label: 'Piste' },
+  { id: 'off-piste', label: 'Off-Piste' },
+  { id: 'backcountry', label: 'Backcountry' },
+]
+type SkiStylesSelectorProps = {
+  selected: UserStyles,
+  set: (types: UserStyles) => void,
+}
+const SkiStylesSelector = ({ selected, set }: SkiStylesSelectorProps) => {
+  return < View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingTop: 10, }}>
+    {skiStyles.map(({ id, label }, index) => {
+      const isSelected = selected[id] === true
+      const onPress = () => set({ ...selected, [id]: isSelected ? undefined : true })
+      return <TouchableOpacity onPress={onPress} style={{
+        backgroundColor: isSelected ? colors.secondary : colors.gray300,
+        borderRadius: 10, padding: 10, marginRight: 10,
+      }} key={index}>
+        <Text style={{ color: 'black' }}>{label}</Text>
+      </TouchableOpacity>
+    }
+    )}
+  </View >
+
+}
+
+// type MultiSelectorProps<S, T i> = {
+//   selected: S,
+//   set: (types: S) => void,
+//   options: { id: [key in SkiType], label: string }
+
+// }
+// function MultiSelector<T>({ selected, set, options }: MultiSelectorProps<T>) {
+//   return < View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingTop: 10, }}>
+//     {skiDisciplines.map(({ id, label }, index) => {
+//       const isSelected = selected[id] === true
+//       const onPress = () => set({ ...selected, [id]: isSelected ? undefined : true })
+//       return <TouchableOpacity onPress={onPress} style={{
+//         backgroundColor: isSelected ? colors.secondary : colors.gray300,
+//         borderRadius: 10, padding: 10, marginRight: 10,
+//       }} key={index}>
+//         <Text style={{ color: 'black' }}>{label}</Text>
+//       </TouchableOpacity>
+//     }
+//     )}
+//   </View >
+
+// }
 

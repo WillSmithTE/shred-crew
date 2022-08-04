@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { State } from 'react-native-gesture-handler'
-import { LoginType, SkiType } from '../types'
+import { LoginType, SkiDetails, SkiDiscipline } from '../types'
 import equal from 'fast-deep-equal'
 
 export type UserDetails = {
@@ -59,9 +59,3 @@ export const userReducer = userSlice.reducer
 export function isAuthEqual(a: LoginState, b: LoginState): boolean {
     return equal(a, b)
 }
-
-export type SkiDetails = {
-    homeMountain?: string,
-    skiTypes: UserSkiTypes,
-}
-export type UserSkiTypes = { [key in SkiType]?: boolean }
