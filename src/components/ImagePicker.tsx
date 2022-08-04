@@ -11,7 +11,6 @@ const defaultAvatar = require('../../assets/dog-ski.png')
 type Props = { imageUri?: string, setImageUri: (uri?: string) => void }
 export const ImagePicker = ({ imageUri, setImageUri }: Props) => {
     const [loading, setLoading] = useState(false)
-    console.log({ imageUri })
     const pickImage = async () => {
         if (!loading) {
             setLoading(true)
@@ -21,7 +20,6 @@ export const ImagePicker = ({ imageUri, setImageUri }: Props) => {
                 aspect: [4, 3],
                 quality: 1,
             });
-            console.log(result);
             if (!result.cancelled) {
                 setImageUri(result.uri);
             } else {
@@ -29,7 +27,6 @@ export const ImagePicker = ({ imageUri, setImageUri }: Props) => {
             }
         }
     };
-    console.log({ loading })
     const showDefaultIcon = imageUri === undefined || loading
     return <>
         <TouchableOpacity onPress={pickImage} style={{ alignSelf: 'center', paddingBottom: 20, }}>

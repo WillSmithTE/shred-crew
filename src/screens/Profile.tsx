@@ -40,15 +40,17 @@ export const Profile = ({ }: Props) => {
     defaultValues: {
       name: user?.name ?? '',
       bio: user?.bio ?? '',
-      homeMountain: user?.ski?.homeMountain ?? '',
+      homeMountain: user?.ski.homeMountain ?? '',
+      backCountryDetails: user?.ski.backcountryDetails ?? ''
     }
   });
   const homeMountainSearchQuery = watch('homeMountain')
   useMemo(() => setInputText(homeMountainSearchQuery), [homeMountainSearchQuery])
   const onSubmit = console.log
 
-  const NextButton = () => <Button onPress={handleSubmit(onSubmit)} mode='contained' style={styles.nextButton}
+  const NextButton = ({ style = {} }) => <Button onPress={handleSubmit(onSubmit)} mode='contained' style={[styles.nextButton, style]}
     icon='arrow-right' contentStyle={{ flexDirection: 'row-reverse' }}>Next</Button>
+
   return (<ScrollView  >
     <View style={styles.container}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20, }}>
@@ -59,8 +61,8 @@ export const Profile = ({ }: Props) => {
         <ImagePicker {...{ imageUri, setImageUri }} />
         <MyTextInput {...{ fieldName: 'name', placeholder: 'Name', rules: { required: requiredRule }, control, errors, }} />
         <MyTextInput {...{
-          multiline: true, fieldName: 'bio', placeholder: 'Tell us about yourself...', rules: { required: requiredRule },
-          control, errors, style: { height: 100 }
+          multiline: true, fieldName: 'bio', placeholder: 'Tell us about yourself...', rules: { maxLength: {value: 1000, message: 'Too long'} },
+          control, errors, style: { height: 100, paddingTop: 5, }
         }} />
         <View>
           <MyTextInput {...{ fieldName: 'homeMountain', placeholder: 'Home mountain', control, errors, }} />
@@ -74,8 +76,14 @@ export const Profile = ({ }: Props) => {
         <SkiDisciplineSelector {...{ selected: disciplines, set: setDisciplines }} />
         <Text style={styles.subHeader}>Style</Text>
         <SkiStylesSelector {...{ selected: skiStyles, set: setSkiStyles }} />
+        {skiStyles.backcountry && <MyTextInput {...{
+          multiline: true, fieldName: 'backcountryDetails', placeholder: 'Tell us more about your backcountry experience:\n\nExamples:\n  \u2022 What equipment do you have?\n  \u2022 How experienced are you?', 
+          rules: {  },
+          control, errors, style: { height: 200, marginTop: 20, paddingTop: 5 }
+        }} />}
 
       </View>
+      <NextButton style={{ alignSelf: 'flex-end' }} />
     </View>
   </ScrollView>
   );
@@ -97,7 +105,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   nextButton: {
-
   },
   subHeader: { fontSize: 16, paddingTop: 15, fontWeight: 'bold' },
 });

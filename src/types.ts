@@ -34,6 +34,7 @@ export type SkiDetails = {
     disciplines: UserDisciplines,
     styles: UserStyles,
     skillLevel: number, // 1-5
+    backcountryDetails?: string,
 }
 export type SkiDiscipline = 'ski' | 'snowboard' | 'ski-skate'
 export type UserDisciplines = { [key in SkiDiscipline]?: boolean }
