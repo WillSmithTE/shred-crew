@@ -17,7 +17,7 @@ export const dummyLoginRegisterResponse: ({ name, email }: { name?: string, emai
             name,
             email,
             id: myUuid(),
-            imageUri: 'https://asda',
+            imageUri: undefined,
             loginType: LoginType.EMAIL,
             ski: { disciplines: {}, styles: {}, skillLevel: 3 }, bio: '',
         },
