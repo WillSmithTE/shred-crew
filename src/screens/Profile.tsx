@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, FlatList, View, Text } from 'react-native';
+import { StyleSheet, FlatList, View, Text, TouchableOpacity } from 'react-native';
 
 import { ListItem, ListSeparator } from '../components/List';
 import { MainStackParams } from '../navigation/Navigation';
@@ -13,6 +13,8 @@ import { SearchSuggestions } from '../components/SearchSuggestions';
 import { useDebouncedSearch } from '../services/useDebouncedSearch';
 import { Slider } from '@sharcoux/slider'
 import { colors } from '../constants/colors';
+import { SkiType } from '../types';
+import { logoutUser, UserSkiTypes } from '../redux/userReducer';
 
 const resorts = [
   { id: 'whistler', label: 'Whistler' },
@@ -24,13 +26,13 @@ const searchResorts = async (place: string) => {
   await new Promise(r => setTimeout(r, 300))
   return resorts.filter(({ label }) => label.toLowerCase().includes(place.toLowerCase()))
 }
-
 export const Profile = ({ }: Props) => {
   const user = useSelector((state: RootState) => state.user.user)
   const isFirstTimeSetup = !!!user?.hasDoneInitialSetup
   const dispatch = useDispatch()
 
   const [skillLevel, setSkillLevel] = useState<number | undefined>()
+  const [skiTypes, setSkiTypes] = useState<UserSkiTypes>(user?.ski?.skiTypes ?? {})
   const { setInputText, searchResults } = useDebouncedSearch((place) => searchResorts(place));
 
   const { control, handleSubmit, formState: { errors }, watch } = useForm({
@@ -66,6 +68,7 @@ export const Profile = ({ }: Props) => {
       <Text style={styles.subHeader}>Ability level</Text>
       <SkillLevelSlider {...{ skillLevel, setSkillLevel }} />
       <Text style={styles.subHeader}>Type of shredder</Text>
+      <SkiTypeSelector {...{ selected: skiTypes, set: setSkiTypes }} />
       <Text style={styles.subHeader}>Style</Text>
 
     </View>
@@ -108,12 +111,12 @@ const SkillLevelSlider = ({ skillLevel, setSkillLevel }: SliderProps) => {
       onValueChange={setSkillLevel}
       minimumTrackTintColor={'black'}
       maximumTrackTintColor={'black'}
-      thumbTintColor={'black'}
+      thumbTintColor={colors.secondary}
       thumbSize={20}
     />
     <View style={{ justifyContent: 'space-between', top: - 25, zIndex: -1, flexDirection: 'row' }}>
       {Array.from(Array(5).keys()).map((index) => {
-        const dotColor = isTouched && index < skillLevel ? colors.secondary : colors.gray300
+        const dotColor = 'black' // isTouched && index < skillLevel ? colors.secondary : colors.gray300
         return (
           <View style={{ backgroundColor: isTouched ? dotColor : colors.gray300, width: 6, height: 10, borderRadius: 3 }} key={index} />
         )
@@ -126,6 +129,32 @@ const SkillLevelSlider = ({ skillLevel, setSkillLevel }: SliderProps) => {
       <View style={{ backgroundColor: '#000000', width: 15, height: 15 }} />
       <View style={{ backgroundColor: '#000000', width: 15, height: 15, transform: [{ rotate: '45deg' }] }} />
     </View>
+  </View >
+
+}
+
+const skiTypes: { id: SkiType, label: string }[] = [
+  { id: 'ski', label: 'Skiier' },
+  { id: 'snowboard', label: 'Snowboarder' },
+  { id: 'ski-skate', label: 'Ski Skater' },
+]
+type SkiTypeSelectorProps = {
+  selected: UserSkiTypes,
+  set: (types: UserSkiTypes) => void,
+}
+const SkiTypeSelector = ({ selected, set }: SkiTypeSelectorProps) => {
+  return < View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingTop: 10, }}>
+    {skiTypes.map(({ id, label }, index) => {
+      const isSelected = selected[id] === true
+      const onPress = () => set({ ...selected, [id]: isSelected ? undefined : true })
+      return <TouchableOpacity onPress={onPress} style={{
+        backgroundColor: isSelected ? colors.secondary : colors.gray300,
+        borderRadius: 10, padding: 10, marginRight: 10,
+      }} key={index}>
+        <Text style={{ color: 'black' }}>{label}</Text>
+      </TouchableOpacity>
+    }
+    )}
   </View >
 
 }

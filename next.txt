@@ -1,6 +1,8 @@
 - android standalone google https://github.com/expo/expo/issues/12044
    - someone says remove scheme from app.json
     - someone says set scheme and package same (com....)
-- maybe combine auth and user redux state
+DONE- maybe combine auth and user redux state
 - do a preloadResources thing. Check auth state. If empty, not logged in. If not empty, ping backend with access & refresh. Get back same or new, is logged in. Get back 401, not logged in.
 - users with https://betalist.com/
+- usernames
+- check theme based on phone. set text  colors black/white depending somehow
