@@ -160,6 +160,8 @@ const SkillLevelSlider = ({ skillLevel, setSkillLevel }: SliderProps) => {
       maximumTrackTintColor={'black'}
       thumbTintColor={colors.secondary}
       thumbSize={20}
+      onResponderGrant={() => true} // try fix slider on android inside scrollview
+      
     />
     <View style={{ paddingHorizontal: 3, justifyContent: 'space-between', top: - 25, zIndex: -1, flexDirection: 'row' }}>
       {Array.from(Array(5).keys()).map((index) => {
