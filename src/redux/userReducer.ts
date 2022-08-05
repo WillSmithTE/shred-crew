@@ -11,7 +11,8 @@ export type UserDetails = {
     imageUri?: string,
     loginType: LoginType,
     ski: SkiDetails,
-    bio: string,
+    bio?: string,
+    createdAt?: number,
 }
 export type LoginState = {
     accessToken: string,

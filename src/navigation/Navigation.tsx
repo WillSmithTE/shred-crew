@@ -10,6 +10,7 @@ import { Register } from '../screens/Register';
 import { RegisterEmail } from '../screens/RegisterEmail';
 import { DarkTheme, NavigationContainer } from '@react-navigation/native';
 import { Profile } from '../screens/Profile';
+import { GetStarted } from '../screens/GetStarted';
 
 export type MainStackParams = {
   Home: undefined;
@@ -18,6 +19,7 @@ export type MainStackParams = {
   Login: undefined;
   LoginEmail: undefined;
   Profile: undefined
+  GetStarted: undefined
 };
 
 const Stack = createNativeStackNavigator<MainStackParams>();
@@ -36,7 +38,10 @@ export const Navigation = () => {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Profile" component={Profile} />
           </> :
-            <Stack.Screen name="Profile" component={Profile} />
+            <>
+              <Stack.Screen name="Profile" component={Profile} />
+              <Stack.Screen name="GetStarted" component={GetStarted} />
+            </>
           )
           :
           <>

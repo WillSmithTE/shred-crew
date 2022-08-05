@@ -11,6 +11,7 @@ import { dummyLoginRegisterResponse, LoginRegisterResponse, LoginType } from "..
 import { setUserState, UserDetails } from "../redux/userReducer";
 import { Loading } from "./Loading";
 import { myUuid } from "../services/myUuid";
+import { MyTextInput } from "./MyTextInput";
 
 type RegisterRequest = { name: string, email: string, password: string }
 const registerAction: (request: RegisterRequest) => Promise<LoginRegisterResponse> = async ({ name, email, password }) => {
@@ -56,65 +57,30 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
                 <IconButton icon='close' size={40} style={[styles.closeButton, { opacity: 0 }]}
                 />
             </View>
-            <View style={{ paddingHorizontal: 20, width: '100%' }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 30 }}>{loginMode ? 'Login' : 'Create your account'}</Text>
+            <View style={{ paddingHorizontal: 20, width: '90%', }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 30, marginBottom: 30, }}>{loginMode ? 'Login' : 'Create your account'}</Text>
                 {!loginMode && <View style={styles.inputContainer}>
-                    <Controller control={control} rules={{ required: requiredRule, maxLength: maxLenRule, }}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                label='Name'
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                mode='flat'
-                            />
-                        )}
-                        name="name"
-                    />
-                    <Text style={styles.errorText}>{errors.name?.message ?? ' '}</Text>
+                    <MyTextInput {...{
+                        control, errors, fieldName: 'name', placeholder: 'Name',
+                        rules: { required: requiredRule, maxLength: maxLenRule, }
+                    }} />
                 </View>
                 }
                 <View style={styles.inputContainer}>
-                    <Controller
-                        control={control}
-                        rules={{ required: requiredRule, maxLength: maxLenRule, pattern: emailRule }}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                label='Email'
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                mode='flat'
-                            />
-                        )}
-                        name="email"
-                    />
-                    <Text style={styles.errorText}>{errors.email?.message ?? ' '}</Text>
+                    <MyTextInput {...{
+                        control, errors, fieldName: 'email', placeholder: 'Email',
+                        rules: { required: requiredRule, maxLength: maxLenRule, pattern: emailRule }
+                    }} />
                 </View>
                 <View style={styles.inputContainer}>
-                    <Controller
-                        control={control}
-                        rules={{ required: requiredRule, maxLength: maxLenRule, minLength: minLenRule }}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                label='Password'
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                secureTextEntry
-                                mode='flat'
-                            />
-                        )}
-                        name="password"
-                    />
-                    <Text style={styles.errorText}>{errors.password?.message ?? ' '}</Text>
+                    <MyTextInput {...{
+                        control, errors, fieldName: 'password', placeholder: 'Password', secureTextEntry: true,
+                        rules: { required: requiredRule, maxLength: maxLenRule, minLength: minLenRule }
+                    }} />
                 </View>
             </View>
             <View style={{ marginLeft: 'auto', padding: 20, }}>
-                <Button onPress={handleSubmit(onSubmit)} style={{ backgroundColor: 'white', borderRadius: 40 }}>Next</Button>
+                <Button onPress={handleSubmit(onSubmit)} style={{  }} mode='contained'>Next</Button>
             </View>
         </View>
         {loading && <Loading />}
@@ -144,13 +110,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     container: {
-        justifyContent: 'space-between',
+        // justifyContent: 'space-between',
         flex: 1,
         alignItems: 'center',
     },
     inputContainer: {
-        width: '80%',
-        paddingTop: 20
+        // width: '80%',
+        // paddingTop: 2
     },
     input: {
         // width: '80%',

@@ -16,8 +16,9 @@ type Props = {
     placeholder?: string,
     multiline?: boolean,
     style?: StyleProp<TextStyle>,
+    secureTextEntry?: boolean,
 }
-export const MyTextInput = ({ control, errors, rules = {}, fieldName, label, placeholder, multiline, style }: Props) => {
+export const MyTextInput = ({ control, errors, rules = {}, fieldName, label, placeholder, multiline, style, secureTextEntry, }: Props) => {
     const theme = useTheme()
 
     return <>
@@ -33,6 +34,7 @@ export const MyTextInput = ({ control, errors, rules = {}, fieldName, label, pla
                         mode='flat'
                         placeholder={placeholder}
                         multiline={multiline}
+                        secureTextEntry
                         render={(innerProps) => (
                             <NativeTextInput
                                 {...innerProps}

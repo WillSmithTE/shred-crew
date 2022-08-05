@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { ImageBackground, Text, StyleSheet, View, Platform, } from "react-native"
+import { ImageBackground, Text, StyleSheet, View, Image, } from "react-native"
 import { Button, IconButton } from 'react-native-paper'
 import { showComingSoon, showError, showError2 } from "../components/Error"
 // import {
@@ -11,7 +11,7 @@ import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import { onGoogleSignInButtonPress } from "../components/GoogleSignInButton";
 import { useDispatch } from "react-redux";
-import { loginUser,  } from "../redux/userReducer";
+import { loginUser, } from "../redux/userReducer";
 import { dummyLoginRegisterResponse, LoginRegisterResponse, LoginType } from "../types";
 import Constants from "expo-constants";
 import { jsonString } from "../util/jsonString";
@@ -61,10 +61,9 @@ export const LoginRegister = ({ mode }: Props) => {
     return <>
         <ImageBackground style={styles.background} source={require('../../assets/splash.png')}>
             <View style={styles.container}>
-                <View>
-                    <Button icon='email' mode='outlined' onPress={onEmailPress}> {mode === 'login' ? 'Login' : 'Sign up'} with Email</Button>
-                    <Button icon='google' mode='outlined' onPress={onGooglePress}>Continue with Google</Button>
-
+                <View style={{ paddingVertical: 20 }}>
+                    <Button style={styles.button} icon='email' mode='contained' onPress={onEmailPress}> {mode === 'login' ? 'Login' : 'Sign up'} with Email</Button>
+                    <Button style={[styles.button]} icon='google' mode='contained' onPress={onGooglePress}>{mode === 'login' ? 'Login' : 'Sign up'} with Google</Button>
                 </View>
                 <Text>{mode === 'login' ? `Don't` : 'Already'} have an account?&nbsp;
                     <Text style={{ textDecorationLine: 'underline' }} onPress={() => navigate(mode === 'login' ? 'Register' : 'Login')}>{mode === 'login' ? 'Sign up' : 'Login'}</Text>
@@ -85,5 +84,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flex: 1,
         alignItems: 'center',
+    },
+    button: {
+        marginVertical: 10,
     }
 })

@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/reduxStore';
-import { Button } from 'react-native-paper';
+import { Button, Portal } from 'react-native-paper';
 import { useForm } from "react-hook-form";
 import { MyTextInput, requiredRule } from '../components/MyTextInput';
 import { SearchSuggestions } from '../components/SearchSuggestions';
@@ -11,9 +11,19 @@ import { Slider } from '@sharcoux/slider'
 import { colors } from '../constants/colors';
 import { SkiDiscipline, SkiStyle, UserDisciplines, UserStyles } from '../types';
 import { FullScreenLoader } from '../components/Loading';
-import { logoutUser } from '../redux/userReducer';
+import { logoutUser, setUserState, UserDetails } from '../redux/userReducer';
 import { ImagePicker } from '../components/ImagePicker';
+import AutoComplete from 'react-native-autocomplete-input'
+import { useUserApi } from '../api/api';
+import { showError2 } from '../components/Error';
+import { useNavigation } from '@react-navigation/native';
 
+function useAction() {
+  const { upsert } = useUserApi()
+  return async (userDetails: UserDetails) => {
+    return upsert(userDetails)
+  }
+}
 const resorts = [
   { id: 'whistler', label: 'Whistler' },
   { id: 'thredbo', label: 'Thredbo' },
@@ -24,29 +34,46 @@ const searchResorts = async (place: string) => {
   await new Promise(r => setTimeout(r, 300))
   return resorts.filter(({ label }) => label.toLowerCase().includes(place.toLowerCase()))
 }
+type FormData = { name: string, bio?: string, homeMountain: string, backcountryDetails: string }
 export const Profile = ({ }: Props) => {
   const dispatch = useDispatch()
+  const action = useAction()
   const user = useSelector((state: RootState) => state.user.user)
   if (user === undefined) return <FullScreenLoader />
   const isFirstTimeSetup = !!!user?.hasDoneInitialSetup
-
+  const {navigate } = useNavigation()
+  const [loading, setLoading] = useState(false)
   const [imageUri, setImageUri] = useState(user!!.imageUri)
   const [skillLevel, setSkillLevel] = useState<number>(user!!.ski.skillLevel)
   const [disciplines, setDisciplines] = useState<UserDisciplines>(user.ski.disciplines ?? {})
   const [skiStyles, setSkiStyles] = useState<UserStyles>(user.ski.styles ?? {})
-  const { setInputText, searchResults } = useDebouncedSearch((place) => searchResorts(place));
+  const { setInputText: setHomeMountainInput, searchResults: { result: resortResults } } = useDebouncedSearch((place) => searchResorts(place));
 
-  const { control, handleSubmit, formState: { errors }, watch } = useForm({
+  const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<FormData>({
     defaultValues: {
       name: user?.name ?? '',
       bio: user?.bio ?? '',
       homeMountain: user?.ski.homeMountain ?? '',
-      backCountryDetails: user?.ski.backcountryDetails ?? ''
+      backcountryDetails: user?.ski.backcountryDetails ?? ''
     }
   });
   const homeMountainSearchQuery = watch('homeMountain')
-  useMemo(() => setInputText(homeMountainSearchQuery), [homeMountainSearchQuery])
-  const onSubmit = console.log
+  useMemo(() => setHomeMountainInput(homeMountainSearchQuery), [homeMountainSearchQuery])
+  const onSubmit = async ({ name, bio, homeMountain, backcountryDetails, }: FormData) => {
+    setLoading(true)
+    try {
+      const response = await action({
+        id: user.id, email: user.email, bio, imageUri, name, loginType: user.loginType,
+        ski: { disciplines, skillLevel, styles: skiStyles, backcountryDetails, homeMountain }
+      })
+      dispatch(setUserState(response))
+      setLoading(false)
+      navigate('GetStarted' as any)
+    } catch (e: any) {
+      setLoading(false)
+      showError2({ message: `Something went wrong saving your profile...`, description: e.toString() })
+    }
+  }
 
   const NextButton = ({ style = {} }) => <Button onPress={handleSubmit(onSubmit)} mode='contained' style={[styles.nextButton, style]}
     icon='arrow-right' contentStyle={{ flexDirection: 'row-reverse' }}>Next</Button>
@@ -61,24 +88,29 @@ export const Profile = ({ }: Props) => {
         <ImagePicker {...{ imageUri, setImageUri }} />
         <MyTextInput {...{ fieldName: 'name', placeholder: 'Name', rules: { required: requiredRule }, control, errors, }} />
         <MyTextInput {...{
-          multiline: true, fieldName: 'bio', placeholder: 'Tell us about yourself...', rules: { maxLength: {value: 1000, message: 'Too long'} },
+          multiline: true, fieldName: 'bio', placeholder: 'Tell us about yourself...', rules: { maxLength: { value: 1000, message: 'Too long' } },
           control, errors, style: { height: 100, paddingTop: 5, }
         }} />
-        <View>
+        <View style={{ zIndex: 100, elevation: 100, }}>
           <MyTextInput {...{ fieldName: 'homeMountain', placeholder: 'Home mountain', control, errors, }} />
-          {searchResults.result &&
-            <View style={{ zIndex: 100, position: 'absolute', top: 64, width: '100%' }}><SearchSuggestions items={searchResults.result} /></View>
-          }
+          <View style={{ position: 'absolute', marginTop: 64, width: '100%' }}>
+            <AutoComplete data={resortResults?.length === 1 && resortResults[0].label === homeMountainSearchQuery ? [] : resortResults ?? []}
+              renderTextInput={() => <View></View>}
+              renderResultList={(props) => <View style={{}}>{props.data.map(({ id, label }) =>
+                <TouchableOpacity onPress={() => setValue('homeMountain', label)} style={{ backgroundColor: colors.gray300, padding: 5, }} key={id}><Text style={{ fontSize: 16, }}>{label}</Text></TouchableOpacity>
+              )}</View>}
+            />
+          </View>
         </View>
-        <Text style={styles.subHeader}>Ability level</Text>
+        <View style={{ paddingTop: 0 }}><Text style={[styles.subHeader, {}]}>Ability level</Text></View>
         <SkillLevelSlider {...{ skillLevel, setSkillLevel }} />
         <Text style={styles.subHeader}>Type of shredder</Text>
         <SkiDisciplineSelector {...{ selected: disciplines, set: setDisciplines }} />
         <Text style={styles.subHeader}>Style</Text>
         <SkiStylesSelector {...{ selected: skiStyles, set: setSkiStyles }} />
         {skiStyles.backcountry && <MyTextInput {...{
-          multiline: true, fieldName: 'backcountryDetails', placeholder: 'Tell us more about your backcountry experience:\n\nExamples:\n  \u2022 What equipment do you have?\n  \u2022 How experienced are you?', 
-          rules: {  },
+          multiline: true, fieldName: 'backcountryDetails', placeholder: 'Tell us more about your backcountry experience:\n\nExamples:\n  \u2022 What equipment do you have?\n  \u2022 How experienced are you?',
+          rules: {},
           control, errors, style: { height: 200, marginTop: 20, paddingTop: 5 }
         }} />}
 

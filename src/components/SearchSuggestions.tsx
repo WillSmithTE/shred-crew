@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, FlatList, View, TouchableOpacity, Text } from 'react-native';
 
-import {colors} from '../constants/colors';
+import { colors } from '../constants/colors';
 import { ListItem } from './List';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearAuth, logoutUser } from '../redux/userReducer';
@@ -26,7 +26,16 @@ export const SearchSuggestions = ({ items }: Props) => {
     dispatch(logoutUser())
   }
   return (
-    <></>
+    <View>
+      {items.map(({ id, label }) => <View key={id} style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+    </View>
     // <FlatList
     //   style={styles.container}
     //   data={items}

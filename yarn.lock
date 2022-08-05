@@ -2149,6 +2149,21 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-native-autocomplete-input@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@types/react-native-autocomplete-input/-/react-native-autocomplete-input-5.1.0.tgz#635ddc6d1e939f6d5be122591ed342a1c4769737"
+  integrity sha512-ICXh3AM5aM2z9yFMg0jX5K+rVfFx+l8WxBt7R73Jmyeqe6/7+ynoC/uEuQiqWnMqG1+WirvEoKdxlcB1RwzPVQ==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-native" "*"
+
+"@types/react-native@*":
+  version "0.69.5"
+  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.69.5.tgz#7709fdbff031a5ecf1956705e6c4a07cdfe6867c"
+  integrity sha512-mSUCuGUsW2kJlZiu4GmdYVDKZX/52iyC9rm6dxAmflJj1b7kSO/CMSDy5WbcfS8QerxTqbYGTrIwHD0GnXHzbQ==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-native@^0.68.2":
   version "0.68.2"
   resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.68.2.tgz#dc435b9a7ba8733fe8d4a6f1c511a7c6c6f85041"
@@ -7348,6 +7363,11 @@ react-is@^16.13.0, react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
+
+react-native-autocomplete-input@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-autocomplete-input/-/react-native-autocomplete-input-5.1.0.tgz#01bb16873a4b2589ad47cda4ad69ae67dcf3c793"
+  integrity sha512-y6gIBm189hcsJO+6a4Hn8lNdy1qmY7yw1NAA6Bgvg8rznZk0r+35xXd1tu81aOZYJo9/LxGNlNL6Zblo3N1kGw==
 
 react-native-codegen@^0.0.17:
   version "0.0.17"
