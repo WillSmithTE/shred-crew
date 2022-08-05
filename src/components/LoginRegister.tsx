@@ -20,10 +20,12 @@ import { MainStackParams } from "../navigation/Navigation";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { setUserState } from "../redux/userReducer";
 import { myUuid } from "../services/myUuid";
+import jwtDecode from "jwt-decode";
 
 const loader: (idToken: string) => Promise<LoginRegisterResponse> = async (idToken: string) => {
+    const { name, picture }: any = jwtDecode(idToken)
     await new Promise(r => setTimeout(r, 1000));
-    return dummyLoginRegisterResponse({})
+    return dummyLoginRegisterResponse({ name, imageUri: picture })
 }
 
 type Mode = 'login' | 'register'

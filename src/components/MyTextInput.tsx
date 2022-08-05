@@ -34,7 +34,7 @@ export const MyTextInput = ({ control, errors, rules = {}, fieldName, label, pla
                         mode='flat'
                         placeholder={placeholder}
                         multiline={multiline}
-                        secureTextEntry
+                        secureTextEntry={secureTextEntry}
                         render={(innerProps) => (
                             <NativeTextInput
                                 {...innerProps}

@@ -11,13 +11,13 @@ export type LoginRegisterResponse = {
     auth: LoginState
 }
 
-export const dummyLoginRegisterResponse: ({ name, email }: { name?: string, email?: string }) => LoginRegisterResponse =
-    ({ name = 'John Bob', email = 'John@gmail.com' } = {}) => ({
+export const dummyLoginRegisterResponse: ({ name, email, imageUri }: { name?: string, email?: string, imageUri?: string }) => LoginRegisterResponse =
+    ({ name = 'John Bob', email = 'John@gmail.com', imageUri } = {}) => ({
         user: {
             name,
             email,
             id: myUuid(),
-            imageUri: undefined,
+            imageUri,
             loginType: LoginType.EMAIL,
             ski: { disciplines: {}, styles: {}, skillLevel: 3 }, bio: '',
         },
