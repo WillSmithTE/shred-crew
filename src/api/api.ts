@@ -4,8 +4,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/reduxStore';
 import { UserDetails, UserState } from '../redux/userReducer';
 import { dummyLoginRegisterResponse } from '../types';
+import Constants from 'expo-constants';
 
-const devEnv = process.env.NODE_ENV === 'development'
+console.log(`releasechannel: ${Constants.manifest?.releaseChannel}`)
+const devEnv = Constants.manifest?.releaseChannel === undefined || Constants.manifest?.releaseChannel === 'dev'
 
 export function useUserApi() {
     const baseApi = useBaseApi()

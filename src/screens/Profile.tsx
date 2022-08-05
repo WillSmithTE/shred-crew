@@ -17,6 +17,7 @@ import AutoComplete from 'react-native-autocomplete-input'
 import { useUserApi } from '../api/api';
 import { showError2 } from '../components/Error';
 import { useNavigation } from '@react-navigation/native';
+import { jsonString } from '../util/jsonString';
 
 function useAction() {
   const { upsert } = useUserApi()
@@ -41,7 +42,7 @@ export const Profile = ({ }: Props) => {
   const user = useSelector((state: RootState) => state.user.user)
   if (user === undefined) return <FullScreenLoader />
   const isFirstTimeSetup = !!!user?.hasDoneInitialSetup
-  const {navigate } = useNavigation()
+  const { navigate } = useNavigation()
   const [loading, setLoading] = useState(false)
   const [imageUri, setImageUri] = useState(user!!.imageUri)
   const [skillLevel, setSkillLevel] = useState<number>(user!!.ski.skillLevel)
@@ -71,7 +72,7 @@ export const Profile = ({ }: Props) => {
       navigate('GetStarted' as any)
     } catch (e: any) {
       setLoading(false)
-      showError2({ message: `Something went wrong saving your profile...`, description: e.toString() })
+      showError2({ message: `Something went wrong saving your profile...`, description: jsonString(e) })
     }
   }
 

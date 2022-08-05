@@ -6,3 +6,4 @@ DONE- maybe combine auth and user redux state
 - users with https://betalist.com/
 - usernames
 - check theme based on phone. set text  colors black/white depending somehow
+- slider doesnt work. scrolls instead

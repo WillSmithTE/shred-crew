@@ -21,6 +21,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { setUserState } from "../redux/userReducer";
 import { myUuid } from "../services/myUuid";
 import jwtDecode from "jwt-decode";
+import { FullScreenLoader } from "./Loading";
 
 const loader: (idToken: string) => Promise<LoginRegisterResponse> = async (idToken: string) => {
     const { name, picture }: any = jwtDecode(idToken)
@@ -36,6 +37,7 @@ type Props = {
 export const LoginRegister = ({ mode }: Props) => {
     const dispatch = useDispatch()
     const { navigate } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+    const [loading, setLoading] = useState(false)
 
     const [request, _, promptAsync] = Google.useIdTokenAuthRequest({
         webClientId: Constants.manifest?.extra!!.webClientId,
@@ -46,6 +48,7 @@ export const LoginRegister = ({ mode }: Props) => {
 
     async function onGooglePress() {
         try {
+            setLoading(true)
             const response = await promptAsync();
             if (response.type === 'error') throw new Error(response.error?.message);
             if (response.type !== 'success') return;
@@ -72,6 +75,7 @@ export const LoginRegister = ({ mode }: Props) => {
                 </Text>
             </View>
         </ImageBackground>
+        {loading && <FullScreenLoader />}
     </>
 }
 
