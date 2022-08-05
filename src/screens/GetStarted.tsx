@@ -5,13 +5,14 @@ import { useDispatch } from 'react-redux';
 import { logoutUser } from '../redux/userReducer';
 
 export const GetStarted = ({ }: Props) => {
-  // const dispatch = useDispatch()
-  // dispatch(logoutUser())
+  const dispatch = useDispatch()
+
   return <>
     <View style={styles.container}>
       <Text style={styles.header}>Congrats for making today a shred day!</Text>
       <Image style={styles.skiierImg} resizeMode={'contain'} source={require('../../assets/skier.jpg')} />
       <View><Button onPress={() => console.log('here')} style={{ width: '60%', alignSelf: 'center', position: 'absolute', top: -40 }} mode='contained'>Let's Get Started</Button></View>
+      <Button onPress={() => dispatch(logoutUser())} style={{ opacity: .01, height: 2}}><Text>logout</Text></Button>
     </View>
   </>
 };

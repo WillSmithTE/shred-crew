@@ -116,7 +116,10 @@ export const Profile = ({ }: Props) => {
         }} />}
 
       </View>
-      <NextButton style={{ alignSelf: 'flex-end' }} />
+      <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
+        <Button onPress={() => dispatch(logoutUser())} style={{ opacity: .01 }}>logout</Button>
+        <NextButton style={{ alignSelf: 'flex-end' }} />
+      </View>
     </View>
   </ScrollView>
   );
