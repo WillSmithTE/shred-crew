@@ -1,0 +1,26 @@
+{
+  "name": "common",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Will Smith <willsmithte@gmail.com>",
+  "homepage": "https://github.com/WillSmithTE/shred-crew#readme",
+  "license": "ISC",
+  "main": "lib/common.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WillSmithTE/shred-crew.git"
+  },
+  "scripts": {
+    "test": "node ./__tests__/common.test.js"
+  },
+  "bugs": {
+    "url": "https://github.com/WillSmithTE/shred-crew/issues"
+  }
+}
