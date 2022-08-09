@@ -7,3 +7,6 @@ DONE- maybe combine auth and user redux state
 - usernames
 - check theme based on phone. set text  colors black/white depending somehow
 - slider doesnt work. scrolls instead
+- no background on login, only on register
+- store geo data like this https://jason.wadsworth.dev/working-with-geo-data-in-dynamodb/
+   display like this https://github.com/react-native-maps/react-native-maps

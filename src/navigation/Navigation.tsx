@@ -39,8 +39,8 @@ export const Navigation = () => {
             <Stack.Screen name="Profile" component={Profile} />
           </> :
             <>
-              <Stack.Screen name="Profile" component={Profile} />
               <Stack.Screen name="GetStarted" component={GetStarted} />
+              <Stack.Screen name="Profile" component={Profile} />
             </>
           )
           :

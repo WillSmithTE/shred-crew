@@ -15,7 +15,7 @@ import { logoutUser, setUserState, UserDetails } from '../redux/userReducer';
 import { ImagePicker } from '../components/ImagePicker';
 import AutoComplete from 'react-native-autocomplete-input'
 import { useUserApi } from '../api/api';
-import { showError2 } from '../components/Error';
+import { showComingSoon, showError2 } from '../components/Error';
 import { useNavigation } from '@react-navigation/native';
 import { jsonString } from '../util/jsonString';
 
@@ -69,7 +69,7 @@ export const Profile = ({ }: Props) => {
       })
       dispatch(setUserState(response))
       setLoading(false)
-      navigate('GetStarted' as any)
+      showComingSoon()
     } catch (e: any) {
       setLoading(false)
       showError2({ message: `Something went wrong saving your profile...`, description: jsonString(e) })

@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { } from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 import { Button } from 'react-native-paper';
@@ -6,13 +7,17 @@ import { logoutUser } from '../redux/userReducer';
 
 export const GetStarted = ({ }: Props) => {
   const dispatch = useDispatch()
+  const { navigate } = useNavigation()
+  const onNextPress = () => {
+    navigate('Profile' as any)
+  }
 
   return <>
     <View style={styles.container}>
       <Text style={styles.header}>Congrats for making today a shred day!</Text>
       <Image style={styles.skiierImg} resizeMode={'contain'} source={require('../../assets/skier.jpg')} />
-      <View><Button onPress={() => console.log('here')} style={{ width: '60%', alignSelf: 'center', position: 'absolute', top: -40 }} mode='contained'>Let's Get Started</Button></View>
-      <Button onPress={() => dispatch(logoutUser())} style={{ opacity: .01, height: 2}}><Text>logout</Text></Button>
+      <View><Button onPress={onNextPress} style={{ width: '60%', alignSelf: 'center', position: 'absolute', top: -40 }} mode='contained'>Let's Get Started</Button></View>
+      <Button onPress={() => dispatch(logoutUser())} style={{ opacity: .01, height: 2 }}><Text>logout</Text></Button>
     </View>
   </>
 };
