@@ -1,0 +1,5 @@
+#!/bin/bash
+
+expo publish --release-channel dev
+
+
