@@ -7,6 +7,19 @@ export default ({ config }: any) => {
             androidClientId: `${process.env.GOOGLE_ANDROID_APP_KEY}.apps.googleusercontent.com`,
             iosClientId: `${process.env.GOOGLE_IOS_APP_KEY}.apps.googleusercontent.com`,
             expoClientId: `${process.env.GOOGLE_EXPO_APP_KEY}.apps.googleusercontent.com`,
+            // ...getConfig()
         },
     };
 };
+
+function getConfig() {
+    const environment: 'dev' | 'prod' | undefined = process.env['ENVIRONMENT'] as 'dev' | 'prod' | undefined
+
+    if (environment === 'prod') {
+        return { apiBaseUrl: '', }
+    } else if (environment === 'dev') {
+        return { apiBaseUrl: 'https://cfwjn30knb.execute-api.eu-central-1.amazonaws.com', }
+    } else {
+        return { apiBaseUrl: 'http://localhost:3000', }
+    }
+}

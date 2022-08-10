@@ -105,9 +105,6 @@ const myError: (error: string) => MyResponse<void> = (error) => ({
     error, ok: false, status: 400, redirected: false, headers: new Headers()
 })
 
-const BASE_URL = process.env.NODE_ENV === 'development' ?
-    'http://localhost:8080' : 'https://1xhyqk0q87.execute-api.eu-central-1.amazonaws.com'
-
 export function useBaseApi() {
-    return useBaseApiBuilder({ baseUrl: `${BASE_URL}/api` })
+    return useBaseApiBuilder({ baseUrl: `${Constants.manifest!!.extra!!.apiBaseUrl}/api` })
 }

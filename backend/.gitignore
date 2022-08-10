@@ -2,3 +2,5 @@ node_modules
 .serverless
 .dynamodb
 .env*
+dist
+.DS_Store

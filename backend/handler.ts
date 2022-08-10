@@ -1,11 +1,11 @@
-const AWS = require("aws-sdk");
-const express = require("express");
-const serverless = require("serverless-http");
+import * as AWS from "aws-sdk";
+import express from "express";
+import serverless from "serverless-http";
 
 const app = express();
 
 const USERS_TABLE = process.env.USERS_TABLE;
-const dynamoDbClientParams = {};
+const dynamoDbClientParams = {} as any;
 if (process.env.IS_OFFLINE) {
   dynamoDbClientParams.region = 'localhost'
   dynamoDbClientParams.endpoint = 'http://localhost:8000'
@@ -14,7 +14,7 @@ const dynamoDbClient = new AWS.DynamoDB.DocumentClient(dynamoDbClientParams);
 
 app.use(express.json());
 
-app.get("/users/:userId", async function (req, res) {
+app.get("/user/:userId", async function (req, res) {
   const params = {
     TableName: USERS_TABLE,
     Key: {
@@ -37,6 +37,10 @@ app.get("/users/:userId", async function (req, res) {
     res.status(500).json({ error: "Could not retreive user" });
   }
 });
+
+app.get('/bonjour', async function (req, res) {
+  res.json({ message: 'salut' })
+})
 
 app.post("/users", async function (req, res) {
   const { userId, name } = req.body;

@@ -21,20 +21,21 @@ type Props = {
     watch: UseFormWatch<any>,
     setValue: UseFormSetValue<any>,
     fieldName?: string,
+    placeholder?: string
 }
-export const ResortLookup = ({ control, errors, watch, fieldName = 'resort', setValue }: Props) => {
+export const ResortLookup = ({ control, errors, watch, fieldName = 'resort', setValue, placeholder  }: Props) => {
     const { setInputText: setHomeMountainInput, searchResults: { result: resortResults } } = useDebouncedSearch((place) => searchResorts(place));
     const homeMountainSearchQuery = watch(fieldName)
 
     useMemo(() => setHomeMountainInput(homeMountainSearchQuery), [homeMountainSearchQuery])
 
     return <>
-        <View style={{ zIndex: 100, elevation: 100, }}>
-            <MyTextInput {...{ fieldName, placeholder: 'Home mountain', control, errors, }} />
+        <View style={{ zIndex: 100, elevation: 100, marginBottom: 100,}}>
+            <MyTextInput {...{ fieldName, placeholder, control, errors, }} />
             <View style={{ position: 'absolute', marginTop: 64, width: '100%' }}>
                 {(resortResults?.length === 1 && resortResults[0].label === homeMountainSearchQuery ? [] : resortResults ?? [])
                     .map(({ id, label }, index) => <>
-                        <TouchableOpacity onPress={() => setValue(fieldName, label)} style={{ backgroundColor: colors.gray300, padding: 5, }} key={index}>
+                        <TouchableOpacity onPress={() => setValue(fieldName, label)} style={{ backgroundColor: colors.gray300, padding: 5, }} key={id}>
                             <Text style={{ fontSize: 16, }}>{label}</Text>
                         </TouchableOpacity>
                     </>)

@@ -6,7 +6,6 @@ import { IconButton } from "react-native-paper"
 export const BackButton = () => {
     const { goBack } = useNavigation()
     return <IconButton onPress={goBack} icon='arrow-left' size={40} style={styles.backButton} />
-
 }
 
 const styles = StyleSheet.create({

@@ -13,7 +13,7 @@ custom:
 
 provider:
   name: aws
-  region: eu-west-1
+  region: eu-central-1
   runtime: nodejs14.x
   iam:
     role:
@@ -33,7 +33,7 @@ provider:
 
 functions:
   api:
-    handler: handler.handler
+    handler: dist/handler.handler
     events:
       - httpApi: '*'
 
@@ -54,3 +54,7 @@ resources:
 plugins:
   - serverless-dynamodb-local
   - serverless-offline
+
+package:
+  patterns:
+    - '!.dynamodb/**'

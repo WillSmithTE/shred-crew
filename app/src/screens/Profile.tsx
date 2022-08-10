@@ -88,7 +88,7 @@ export const Profile = ({ mode }: Props) => {
                     multiline: true, fieldName: 'bio', placeholder: 'Tell us about yourself...', rules: { maxLength: { value: 1000, message: 'Too long' } },
                     control, errors, style: { height: 100, paddingTop: 5, }
                 }} />
-                <ResortLookup {...{ fieldName: 'homeMountain', control, errors, watch, setValue }} />
+                <ResortLookup {...{ fieldName: 'homeMountain', control, errors, watch, setValue, placeholder: 'Home mountain' }} />
                 <View style={{ paddingTop: 0 }}><Text style={[styles.subHeader, {}]}>Ability level</Text></View>
                 <SkillLevelSlider {...{ skillLevel, setSkillLevel }} />
                 <Text style={styles.subHeader}>Type of shredder</Text>
