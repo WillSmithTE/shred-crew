@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, ImageBackground } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/reduxStore';
 import { Button, Portal } from 'react-native-paper';
@@ -18,11 +18,14 @@ import { useUserApi } from '../api/api';
 import { showComingSoon, showError2 } from '../components/Error';
 import { useNavigation } from '@react-navigation/native';
 import { jsonString } from '../util/jsonString';
+import { MainStackParams } from '../navigation/Navigation';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MultiSelector } from '../components/MultiSelector';
 
 function useAction() {
   const { upsert } = useUserApi()
   return async (userDetails: UserDetails) => {
-    return upsert(userDetails)
+    return upsert({ ...userDetails, hasDoneInitialSetup: true })
   }
 }
 const resorts = [
@@ -36,13 +39,12 @@ const searchResorts = async (place: string) => {
   return resorts.filter(({ label }) => label.toLowerCase().includes(place.toLowerCase()))
 }
 type FormData = { name: string, bio?: string, homeMountain: string, backcountryDetails: string }
-export const Profile = ({ }: Props) => {
+export const CreateProfile = ({ }: Props) => {
   const dispatch = useDispatch()
   const action = useAction()
   const user = useSelector((state: RootState) => state.user.user)
   if (user === undefined) return <FullScreenLoader />
-  const isFirstTimeSetup = !!!user?.hasDoneInitialSetup
-  const { navigate } = useNavigation()
+  const { navigate } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const [loading, setLoading] = useState(false)
   const [imageUri, setImageUri] = useState(user!!.imageUri)
   const [skillLevel, setSkillLevel] = useState<number>(user!!.ski.skillLevel)
@@ -68,21 +70,26 @@ export const Profile = ({ }: Props) => {
         ski: { disciplines, skillLevel, styles: skiStyles, backcountryDetails, homeMountain }
       })
       dispatch(setUserState(response))
-      setLoading(false)
-      showComingSoon()
+      // setLoading(false)
+      // showComingSoon()
     } catch (e: any) {
       setLoading(false)
       showError2({ message: `Something went wrong saving your profile...`, description: jsonString(e) })
     }
   }
 
+  useMemo(() => {
+    if (user.hasDoneInitialSetup === true) navigate('Home', { showOptions: true })
+  }, [user.hasDoneInitialSetup])
+
   const NextButton = ({ style = {} }) => <Button onPress={handleSubmit(onSubmit)} mode='contained' style={[styles.nextButton, style]}
     icon='arrow-right' contentStyle={{ flexDirection: 'row-reverse' }}>Next</Button>
 
   return (<ScrollView  >
+    {/* <ImageBackground style={styles.background} source={require('../../assets/splash.png')} /> */}
     <View style={styles.container}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20, }}>
-        <Text style={styles.header}>{isFirstTimeSetup ? 'Create' : 'Update'} your profile</Text>
+        <Text style={styles.header}>Create your profile</Text>
         <NextButton />
       </View>
       <View style={{ paddingHorizontal: 20 }}>
@@ -143,6 +150,12 @@ const styles = StyleSheet.create({
   nextButton: {
   },
   subHeader: { fontSize: 16, paddingTop: 15, fontWeight: 'bold' },
+  background: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    top: 0,
+  },
 });
 
 const UNTOUCHED_COLOR = colors.gray300
@@ -161,7 +174,7 @@ const SkillLevelSlider = ({ skillLevel, setSkillLevel }: SliderProps) => {
       thumbTintColor={colors.secondary}
       thumbSize={20}
       onResponderGrant={() => true} // try fix slider on android inside scrollview
-      
+
     />
     <View style={{ paddingHorizontal: 3, justifyContent: 'space-between', top: - 25, zIndex: -1, flexDirection: 'row' }}>
       {Array.from(Array(5).keys()).map((index) => {
@@ -206,32 +219,5 @@ type SkiStylesSelectorProps = {
 }
 const SkiStylesSelector = ({ selected, set }: SkiStylesSelectorProps) => {
   return <MultiSelector {...{ options: skiStyles, selected, set }} />
-}
-
-type MultiSelectorOptions<S extends string> = {
-  id: S,
-  label: string,
-}
-type Thing<S extends string> = { [key in S]?: boolean }
-type MultiSelectorProps<S extends string> = {
-  selected: Thing<S>,
-  set: (types: Thing<S>) => void,
-  options: MultiSelectorOptions<S>[]
-}
-function MultiSelector<S extends string>({ selected, set, options }: MultiSelectorProps<S>) {
-  return < View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingTop: 10, }}>
-    {options.map(({ id, label }, index) => {
-      const isSelected = selected[id] === true
-      const onPress = () => set({ ...selected, [id]: isSelected ? undefined : true })
-      return <TouchableOpacity onPress={onPress} style={{
-        backgroundColor: isSelected ? colors.secondary : colors.gray300,
-        borderRadius: 10, padding: 10, marginRight: 10, marginBottom: 10,
-      }} key={index}>
-        <Text style={{ color: 'black' }}>{label}</Text>
-      </TouchableOpacity>
-    }
-    )}
-  </View >
-
 }
 

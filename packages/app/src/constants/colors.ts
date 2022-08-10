@@ -14,4 +14,5 @@ export const colors = {
   border: '#c6c6c6',
   white: '#fff',
   error: '#b55464',
+  background: '#eef0f3',
 }

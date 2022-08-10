@@ -1,15 +1,17 @@
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { } from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
+import { MainStackParams } from '../navigation/Navigation';
 import { logoutUser } from '../redux/userReducer';
 
 export const GetStarted = ({ }: Props) => {
   const dispatch = useDispatch()
-  const { navigate } = useNavigation()
+  const { navigate } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const onNextPress = () => {
-    navigate('Profile' as any)
+    navigate('CreateProfile')
   }
 
   return <>

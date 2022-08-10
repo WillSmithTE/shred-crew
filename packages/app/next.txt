@@ -11,3 +11,5 @@ DONE- do a preloadResources thing. Check auth state. If empty, not logged in. If
 - store geo data like this https://jason.wadsworth.dev/working-with-geo-data-in-dynamodb/
    display like this https://github.com/react-native-maps/react-native-maps
 - proper google logo
+- use special limited keys  for ios and android in app.json like this https://docs.expo.dev/versions/latest/sdk/map-view/#deploying-to-a-standalone-app-on-android
+- add error log on google fail, not just showError

@@ -28,7 +28,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.willsmithte.shred-crew"
+      "bundleIdentifier": "com.willsmithte.shred-crew",
+      "config": {
+        "googleMapsApiKey": "AIzaSyC89pP8wL7AHzl0IVGebfeTcSSq6KgVEhg"
+      }
     },
     "android": {
       "adaptiveIcon": {

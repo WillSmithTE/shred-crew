@@ -70,7 +70,7 @@ export const LoginRegister = ({ mode }: Props) => {
             <View style={styles.container}>
                 <View style={{ paddingVertical: 20 }}>
                     <Button style={styles.button} icon='email' mode='contained' onPress={onEmailPress}> {mode === 'login' ? 'Login' : 'Sign up'} with Email</Button>
-                    <TouchableOpacity style={[styles.button, { padding: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: 'white' }]}>
+                    <TouchableOpacity onPress={onGooglePress} style={[styles.button, { padding: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: 'white' }]}>
                         <Image style={{ height: 20, width: 20, marginRight: 10 }} resizeMode='contain' source={require('../../assets/Google_logo.png')} />
                         <Text style={{ color: colors.darkGray, alignContent: 'center', fontWeight: 'bold' }}>{mode === 'login' ? 'Login' : 'Sign up'} with Google</Text>
                     </TouchableOpacity>

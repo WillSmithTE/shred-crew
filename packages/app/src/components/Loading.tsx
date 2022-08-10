@@ -5,15 +5,16 @@ type LoadingProps = {
     theme?: string,
     size?: number | 'large' | 'small',
     backgroundColor?: string,
+    opacity?: number,
 }
 
-export const Loading = ({ theme = 'white', size = 'large', backgroundColor = 'white' }: LoadingProps) => {
+export const Loading = ({ theme = 'white', size = 'large', backgroundColor = 'white', opacity = 0.9 }: LoadingProps) => {
     const color = theme === 'white' ? '#00bdcd' : '#fff';
     return (
         <View
             style={{
                 backgroundColor,
-                opacity: .9,
+                opacity,
                 position: 'absolute',
                 left: 0,
                 right: 0,
@@ -22,7 +23,7 @@ export const Loading = ({ theme = 'white', size = 'large', backgroundColor = 'wh
                 alignItems: 'center',
                 justifyContent: 'center',
                 shadowColor: 'black',
-                shadowOpacity: .7,        
+                shadowOpacity: .7,
             }}>
             <ActivityIndicator size={size} color={color} />
         </View>
@@ -31,7 +32,7 @@ export const Loading = ({ theme = 'white', size = 'large', backgroundColor = 'wh
 
 export const FullScreenLoader = () => {
     return <ImageBackground style={styles.background} source={require('../../assets/splash.png')}>
-        <Loading />
+        <Loading opacity={0.5}/>
     </ImageBackground>
 }
 
