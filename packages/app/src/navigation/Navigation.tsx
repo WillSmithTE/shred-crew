@@ -12,6 +12,8 @@ import { DarkTheme, NavigationContainer } from '@react-navigation/native';
 import { CreateProfile } from '../screens/CreateProfile';
 import { GetStarted } from '../screens/GetStarted';
 import { LocationFinder } from '../components/LocationFinder';
+import { Profile } from '../screens/Profile';
+import { EditProfile } from '../screens/EditProfile';
 
 export type MainStackParams = {
   Home: { showOptions?: boolean };
@@ -22,6 +24,7 @@ export type MainStackParams = {
   CreateProfile: undefined
   GetStarted: undefined
   LocationFinder: undefined
+  EditProfile: undefined
 };
 
 const Stack = createNativeStackNavigator<MainStackParams>();
@@ -39,6 +42,7 @@ export const Navigation = () => {
           (hasDoneInitialSetup ? <>
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="LocationFinder" component={LocationFinder} />
+            <Stack.Screen name="EditProfile" component={EditProfile} />
           </> :
             <>
               <Stack.Screen name="GetStarted" component={GetStarted} />

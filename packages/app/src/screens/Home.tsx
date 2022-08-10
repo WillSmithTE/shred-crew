@@ -48,6 +48,7 @@ export const Home = ({ route: { params } }: Props) => {
         < View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Button style={styles.button} mode='contained' onPress={() => navigate('LocationFinder')}>I'm on the mountain now</Button>
           <Button style={styles.button} mode='contained' onPress={showComingSoon}>I'm planning a trip</Button>
+          <Button style={[styles.button, {marginTop: '50%'}]} mode='outlined' onPress={() => navigate('EditProfile')}>Manage my profile</Button>
         </View>
       </> :
       <FlatList

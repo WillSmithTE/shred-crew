@@ -7,6 +7,7 @@ import { MultiSelector, MultiSelectorOption, SingleSelector } from "./MultiSelec
 import { dummyPlace, placeToRegion, locationToLatLng, Place } from "../types";
 import { IconButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import { BackButton } from "./BackButton";
 
 const mapWidth = Dimensions.get('window').width
 const mapHeight = Dimensions.get('window').height / 2
@@ -28,7 +29,7 @@ export const LocationFinder = () => {
         return <FullScreenLoader />
     } else {
         return <>
-            <IconButton onPress={goBack} icon='arrow-left' size={40} style={styles.backButton} />
+            <BackButton />
             <View style={{ flex: 1, }}>
                 <MapView provider={PROVIDER_GOOGLE} style={styles.map} region={placeToRegion(place, mapWidth, mapHeight)}>
                     <Marker coordinate={locationToLatLng(place.geometry.location)} />
@@ -55,10 +56,4 @@ const styles = StyleSheet.create({
         width: mapWidth,
         height: mapHeight,
     },
-    backButton: {
-        position: 'absolute',
-        top: 10,
-        left: 0,
-        zIndex: 10,
-    }
 })
