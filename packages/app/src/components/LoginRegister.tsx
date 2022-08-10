@@ -22,6 +22,8 @@ import { setUserState } from "../redux/userReducer";
 import { myUuid } from "../services/myUuid";
 import jwtDecode from "jwt-decode";
 import { FullScreenLoader } from "./Loading";
+import { colors } from "../constants/colors";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const loader: (idToken: string) => Promise<LoginRegisterResponse> = async (idToken: string) => {
     const { name, picture }: any = jwtDecode(idToken)
@@ -68,7 +70,10 @@ export const LoginRegister = ({ mode }: Props) => {
             <View style={styles.container}>
                 <View style={{ paddingVertical: 20 }}>
                     <Button style={styles.button} icon='email' mode='contained' onPress={onEmailPress}> {mode === 'login' ? 'Login' : 'Sign up'} with Email</Button>
-                    <Button style={[styles.button]} icon='google' mode='contained' onPress={onGooglePress}>{mode === 'login' ? 'Login' : 'Sign up'} with Google</Button>
+                    <TouchableOpacity style={[styles.button, { padding: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: 'white' }]}>
+                        <Image style={{ height: 20, width: 20, marginRight: 10 }} resizeMode='contain' source={require('../../assets/Google_logo.png')} />
+                        <Text style={{ color: colors.darkGray, alignContent: 'center', fontWeight: 'bold' }}>{mode === 'login' ? 'Login' : 'Sign up'} with Google</Text>
+                    </TouchableOpacity>
                 </View>
                 <Text>{mode === 'login' ? `Don't` : 'Already'} have an account?&nbsp;
                     <Text style={{ textDecorationLine: 'underline' }} onPress={() => navigate(mode === 'login' ? 'Register' : 'Login')}>{mode === 'login' ? 'Sign up' : 'Login'}</Text>
