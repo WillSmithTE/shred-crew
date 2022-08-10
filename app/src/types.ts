@@ -76,3 +76,11 @@ export function placeToRegion(place: Place, mapWidth: number, mapHeight: number)
 export function locationToLatLng({ lat, lng }: Location): LatLng {
     return { latitude: lat, longitude: lng, }
 }
+export function userLocationToRegion({ latitude, longitude }: LatLng): Region {
+    return {
+        latitude,
+        longitude,
+        latitudeDelta: .02,
+        longitudeDelta: .02,
+    }
+}

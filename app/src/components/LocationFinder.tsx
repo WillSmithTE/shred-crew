@@ -4,7 +4,7 @@ import { FullScreenLoader } from "./Loading"
 import { Text, View, StyleSheet, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
 import MapView, { LatLng, Marker, Region, PROVIDER_GOOGLE } from 'react-native-maps';
 import { MultiSelector, MultiSelectorOption, SingleSelector } from "./MultiSelector";
-import { dummyPlace, placeToRegion, locationToLatLng, Place } from "../types";
+import { dummyPlace, placeToRegion as googlePlaceToRegion, locationToLatLng, Place, userLocationToRegion } from "../types";
 import { IconButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { BackButton } from "./BackButton";
@@ -20,10 +20,11 @@ const mapHeight = Dimensions.get('window').height / 2
 
 async function loader(userLocation: LatLng): Promise<Place | undefined> {
     await new Promise(r => setTimeout(r, 2000));
-    return dummyPlace
+    return undefined
+    // return dummyPlace
 }
 export const LocationFinder = () => {
-    const [place, setPlace] = useState<Place | undefined>()
+    const [googlePlace, setPlace] = useState<Place | undefined>()
     const [yesNo, setYesNo] = useState<'yes' | 'no' | undefined>()
     const [noNearbyResort, setNoNearbyResort] = useState(false)
 
@@ -41,33 +42,38 @@ export const LocationFinder = () => {
 
     const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<{ resort: string }>();
 
+    const SkiResortSelector = () => <>
+        <Text style={[subHeader, { marginBottom: 20, }]}>Where you at?</Text>
+        <ResortLookup {...{ control, errors, setValue, watch, fieldName: 'resort', }} />
+    </>
     return <>
         <BackButton />
         <View style={{ flex: 1, }}>
             {(() => {
                 if (error) {
                     return <Text>oops</Text>
-                } else if (noNearbyResort) {
-
-                } else if (!place) {
-                    return <FullScreenLoader />
-                } else {
+                } else if (userLocation && (googlePlace || noNearbyResort)) {
+                    const region = googlePlace ? googlePlaceToRegion(googlePlace, mapWidth, mapHeight) : userLocationToRegion(userLocation)
                     return <>
-                        <MapView provider={PROVIDER_GOOGLE} style={styles.map} region={placeToRegion(place, mapWidth, mapHeight)}>
-                            <Marker coordinate={locationToLatLng(place.geometry.location)} />
+                        <MapView provider={PROVIDER_GOOGLE} style={styles.map} region={region} showsUserLocation={true}>
+                            {googlePlace && <Marker coordinate={locationToLatLng(googlePlace.geometry.location)} />}
                         </MapView>
-                        <KeyboardAvoidingView style={{ flex: 1, padding: 20, justifyContent: 'flex-end' }}
-                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-                            <Text style={subHeader}>Are you skiing at Verbier today?</Text>
-                            <SingleSelector selected={yesNo} set={setYesNo} options={yesNoOptions} />
-                            {yesNo === 'no' && <>
-                                <Text style={[subHeader, { marginBottom: 20, }]}>Where you at?</Text>
-                                <ResortLookup {...{ control, errors, setValue, watch, fieldName: 'resort', }} />
-                            </>
+                        <KeyboardAvoidingView style={styles.form} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                            {googlePlace ? <>
+                                <Text style={subHeader}>Are you skiing at Verbier today?</Text>
+                                <SingleSelector selected={yesNo} set={setYesNo} options={yesNoOptions} />
+                            </> :
+                                <>
+                                    <Text>No resorts found nearby 😔</Text>
+                                </>}
+                            {(noNearbyResort || yesNo === 'no') && <SkiResortSelector />
                             }
                             <View style={{ flex: 1 }} />
                         </KeyboardAvoidingView>
                     </>
+
+                } else {
+                    return <FullScreenLoader />
                 }
             })()
             }
@@ -85,4 +91,5 @@ const styles = StyleSheet.create({
         width: mapWidth,
         height: mapHeight,
     },
+    form: { flex: 1, padding: 20, justifyContent: 'flex-end' },
 })
