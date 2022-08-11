@@ -4,7 +4,8 @@ service: aws-node-express-dynamodb-api
 frameworkVersion: '3'
 
 custom:
-  tableName: 'users-table-${sls:stage}'
+  usersTableName: 'users-${sls:stage}'
+  resortsTableName: 'resorts-${sls:stage}'
   dynamodb:
     start:
       migrate: true
@@ -29,7 +30,8 @@ provider:
           Resource:
             - Fn::GetAtt: [ UsersTable, Arn ]
   environment:
-    USERS_TABLE: ${self:custom.tableName}
+    USERS_TABLE: ${self:custom.usersTableName}
+    RESORTS_TABLE: ${self:custom.resortsTableName}
 
 functions:
   api:
@@ -49,12 +51,38 @@ resources:
           - AttributeName: userId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
-        TableName: ${self:custom.tableName}
+        TableName: ${self:custom.usersTableName}
+    ResortsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: gsi1pk
+            AttributeType: S
+          - AttributeName: gsi1sk
+            AttributeType: S
+        GlobalSecondaryIndexes:
+          - IndexName: gsi1
+            Projection:
+              ProjectionType: ALL
+            KeySchema:
+              - AttributeName: gsi1pk
+                KeyType: HASH
+              - AttributeName: gsi1sk
+                KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:custom.resortsTableName}
 
 plugins:
   - serverless-dynamodb-local
   - serverless-offline
+  - serverless-dynamodb-seed
 
 package:
   patterns:
     - '!.dynamodb/**'
+    - './db/bootstrap/resorts.json'

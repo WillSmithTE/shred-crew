@@ -1,0 +1,1 @@
+export const allResortsFile = './db/bootstrap/resorts.json'

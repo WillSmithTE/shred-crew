@@ -1,16 +1,10 @@
 import * as AWS from "aws-sdk";
 import express from "express";
 import serverless from "serverless-http";
+import { bootstrapResorts } from "./src/bootstrapResorts";
+import { dynamoDbClient, RESORTS_TABLE, USERS_TABLE } from "./src/database";
 
 const app = express();
-
-const USERS_TABLE = process.env.USERS_TABLE;
-const dynamoDbClientParams = {} as any;
-if (process.env.IS_OFFLINE) {
-  dynamoDbClientParams.region = 'localhost'
-  dynamoDbClientParams.endpoint = 'http://localhost:8000'
-}
-const dynamoDbClient = new AWS.DynamoDB.DocumentClient(dynamoDbClientParams);
 
 app.use(express.json());
 
@@ -45,9 +39,9 @@ app.get('/bonjour', async function (req, res) {
 app.post("/users", async function (req, res) {
   const { userId, name } = req.body;
   if (typeof userId !== "string") {
-    res.status(400).json({ error: '"userId" must be a string' });
+    res.status(400).json({ error: 'userId must be a string' });
   } else if (typeof name !== "string") {
-    res.status(400).json({ error: '"name" must be a string' });
+    res.status(400).json({ error: 'name must be a string' });
   }
 
   const params = {
@@ -67,11 +61,31 @@ app.post("/users", async function (req, res) {
   }
 });
 
+app.get("/resort", async function (req, res) {
+  const params = {
+    TableName: RESORTS_TABLE,
+  };
+
+  try {
+    const { Items } = await dynamoDbClient.scan(params).promise();
+    if (Items) {
+      res.json(Items);
+    } else {
+      res
+        .status(404)
+        .json({ error: '?' });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "??" });
+  }
+});
+
+
 app.use((req, res, next) => {
   return res.status(404).json({
     error: "Not Found",
   });
 });
-
 
 module.exports.handler = serverless(app);
