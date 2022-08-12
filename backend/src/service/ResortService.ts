@@ -17,9 +17,9 @@ export const resortService = {
             res.status(404).json({ error: 'no items found' });
         }
     },
-    getAllNearCoordinates: async (req: Request<{}, Place[], ResortSearchByCoordinatesDto>, res: Response) => {
+    getAllNearCoordinates: async (req: Request<{}, Place[], MyLocation>, res: Response) => {
         const location: MyLocation = req.body;
-        console.debug(JSON.stringify(req.body, null, 2))
+        console.debug(`received coordinates (coordinates=${JSON.stringify(req.body, null, 2)}`)
         try {
             verifyCoordinates(location, res)
             const [southwestLat, southwestLng] = [location.lat - coordinateSearchMargin, location.lng - coordinateSearchMargin]
@@ -75,7 +75,6 @@ export const resortService = {
 }
 
 
-type ResortSearchByCoordinatesDto = MyLocation
 function verifyCoordinates(location: MyLocation, res: Response) {
     verifyDefined(location, res, 'location')
     verifyNumber(location.lat, res, 'location.lat')

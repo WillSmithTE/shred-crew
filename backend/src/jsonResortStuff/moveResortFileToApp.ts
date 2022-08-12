@@ -1,6 +1,5 @@
 import { readFile, writeFileSync, } from 'fs'
 import { promisify } from 'util';
-import geohash from 'ngeohash';
 import { Place, ResortStore } from '../types';
 import { allResortsFile } from '../constants';
 
