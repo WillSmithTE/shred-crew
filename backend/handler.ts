@@ -19,8 +19,11 @@ app.get("/resort", async function (req, res) {
   resortService.search(req, res)
 });
 app.post('/resort/coords', async function (req, res) {
-  resortService.getAllWithinCoordinates(req, res)
+  resortService.getAllNearCoordinates(req, res)
 })
+app.get("/resort/:resortId", async function (req, res) {
+  resortService.getById(req, res)
+});
 
 app.get('/bonjour', async function (req, res) {
   res.json({ message: 'salut' })
