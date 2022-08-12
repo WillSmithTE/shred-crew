@@ -13,3 +13,4 @@ DONE- do a preloadResources thing. Check auth state. If empty, not logged in. If
 - proper google logo
 - use special limited keys  for ios and android in app.json like this https://docs.expo.dev/versions/latest/sdk/map-view/#deploying-to-a-standalone-app-on-android
 - add error log on google fail, not just showError
+- x on resort lookup textinput to clear

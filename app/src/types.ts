@@ -1,6 +1,21 @@
 import { Region, LatLng } from "react-native-maps"
-import { UserDetails, LoginState } from "./redux/userReducer"
 import { myUuid } from "./services/myUuid"
+
+export type UserDetails = {
+    name: string,
+    email: string,
+    id: string,
+    hasDoneInitialSetup?: boolean,
+    imageUri?: string,
+    loginType: LoginType,
+    ski: SkiDetails,
+    bio?: string,
+    createdAt?: number,
+}
+export type LoginState = {
+    accessToken: string,
+    refreshToken: string,
+}
 
 export enum LoginType {
     EMAIL = 'email',
@@ -44,8 +59,14 @@ export type UserDisciplines = { [key in SkiDiscipline]?: boolean }
 export type SkiStyle = 'moguls' | 'piste' | 'off-piste' | 'backcountry'
 export type UserStyles = { [key in SkiStyle]?: boolean }
 
+export type Place = {
+    id: string,
+    name: string,
+    googlePlace: GooglePlace,
+    skiResortInfoData: {},
+}
 
-export const dummyPlace: Place = {
+export const dummyPlace: GooglePlace = {
     geometry: {
         location: { lat: 46.951211, lng: 11.38775 },
         viewport: {
@@ -55,7 +76,7 @@ export const dummyPlace: Place = {
     }
 }
 export type Location = { lat: number, lng: number }
-export type Place = {
+export type GooglePlace = {
     geometry: {
         location: Location,
         viewport: {
@@ -64,7 +85,7 @@ export type Place = {
         }
     }
 }
-export function placeToRegion(place: Place, mapWidth: number, mapHeight: number): Region {
+export function placeToRegion(place: GooglePlace, mapWidth: number, mapHeight: number): Region {
     const latDelta = place.geometry.viewport.northeast.lat - place.geometry.viewport.southwest.lat
     return {
         latitude: place.geometry.location.lat,
@@ -83,4 +104,9 @@ export function userLocationToRegion({ latitude, longitude }: LatLng): Region {
         latitudeDelta: .02,
         longitudeDelta: .02,
     }
+}
+
+export type ResortStore = {
+    id: string,
+    name: string,
 }

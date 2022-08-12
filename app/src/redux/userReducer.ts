@@ -1,23 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { State } from 'react-native-gesture-handler'
-import { LoginType, SkiDetails, SkiDiscipline } from '../types'
+import { LoginState, LoginType, SkiDetails, SkiDiscipline, UserDetails } from '../types'
 import equal from 'fast-deep-equal'
 
-export type UserDetails = {
-    name: string,
-    email: string,
-    id: string,
-    hasDoneInitialSetup?: boolean,
-    imageUri?: string,
-    loginType: LoginType,
-    ski: SkiDetails,
-    bio?: string,
-    createdAt?: number,
-}
-export type LoginState = {
-    accessToken: string,
-    refreshToken: string,
-}
 export interface UserState {
     user?: UserDetails,
     loginState?: LoginState,

@@ -2,8 +2,7 @@ import { HttpError } from '../model/HttpError';
 import { jsonString } from '../util/jsonString';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/reduxStore';
-import { UserDetails, UserState } from '../redux/userReducer';
-import { dummyLoginRegisterResponse } from '../types';
+import { dummyLoginRegisterResponse, UserDetails } from '../types';
 import Constants from 'expo-constants';
 
 const devEnv = Constants.manifest?.releaseChannel === undefined || Constants.manifest?.releaseChannel === 'dev'
@@ -106,5 +105,5 @@ const myError: (error: string) => MyResponse<void> = (error) => ({
 })
 
 export function useBaseApi() {
-    return useBaseApiBuilder({ baseUrl: `${Constants.manifest!!.extra!!.apiBaseUrl}/api` })
+    return useBaseApiBuilder({ baseUrl: `${Constants.manifest!!.extra!!.apiBaseUrl}` })
 }

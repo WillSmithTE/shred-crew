@@ -11,7 +11,7 @@ import { RootState } from '../redux/reduxStore';
 import { useNavigation } from '@react-navigation/native';
 
 export type SearchResult = {
-  id: string, label: string
+  id: string, name: string
 }
 
 type Props = {
@@ -27,14 +27,14 @@ export const SearchSuggestions = ({ items }: Props) => {
   }
   return (
     <View>
-      {items.map(({ id, label }) => <View key={id} style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
-      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
-      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
-      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
-      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
-      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
-      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
-      {items.map(({ id, label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, name: label }) => <View key={id} style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, name: label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, name: label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, name: label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, name: label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, name: label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, name: label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
+      {items.map(({ id, name: label }) => <View key={id}style={{backgroundColor: 'red'}}><Text>{label}</Text></View>)}
     </View>
     // <FlatList
     //   style={styles.container}

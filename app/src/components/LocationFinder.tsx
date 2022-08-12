@@ -4,27 +4,24 @@ import { FullScreenLoader } from "./Loading"
 import { Text, View, StyleSheet, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
 import MapView, { LatLng, Marker, Region, PROVIDER_GOOGLE } from 'react-native-maps';
 import { MultiSelector, MultiSelectorOption, SingleSelector } from "./MultiSelector";
-import { dummyPlace, placeToRegion as googlePlaceToRegion, locationToLatLng, Place, userLocationToRegion } from "../types";
+import { dummyPlace, placeToRegion as googlePlaceToRegion, locationToLatLng, GooglePlace, userLocationToRegion } from "../types";
 import { IconButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { BackButton } from "./BackButton";
 import { useForm } from "react-hook-form";
 import { ResortLookup } from "./ResortLookup";
-import { colors } from "../constants/colors";
-import * as Location from 'expo-location'
-import { showError } from "./Error";
 import { useUserLocation } from "../services/useUserLocation";
 
 const mapWidth = Dimensions.get('window').width
 const mapHeight = Dimensions.get('window').height / 2
 
-async function loader(userLocation: LatLng): Promise<Place | undefined> {
+async function loader(userLocation: LatLng): Promise<GooglePlace | undefined> {
     await new Promise(r => setTimeout(r, 2000));
     return undefined
     // return dummyPlace
 }
 export const LocationFinder = () => {
-    const [googlePlace, setPlace] = useState<Place | undefined>()
+    const [googlePlace, setPlace] = useState<GooglePlace | undefined>()
     const [yesNo, setYesNo] = useState<'yes' | 'no' | undefined>()
     const [noNearbyResort, setNoNearbyResort] = useState(false)
 
@@ -40,11 +37,11 @@ export const LocationFinder = () => {
         })()
     }, [userLocation])
 
-    const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<{ resort: string }>();
+    const { control, handleSubmit, formState: { errors }, setValue } = useForm<{ resort: string }>();
 
     const SkiResortSelector = () => <>
         <Text style={[subHeader, { marginBottom: 20, }]}>Where you at?</Text>
-        <ResortLookup {...{ control, errors, setValue, watch, fieldName: 'resort', }} />
+        <ResortLookup {...{ control, errors, setValue, fieldName: 'resort', }} />
     </>
     return <>
         <BackButton />
