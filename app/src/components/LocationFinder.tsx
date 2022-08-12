@@ -4,35 +4,46 @@ import { FullScreenLoader } from "./Loading"
 import { Text, View, StyleSheet, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
 import MapView, { LatLng, Marker, Region, PROVIDER_GOOGLE } from 'react-native-maps';
 import { MultiSelector, MultiSelectorOption, SingleSelector } from "./MultiSelector";
-import { dummyPlace, placeToRegion as googlePlaceToRegion, locationToLatLng, GooglePlace, userLocationToRegion } from "../types";
+import { dummyPlace, placeToRegion as googlePlaceToRegion, locationToLatLng, GooglePlace, userLocationToRegion, Place } from "../types";
 import { IconButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { BackButton } from "./BackButton";
 import { useForm } from "react-hook-form";
 import { ResortLookup } from "./ResortLookup";
 import { useUserLocation } from "../services/useUserLocation";
+import { useResortApi } from "../api/api";
+import { jsonString } from "../util/jsonString";
+import { showError, showError2 } from "./Error";
+import * as Device from 'expo-device'
 
 const mapWidth = Dimensions.get('window').width
 const mapHeight = Dimensions.get('window').height / 2
 
-async function loader(userLocation: LatLng): Promise<GooglePlace | undefined> {
-    await new Promise(r => setTimeout(r, 2000));
-    return undefined
+function useLoader(): (userLocation: LatLng) => Promise<Place[] | undefined> {
+    const { findNearbyResorts } = useResortApi()
+    return async ({ latitude, longitude }: LatLng) => {
+        return await findNearbyResorts({ lat: latitude, lng: longitude });
+    }
     // return dummyPlace
 }
 export const LocationFinder = () => {
-    const [googlePlace, setPlace] = useState<GooglePlace | undefined>()
+    const [places, setPlaces] = useState<Place[] | undefined>()
     const [yesNo, setYesNo] = useState<'yes' | 'no' | undefined>()
-    const [noNearbyResort, setNoNearbyResort] = useState(false)
-
-    const error = false
+    const loader = useLoader()
+    const [error, setError] = useState<string | undefined>()
     const userLocation = useUserLocation()
+
     useEffect(() => {
         (async () => {
             if (userLocation !== undefined) {
-                const nearestSkiResort = await loader(userLocation)
-                if (nearestSkiResort === undefined) setNoNearbyResort(true)
-                else setPlace(nearestSkiResort)
+                try {
+                    const nearestSkiResorts = await loader(userLocation)
+                    setPlaces(nearestSkiResorts)
+                } catch (e) {
+                    console.log(`error finding ski resorts (e=${jsonString(e as any)})`)
+                    setError(jsonString(e as any))
+                    showError2({ message: 'Something went wrong...', description: jsonString(e as any) })
+                }
             }
         })()
     }, [userLocation])
@@ -49,21 +60,22 @@ export const LocationFinder = () => {
             {(() => {
                 if (error) {
                     return <Text>oops</Text>
-                } else if (userLocation && (googlePlace || noNearbyResort)) {
-                    const region = googlePlace ? googlePlaceToRegion(googlePlace, mapWidth, mapHeight) : userLocationToRegion(userLocation)
+                } else if (userLocation && (places !== undefined)) {
+                    const place = places[0]
+                    const region = place ? googlePlaceToRegion(place.googlePlace, mapWidth, mapHeight) : userLocationToRegion(userLocation)
                     return <>
-                        <MapView provider={PROVIDER_GOOGLE} style={styles.map} region={region} showsUserLocation={true}>
-                            {googlePlace && <Marker coordinate={locationToLatLng(googlePlace.geometry.location)} />}
+                        <MapView provider={Device.isDevice ? PROVIDER_GOOGLE : undefined} style={styles.map} region={region} showsUserLocation={true}>
+                            {place && <Marker coordinate={locationToLatLng(place.googlePlace.geometry.location)} />}
                         </MapView>
                         <KeyboardAvoidingView style={styles.form} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-                            {googlePlace ? <>
-                                <Text style={subHeader}>Are you skiing at Verbier today?</Text>
+                            {place ? <>
+                                <Text style={subHeader}>Are you skiing at {place.name} today?</Text>
                                 <SingleSelector selected={yesNo} set={setYesNo} options={yesNoOptions} />
                             </> :
                                 <>
                                     <Text>No resorts found nearby 😔</Text>
                                 </>}
-                            {(noNearbyResort || yesNo === 'no') && <SkiResortSelector />
+                            {(place === undefined || yesNo === 'no') && <SkiResortSelector />
                             }
                             <View style={{ flex: 1 }} />
                         </KeyboardAvoidingView>

@@ -2,8 +2,9 @@ import { HttpError } from '../model/HttpError';
 import { jsonString } from '../util/jsonString';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/reduxStore';
-import { dummyLoginRegisterResponse, UserDetails } from '../types';
+import { dummyLoginRegisterResponse, MyLocation, Place, UserDetails } from '../types';
 import Constants from 'expo-constants';
+import { LatLng } from 'react-native-maps';
 
 const devEnv = Constants.manifest?.releaseChannel === undefined || Constants.manifest?.releaseChannel === 'dev'
 
@@ -20,8 +21,24 @@ export function useUserApi() {
         ),
     }
 }
+export function useResortApi() {
+    const baseApi = useBaseApi()
+    return {
+        findNearbyResorts: async (userLocation: MyLocation) => await baseApiRequest<Place[]>(
+            () => {
+                console.debug(`Searching for nearby resorts`)
+                // if (devEnv) Promise.resolve([])
+                return baseApi.post<Place[]>(`/resort/coords`, {
+                    body: JSON.stringify(userLocation),
+                    headers: { "Content-Type": "application/json", }
+                })
+            },
+            'error getting nearby resorts',
+        ),
+    }
+}
 
-const useBaseApiBuilder = ({ baseUrl = '', fetchWith = global.fetch, }) => {
+const useBaseApiBuilder = ({ baseUrl = '', fetchWith = fetch, }) => {
     const loginState = useSelector((state: RootState) => state.user.loginState)
     const get = async <T = object,>(url: string, options = {}, auth = true) =>
         request<T>(url, { ...options, method: 'GET' }, true, auth);
@@ -41,9 +58,10 @@ const useBaseApiBuilder = ({ baseUrl = '', fetchWith = global.fetch, }) => {
 
     const request = async <T = any,>(url: string, options: RequestInit = {}, invokeErrorCallbacks = true, auth = true) => {
         if (auth && loginState === undefined) return Promise.reject(myError(`wanted auth request but loginState was undefined`))
+        console.debug(`about to fetch (baseUrl=${baseUrl}, path=${url}, body=${options.body})`)
         return fetchWith(`${baseUrl}${url}`, { // could add refresh token ${auth ? `?refresh_token=${loginState!!.refreshToken}` : ''}
             ...options,
-            body: options.body ? jsonString(options.body) : undefined,
+            body: options.body,
             // credentials: 'include',
             headers: {
                 ...(auth ? { Authorization: `Bearer ${loginState!!.accessToken}` } : {}),
@@ -84,7 +102,7 @@ export const baseApiRequest = async <T, U = T>(callback: () => Promise<MyRespons
     if (response.ok) {
         return mapper(response.body!!)
     } else {
-        throw new HttpError({ message: `${errorMessage} - ${response.error}`, code: response.status })
+        throw new HttpError({ message: `${errorMessage} - ${response.error} - ${jsonString(response)}`, code: response.status })
     }
 }
 

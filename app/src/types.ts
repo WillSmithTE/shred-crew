@@ -75,13 +75,13 @@ export const dummyPlace: GooglePlace = {
         }
     }
 }
-export type Location = { lat: number, lng: number }
+export type MyLocation = { lat: number, lng: number }
 export type GooglePlace = {
     geometry: {
-        location: Location,
+        location: MyLocation,
         viewport: {
-            northeast: Location,
-            southwest: Location
+            northeast: MyLocation,
+            southwest: MyLocation
         }
     }
 }
@@ -94,7 +94,7 @@ export function placeToRegion(place: GooglePlace, mapWidth: number, mapHeight: n
         longitudeDelta: latDelta * mapWidth / mapHeight,
     }
 }
-export function locationToLatLng({ lat, lng }: Location): LatLng {
+export function locationToLatLng({ lat, lng }: MyLocation): LatLng {
     return { latitude: lat, longitude: lng, }
 }
 export function userLocationToRegion({ latitude, longitude }: LatLng): Region {
