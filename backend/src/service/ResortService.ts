@@ -5,25 +5,18 @@ import { removeDuplicates } from "../util/removeDuplicates";
 import { MyLocation, Place, ViewPort } from "../types";
 
 export const resortService = {
-    getAll: async (req: Request, res: Response) => {
+    search: async (req: Request, res: Response) => {
         const params = {
             TableName: RESORTS_TABLE,
         };
-
-        try {
-            const { Items } = await dynamoDbClient.scan(params).promise();
-            if (Items) {
-                res.json(Items);
-            } else {
-                res
-                    .status(404)
-                    .json({ error: '?' });
-            }
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: "??" });
+        const { Items } = await dynamoDbClient.scan(params).promise();
+        if (Items) {
+            res.json(Items);
+        } else {
+            res.status(404).json({ error: 'no items found' });
         }
     },
+    // change to take 1 coordinate and add/subtract maybe 0.5 from either side
     getAllWithinCoordinates: async (req: Request<{}, Place[], ResortSearchByCoordinatesDto>, res: Response) => {
         const { southwest, northeast } = req.body;
         console.debug(JSON.stringify(req.body, null, 2))

@@ -66,3 +66,8 @@ export type ViewPort = {
     northeast: MyLocation,
     southwest: MyLocation
 }
+
+export type ResortStore = {
+    id: string,
+    name: string,
+}

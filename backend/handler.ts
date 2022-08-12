@@ -16,9 +16,8 @@ app.post("/users", async function (req, res) {
 });
 
 app.get("/resort", async function (req, res) {
-  resortService.getAll(req, res)
+  resortService.search(req, res)
 });
-
 app.post('/resort/coords', async function (req, res) {
   resortService.getAllWithinCoordinates(req, res)
 })

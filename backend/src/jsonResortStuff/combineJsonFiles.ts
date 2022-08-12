@@ -1,8 +1,8 @@
 import { readFile, writeFileSync, } from 'fs'
 import { promisify } from 'util';
 import geohash from 'ngeohash';
-import { Place } from './types';
-import { allResortsFile } from './constants';
+import { Place } from '../types';
+import { allResortsFile } from '../constants';
 
 const readFilePromise = promisify(readFile)
 const allResorts: {}[] = []
