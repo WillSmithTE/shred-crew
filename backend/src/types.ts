@@ -55,13 +55,14 @@ export type Place = {
     gsi1pk: string,
     gsi1sk: string,
 }
-export type Location = { lat: number, lng: number }
+export type MyLocation = { lat: number, lng: number }
 export type GooglePlace = {
     geometry?: {
-        location: Location,
-        viewport: {
-            northeast: Location,
-            southwest: Location
-        }
+        location: MyLocation,
+        viewport: ViewPort
     }
+}
+export type ViewPort = {
+    northeast: MyLocation,
+    southwest: MyLocation
 }

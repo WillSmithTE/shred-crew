@@ -1,0 +1,25 @@
+Resources:
+  ResortsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: gsi1pk
+          AttributeType: S
+        - AttributeName: gsi1sk
+          AttributeType: S
+      GlobalSecondaryIndexes:
+        - IndexName: gsi1
+          Projection:
+            ProjectionType: ALL
+          KeySchema:
+            - AttributeName: gsi1pk
+              KeyType: HASH
+            - AttributeName: gsi1sk
+              KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TableName: ${self:custom.resortsTableName}
