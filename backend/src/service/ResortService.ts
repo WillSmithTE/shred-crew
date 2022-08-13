@@ -59,13 +59,14 @@ export const resortService = {
         };
 
         try {
-            const { Item } = await dynamoDbClient.get(params).promise();
+            const { Item, $response } = await dynamoDbClient.get(params).promise();
             if (Item) {
                 res.json(Item);
             } else {
                 res
                     .status(404)
-                    .json({ error: `Could not find resort (id=${req.params.resortId})` });
+                    .json({ error: `Could not find resort (id=${req.params.resortId}, 
+                        error=${$response.error}, data=${$response.data})` });
             }
         } catch (error) {
             console.log(error);
