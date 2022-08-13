@@ -3,15 +3,6 @@ import { allResortsFile } from "./constants";
 import { dynamoDbClient, RESORTS_TABLE } from "./database";
 import { Place } from "./types";
 
-// bootstrapResorts()
-async function count() {
-    const params = {
-        TableName: RESORTS_TABLE,
-        Select: "COUNT",
-    };
-    const count = await dynamoDbClient.scan(params).promise();
-    console.log({ count })
-}
 bootstrapResorts()
 
 export async function bootstrapResorts() {
