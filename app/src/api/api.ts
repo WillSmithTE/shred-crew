@@ -95,7 +95,7 @@ const useBaseApiBuilder = ({ baseUrl = '', fetchWith = fetch, }) => {
                 } else {
                     return {
                         ...baseResponse,
-                        error: (body as any).message,
+                        error: (body as any).error,
                     };
                 }
             })
