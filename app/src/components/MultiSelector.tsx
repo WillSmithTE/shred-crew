@@ -2,8 +2,8 @@ import React from "react"
 import { colors } from "../constants/colors"
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
 
-export type MultiSelectorOption<S extends string> = {
-    id: S,
+export type MultiSelectorOption<S> = {
+    value: S,
     label: string,
 }
 type Thing<S extends string> = { [key in S]?: boolean }
@@ -14,7 +14,7 @@ type MultiSelectorProps<S extends string> = {
 }
 export function MultiSelector<S extends string>({ selected, set, options }: MultiSelectorProps<S>) {
     return < View style={styles.container}>
-        {options.map(({ id, label }, index) => {
+        {options.map(({ value: id, label }, index) => {
             const isSelected = selected[id] === true
             const onPress = () => set({ ...selected, [id]: isSelected ? undefined : true })
             return <TouchableOpacity onPress={onPress} style={buttonStyles(isSelected).button} key={index}>
@@ -26,16 +26,17 @@ export function MultiSelector<S extends string>({ selected, set, options }: Mult
 
 }
 
-type SingleSelectorProps<S extends string> = {
+type SingleSelectorProps<S> = {
     selected?: S,
     set: (newVal?: S) => void,
     options: MultiSelectorOption<S>[],
+    idResolver?: (it: S) => string,
 }
-export function SingleSelector<S extends string>({ selected, set, options }: SingleSelectorProps<S>) {
+export function SingleSelector<S>({ selected, set, options, idResolver = (it) => (it as any)?.toString() }: SingleSelectorProps<S>) {
     return < View style={styles.container}>
-        {options.map(({ id, label }, index) => {
-            const isSelected = selected === id
-            const onPress = () => set(id === selected ? undefined : id)
+        {options.map(({ value, label }, index) => {
+            const isSelected = selected !== undefined && idResolver(selected) === idResolver(value)
+            const onPress = () => set(isSelected ? undefined : value)
             return <TouchableOpacity onPress={onPress} style={buttonStyles(isSelected).button} key={index}>
                 <Text style={{ color: 'black' }}>{label}</Text>
             </TouchableOpacity>

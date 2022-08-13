@@ -1,19 +1,21 @@
 import { useNavigation } from "@react-navigation/native"
 import React from "react"
-import { StyleSheet } from "react-native"
+import { StyleProp, StyleSheet, ViewStyle } from "react-native"
 import { IconButton } from "react-native-paper"
 
-export const BackButton = () => {
+type Props = {
+    customStyles?: StyleProp<ViewStyle>,
+}
+export const BackButton = ({ customStyles = {} }: Props) => {
     const { goBack } = useNavigation()
-    return <IconButton onPress={goBack} icon='arrow-left' size={40} style={styles.backButton} />
+    return <IconButton onPress={goBack} icon='arrow-left' size={40} style={[styles.backButton, customStyles]} />
 }
 
 const styles = StyleSheet.create({
     backButton: {
         position: 'absolute',
-        top: 0,
-        left: 0,
+        top: 10,
+        left: 5,
         zIndex: 10,
-        paddingBottom: 5,
     }
 })
