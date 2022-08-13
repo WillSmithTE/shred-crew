@@ -1,6 +1,5 @@
 #!/bin/bash
 
-tsc
 export IS_OFFLINE=true
 export RESORTS_TABLE=resorts-dev
 node dist/src/bootstrapResorts.js
