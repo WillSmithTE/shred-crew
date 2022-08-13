@@ -41,13 +41,13 @@ export const resortService = {
                     },
                 }).promise()
                     .then((it) => {
-                        console.log(`matchedResorts=${JSON.stringify(it, null, 2)}`)
                         return it.Items as Place[]
                     })
             )).then((it) => it.flat())
 
             const placesWithoutDuplicates = removeDuplicates(places, 'id')
-            res.status(200).json(placesWithoutDuplicates)
+            const sorted = sortByClosest(location, placesWithoutDuplicates)
+            res.status(200).json(sorted)
         } catch (e) {
             res.status(400).json({ error: e.toString() })
         }
@@ -87,7 +87,25 @@ function verifyDefined(a: any, res: Response, fieldName: string) {
     }
 }
 function verifyNumber(a: any, res: Response, fieldName: string): a is number {
-    console.log({ a, fieldName, type: typeof a })
     if (typeof a === 'number') return true
     throw new Error(`${fieldName} must be a number`)
+}
+
+function sortByClosest(location: MyLocation, resorts: Place[]): Place[] {
+    const resortsWithDistances = resorts.map((resort) => ({
+        ...resort,
+        distance: getDistanceBetweenPoints(location, resort.googlePlace.geometry.location)
+    }))
+    return resortsWithDistances.sort((a, b) => a.distance - b.distance)
+}
+
+function getDistanceBetweenPoints(a: MyLocation, b: MyLocation) {
+    // from https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
+    const p = 0.017453292519943295;    // Math.PI / 180
+    const c = Math.cos;
+    const something = 0.5 - c((b.lat - a.lat) * p) / 2 +
+        c(a.lat * p) * c(b.lat * p) *
+        (1 - c((b.lng - a.lng) * p)) / 2;
+
+    return 12742 * Math.asin(Math.sqrt(something)); // 2 * R; R = 6371 km
 }
