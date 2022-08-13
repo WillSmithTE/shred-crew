@@ -35,6 +35,14 @@ export function useResortApi() {
             },
             'error getting nearby resorts',
         ),
+        findResort: async (id: string) => await baseApiRequest<Place>(
+            () => {
+                console.debug(`finding resort (id=${id})`)
+                // if (devEnv) Promise.resolve([])
+                return baseApi.get(`/resort/${id}`,)
+            },
+            `error finding resort (id=${id})`,
+        ),
     }
 }
 

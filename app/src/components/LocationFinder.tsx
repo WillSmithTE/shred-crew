@@ -16,16 +16,22 @@ import { jsonString } from "../util/jsonString";
 import { showError, showError2 } from "./Error";
 import * as Device from 'expo-device'
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { tryCatchAsync } from "../util/tryCatchAsync";
+import { arrayToMap } from "../util/arrayToMap";
 
 const mapWidth = Dimensions.get('window').width
 const mapHeight = Dimensions.get('window').height / 2
 
-function useLoader(): (userLocation: LatLng) => Promise<Place[] | undefined> {
-    const { findNearbyResorts } = useResortApi()
-    return async ({ latitude, longitude }: LatLng) => {
-        return await findNearbyResorts({ lat: latitude, lng: longitude });
+function useLoader() {
+    const { findNearbyResorts, findResort } = useResortApi()
+    return {
+        findNearbyResorts: async ({ latitude, longitude }: LatLng) => {
+            return await findNearbyResorts({ lat: latitude, lng: longitude });
+        },
+        findResort: async (id: string) => {
+            return await findResort(id)
+        }
     }
-    // return dummyPlace
 }
 export const LocationFinder = () => {
     const [places, setPlaces] = useState<Place[] | undefined>()
@@ -39,14 +45,11 @@ export const LocationFinder = () => {
     useEffect(() => {
         (async () => {
             if (userLocation !== undefined) {
-                try {
-                    const nearestSkiResorts = await loader(userLocation)
-                    setPlaces(nearestSkiResorts)
-                } catch (e) {
-                    console.log(`error finding ski resorts (e=${jsonString(e as any)})`)
-                    setError(jsonString(e as any))
-                    showError2({ message: 'Something went wrong...', description: jsonString(e as any) })
-                }
+                tryCatchAsync(
+                    () => loader.findNearbyResorts(userLocation),
+                    setPlaces,
+                    setError,
+                )
             }
         })()
     }, [userLocation])
@@ -55,23 +58,27 @@ export const LocationFinder = () => {
         if (places !== undefined && places.length > 0) setPlace(places[0])
     }, [places])
 
-    const setResortById = (idToFind: string) => {
-        console.log({ idToFind })
-        const match = places?.find(({ id }) => id === idToFind)
-        console.log({match})
-        setPlace(places?.find(({ id }) => id === idToFind))
-    }
-
     useEffect(() => {
-        howAboutHere !== undefined && howAboutHere !== 'no' && setResortById(howAboutHere)
+        howAboutHere !== undefined && howAboutHere !== 'no' && setPlace(places?.find(({ id }) => id === howAboutHere))
     }, [howAboutHere])
 
     const { control, handleSubmit, formState: { errors }, setValue } = useForm<{ resort: string }>();
 
+    const setResortFromBackend = (id: string) => {
+        tryCatchAsync(
+            () => loader.findResort(id),
+            setPlace,
+            setError,
+        )
+    }
+
     const SkiResortSelector = () => <>
         <Text style={[subHeader, { marginBottom: 20, }]}>Where you at?</Text>
-        <ResortLookup {...{ control, errors, setValue, fieldName: 'resort', onSelectResort: setResortById }} />
+        <ResortLookup {...{ control, errors, setValue, fieldName: 'resort', onSelectResort: setResortFromBackend }} />
     </>
+    const resortSelectionOptions = arrayToMap(places ?
+        [...places.slice(1, 6).map(({ id, name }) => ({ value: id, label: name })),
+        { value: 'no', label: 'Nope' }] : [], 'value')
     return <>
         <BackButton />
         <View style={{ flex: 1, }}>
@@ -95,8 +102,8 @@ export const LocationFinder = () => {
                             {yesNo1 === 'no' && places.length > 1 && <>
                                 <Text style={subHeader}>How about here?</Text>
                                 <SingleSelector selected={howAboutHere} set={setHowAboutHere}
-                                    options={howAboutHere === 'no' ? [{ value: 'no', label: 'Nope' }] :
-                                        [...places.slice(1, 6).map(({ id, name }) => ({ value: id, label: name })), { value: 'no', label: 'Nope' }]} />
+                                    options={howAboutHere === undefined ? Array.from(resortSelectionOptions.values()) :
+                                        [resortSelectionOptions.get(howAboutHere)!!]} />
                             </>}
                             {(place === undefined || howAboutHere === 'no' || (yesNo1 === 'no' && places.length === 1)) && <SkiResortSelector />
                             }
