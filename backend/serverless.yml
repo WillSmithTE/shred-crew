@@ -30,6 +30,8 @@ provider:
           Resource:
             - !Sub '${ResortsTable.Arn}/*'
             - !Sub '${UsersTable.Arn}/*'
+            - Fn::GetAtt: [ UsersTable, Arn ]
+            - Fn::GetAtt: [ ResortsTable, Arn ]
   environment:
     USERS_TABLE: ${self:custom.usersTableName}
     RESORTS_TABLE: ${self:custom.resortsTableName}
