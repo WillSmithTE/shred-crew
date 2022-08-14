@@ -3,15 +3,36 @@
     - someone says set scheme and package same (com....)
 DONE- maybe combine auth and user redux state
 DONE- do a preloadResources thing. Check auth state. If empty, not logged in. If not empty, ping backend with access & refresh. Get back same or new, is logged in. Get back 401, not logged in.
-- users with https://betalist.com/
-- usernames
-- check theme based on phone. set text  colors black/white depending somehow
-- slider doesnt work. scrolls instead
-- no background on login, only on register
-- store geo data like this https://jason.wadsworth.dev/working-with-geo-data-in-dynamodb/
+- biz: users with https://betalist.com/
+- feat: usernames
+- feat: check theme based on phone. set text  colors black/white depending somehow
+- bug: slider doesnt work. scrolls instead
+- bug: no background on login, only on register
+DONE- store geo data like this https://jason.wadsworth.dev/working-with-geo-data-in-dynamodb/
    display like this https://github.com/react-native-maps/react-native-maps
-- proper google logo
-- use special limited keys  for ios and android in app.json like this https://docs.expo.dev/versions/latest/sdk/map-view/#deploying-to-a-standalone-app-on-android
-- add error log on google fail, not just showError
-- x on resort lookup textinput to clear
-- change backend to return ordered list of closest resorts
+DONE- proper google logo
+DONE- use special limited keys  for ios and android in app.json like this https://docs.expo.dev/versions/latest/sdk/map-view/#deploying-to-a-standalone-app-on-android
+- feat: add error log on google fail, not just showError
+- featT: x on resort lookup textinput to clear
+DONE- change backend to return ordered list of closest resorts
+DONE- search by resort id doesn't work
+- bug: resorts in berlin???
+- bug: multiselect selects all not just 1
+- feat: change location finder to popup
+- feat: bottom tab nav with messages
+- feat: messages
+    - frontend: basic messages ui like messenger or bumble
+    - frontend: ui on click into message
+    - backend: endpoint to get list of conversations. just another field, [{id: 123, name: john}]
+    - backend: endpoint to get last x messages between logged in and user clicked on
+    - backend: notify of new conversation when new match
+    - frontend: display little number on messages icon bottom right witth new conversations/messages
+- feat: newsfeed with people
+    - frontend: basic ui, can poke people
+    - backend: endpoint get users with open sessions, plus session place name. separate table SkiSession? with geohash.
+       needs to expire sometime so need a cleanup job? nah, let user do it for now
+- feat: backend store users
+- auth
+   - feat: backend verify logins/generate access tokens
+   - feat: frontend 401 refresh token then call again
+   - feat: backend offer refresh api 
