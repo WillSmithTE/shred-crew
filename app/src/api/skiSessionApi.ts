@@ -4,7 +4,7 @@ import { useBaseApi, baseApiRequest } from './api';
 export function useSkiSessionApi() {
     const baseApi = useBaseApi()
     return {
-        create: async (request: CreateSessionRequest) => await baseApiRequest<CreateSessionResponse>(
+        create: async (request: CreateSessionRequest) => baseApiRequest<CreateSessionResponse>(
             () => {
                 console.debug(`Creating ski session`)
                 return baseApi.post<CreateSessionResponse>(`/ski-session`, {

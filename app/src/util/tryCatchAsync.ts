@@ -10,7 +10,7 @@ export async function tryCatchAsync<T>(
         const result = await getter()
         onSuccess(result)
     } catch (e) {
-        console.log(`http error (e=${jsonString(e as any)})`)
+        console.log(`http error (e=${e}})`)
         setError(jsonString(e as any))
         showError2({ message: 'Something went wrong...', description: jsonString(e as any) })
     }

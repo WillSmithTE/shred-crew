@@ -38,9 +38,9 @@ function useLoader() {
     }
 }
 function useActions() {
+    const { create } = useSkiSessionApi()
     return {
         createSkiSession: async (request: CreateSessionRequest) => {
-            const { create } = useSkiSessionApi()
             return await create(request)
         }
     }
@@ -58,7 +58,6 @@ export const LocationFinder = () => {
     const userLocation = useUserLocation()
     const dispatch = useDispatch()
 
-    console.log({ initialPlace })
     const mapWidth = Dimensions.get('window').width
     const mapHeight = Dimensions.get('window').height * (yesNo1 === 'no' ? 0.3 : .65)
     const styles = createStyles(mapWidth, mapHeight)
@@ -102,8 +101,10 @@ export const LocationFinder = () => {
                 },
                 setError,
             )
+        } else {
+            console.error(`shouldn't be here, pressed next without selecting a resort`)
         }
-    }, [])
+    }, [selectedPlace])
     const onClickSugggestedPlace = useCallback((place) => {
         setSelectedPlace(place)
         if (place !== undefined) setValue(resortLookupFieldName, '')
