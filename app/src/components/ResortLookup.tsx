@@ -1,6 +1,7 @@
-import React, { useMemo } from "react"
+import React, { useCallback, useMemo } from "react"
 import { FieldErrorsImpl, DeepRequired, UseFormWatch, UseFormSetValue, useWatch } from "react-hook-form"
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { IconButton } from "react-native-paper"
 import { colors } from "../constants/colors"
 import { useDebouncedSearch } from "../services/useDebouncedSearch"
 import { ResortStore } from "../types"
@@ -21,17 +22,23 @@ type Props = {
     fieldName?: string,
     placeholder?: string,
     onSelectResort: (resortId: string) => void,
+    onClear?: () => void,
 }
-export const ResortLookup = ({ control, errors, fieldName = 'resort', setValue, placeholder, onSelectResort }: Props) => {
+export const ResortLookup = ({ control, errors, fieldName = 'resort', setValue, placeholder, onSelectResort, onClear }: Props) => {
     const { setInputText: setHomeMountainInput, searchResults: { result: resortResults } } = useDebouncedSearch((place) => searchResorts(place));
-    const homeMountainSearchQuery = useWatch({ control, name: fieldName })
+    const searchQuery = useWatch({ control, name: fieldName })
 
-    useMemo(() => setHomeMountainInput(homeMountainSearchQuery), [homeMountainSearchQuery])
+    useMemo(() => setHomeMountainInput(searchQuery), [searchQuery])
+    const onPressX = useCallback(() => {
+        setValue(fieldName, '')
+        onClear && onClear()
+    }, [fieldName, setValue])
     return <>
         <View style={{ zIndex: 100, elevation: 100, }}>
             <MyTextInput {...{ fieldName, placeholder, control, errors, }} />
+            {searchQuery !== undefined && searchQuery.length > 0 && <IconButton onPress={onPressX} icon='close' size={20} style={{ position: 'absolute', right: 8, top: 8 }} />}
             <View style={{ position: 'absolute', marginTop: 64, width: '100%' }}>
-                {(resortResults?.length === 1 && resortResults[0].name === homeMountainSearchQuery ? [] : resortResults ?? [])
+                {(resortResults?.length === 1 && resortResults[0].name === searchQuery ? [] : resortResults ?? [])
                     .map(({ id, name: label }, index) => <>
                         <TouchableOpacity onPress={() => { setValue(fieldName, label); onSelectResort(id) }}
                             style={styles.searchResult} key={id}>

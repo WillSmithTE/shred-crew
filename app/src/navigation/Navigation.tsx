@@ -14,6 +14,7 @@ import { GetStarted } from '../screens/GetStarted';
 import { LocationFinder } from '../components/LocationFinder';
 import { Profile } from '../screens/Profile';
 import { EditProfile } from '../screens/EditProfile';
+import { PeopleFeed } from '../screens/PeopleFeed';
 
 export type MainStackParams = {
   Home: { showOptions?: boolean };
@@ -25,6 +26,7 @@ export type MainStackParams = {
   GetStarted: undefined
   LocationFinder: undefined
   EditProfile: undefined
+  PeopleFeed: undefined
 };
 
 const Stack = createNativeStackNavigator<MainStackParams>();
@@ -43,6 +45,7 @@ export const Navigation = () => {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="LocationFinder" component={LocationFinder} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
+            <Stack.Screen name="PeopleFeed" component={PeopleFeed} />
           </> :
             <>
               <Stack.Screen name="GetStarted" component={GetStarted} />

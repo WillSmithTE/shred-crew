@@ -1,13 +1,16 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { State } from 'react-native-gesture-handler'
-import { LoginState, LoginType, SkiDetails, SkiDiscipline, UserDetails } from '../types'
+import { CreateSessionResponse, LoginState, LoginType, SkiDetails, SkiDiscipline, SkiSession, UserDetails } from '../types'
 import equal from 'fast-deep-equal'
 
+type ActionType = 'createSkiSession'
 export interface UserState {
     user?: UserDetails,
     loginState?: LoginState,
+    skiSession?: SkiSession,
+    loading: { [actionType in ActionType]?: boolean }
 }
-const initialState: UserState = {}
+const initialState: UserState = { loading: {} }
 
 export const userSlice = createSlice({
     name: 'user',
@@ -35,11 +38,15 @@ export const userSlice = createSlice({
         loginUser: (state, { payload: { user, loginState } }: PayloadAction<UserState>) => {
             state.loginState = loginState
             state.user = user
-        }
+        },
+        createSkiSessionComplete: (state, { payload }: PayloadAction<SkiSession>) => {
+            state.skiSession = payload
+        },
     },
 })
 
-export const { setUserState, clearUser, clearAuth, setLoginState, logoutUser, loginUser } = userSlice.actions
+export const { setUserState, clearUser, clearAuth, setLoginState, logoutUser, loginUser, createSkiSessionComplete } =
+    userSlice.actions
 
 export const userReducer = userSlice.reducer
 

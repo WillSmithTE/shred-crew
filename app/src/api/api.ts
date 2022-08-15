@@ -8,44 +8,6 @@ import { LatLng } from 'react-native-maps';
 
 const devEnv = Constants.manifest?.releaseChannel === undefined || Constants.manifest?.releaseChannel === 'dev'
 
-export function useUserApi() {
-    const baseApi = useBaseApi()
-    return {
-        upsert: async (userState: UserDetails) => await baseApiRequest<UserDetails>(
-            () => {
-                console.debug(`Upserting user (id=${userState.id})`)
-                if (devEnv) return Promise.resolve(MyResponseBuilder(dummyLoginRegisterResponse({ ...userState }).user))
-                return baseApi.put<UserDetails>(`/user`)
-            },
-            'error getting user details',
-        ),
-    }
-}
-export function useResortApi() {
-    const baseApi = useBaseApi()
-    return {
-        findNearbyResorts: async (userLocation: MyLocation) => await baseApiRequest<Place[]>(
-            () => {
-                console.debug(`Searching for nearby resorts`)
-                // if (devEnv) Promise.resolve([])
-                return baseApi.post<Place[]>(`/resort/coords`, {
-                    body: JSON.stringify(userLocation),
-                    headers: { "Content-Type": "application/json", }
-                })
-            },
-            'error getting nearby resorts',
-        ),
-        findResort: async (id: string) => await baseApiRequest<Place>(
-            () => {
-                console.debug(`finding resort (id=${id})`)
-                // if (devEnv) Promise.resolve([])
-                return baseApi.get(`/resort/${id}`,)
-            },
-            `error finding resort (id=${id})`,
-        ),
-    }
-}
-
 const useBaseApiBuilder = ({ baseUrl = '', fetchWith = fetch, }) => {
     const loginState = useSelector((state: RootState) => state.user.loginState)
     const get = async <T = object,>(url: string, options = {}, auth = true) =>

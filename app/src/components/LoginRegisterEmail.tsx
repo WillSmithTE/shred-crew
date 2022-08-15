@@ -8,7 +8,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useForm, Controller } from "react-hook-form";
 import { loginUser, setLoginState } from "../redux/userReducer";
 import { dummyLoginRegisterResponse, LoginRegisterResponse, LoginType } from "../types";
-import { setUserState, UserDetails } from "../redux/userReducer";
+import { setUserState } from "../redux/userReducer";
 import { Loading } from "./Loading";
 import { myUuid } from "../services/myUuid";
 import { MyTextInput } from "./MyTextInput";

@@ -11,7 +11,6 @@ import { SkiDiscipline, SkiStyle, UserDetails, UserDisciplines, UserStyles } fro
 import { FullScreenLoader } from '../components/Loading';
 import { logoutUser, setUserState, } from '../redux/userReducer';
 import { ImagePicker } from '../components/ImagePicker';
-import { useUserApi } from '../api/api';
 import { showError2 } from '../components/Error';
 import { useNavigation } from '@react-navigation/native';
 import { jsonString } from '../util/jsonString';
@@ -20,6 +19,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MultiSelector, MultiSelectorOption } from '../components/MultiSelector';
 import { BackButton } from '../components/BackButton';
 import { ResortLookup } from '../components/ResortLookup';
+import { useUserApi } from '../api/userApi';
 
 function useAction() {
     const { upsert } = useUserApi()
