@@ -9,7 +9,7 @@ import { Slider } from '@sharcoux/slider'
 import { colors } from '../constants/colors';
 import { SkiDiscipline, SkiStyle, UserDetails, UserDisciplines, UserStyles } from '../types';
 import { FullScreenLoader } from '../components/Loading';
-import { logoutUser, setUserState,  } from '../redux/userReducer';
+import { logoutUser, setUserState, } from '../redux/userReducer';
 import { ImagePicker } from '../components/ImagePicker';
 import { useUserApi } from '../api/api';
 import { showError2 } from '../components/Error';
@@ -17,7 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 import { jsonString } from '../util/jsonString';
 import { MainStackParams } from '../navigation/Navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MultiSelector } from '../components/MultiSelector';
+import { MultiSelector, MultiSelectorOption } from '../components/MultiSelector';
 import { BackButton } from '../components/BackButton';
 import { ResortLookup } from '../components/ResortLookup';
 
@@ -172,10 +172,10 @@ const SkillLevelSlider = ({ skillLevel, setSkillLevel }: SliderProps) => {
 
 }
 
-const skiDisciplines: { id: SkiDiscipline, label: string }[] = [
-    { id: 'ski', label: 'Skiier' },
-    { id: 'snowboard', label: 'Snowboarder' },
-    { id: 'ski-skate', label: 'Ski Skater' },
+const skiDisciplines: MultiSelectorOption<SkiDiscipline>[] = [
+    { value: 'ski', label: 'Skiier' },
+    { value: 'snowboard', label: 'Snowboarder' },
+    { value: 'ski-skate', label: 'Ski Skater' },
 ]
 type SkiDisciplineSelectorProps = {
     selected: UserDisciplines,
@@ -184,17 +184,18 @@ type SkiDisciplineSelectorProps = {
 const SkiDisciplineSelector = ({ selected, set }: SkiDisciplineSelectorProps) => {
     return <MultiSelector {...{ options: skiDisciplines, selected, set }} />
 }
-const skiStyles: { id: SkiStyle, label: string }[] = [
-    { id: 'moguls', label: 'Moguls' },
-    { id: 'piste', label: 'Piste' },
-    { id: 'off-piste', label: 'Off-Piste' },
-    { id: 'backcountry', label: 'Backcountry' },
+const skiStyles: MultiSelectorOption<SkiStyle>[] = [
+    { value: 'moguls', label: 'Moguls' },
+    { value: 'piste', label: 'Piste' },
+    { value: 'off-piste', label: 'Off-Piste' },
+    { value: 'backcountry', label: 'Backcountry' },
 ]
 type SkiStylesSelectorProps = {
     selected: UserStyles,
     set: (types: UserStyles) => void,
 }
 const SkiStylesSelector = ({ selected, set }: SkiStylesSelectorProps) => {
+    console.log({selected})
     return <MultiSelector {...{ options: skiStyles, selected, set }} />
 }
 

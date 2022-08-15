@@ -5,7 +5,7 @@ import { Text, View, StyleSheet, Dimensions, KeyboardAvoidingView, Platform } fr
 import MapView, { LatLng, Marker, Region, PROVIDER_GOOGLE } from 'react-native-maps';
 import { MultiSelector, MultiSelectorOption, SingleSelector } from "./MultiSelector";
 import { dummyPlace, placeToRegion as googlePlaceToRegion, locationToLatLng, GooglePlace, userLocationToRegion, Place } from "../types";
-import { IconButton } from "react-native-paper";
+import { Button, IconButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { BackButton } from "./BackButton";
 import { useForm } from "react-hook-form";
@@ -111,6 +111,7 @@ export const LocationFinder = () => {
                                     options={[...places.slice(1, 6).map(({ id, name }) => ({ value: id, label: name }))]} />
                             </>}
                             <View style={{ flex: 1 }} />
+                            <Button mode='text'>Next</Button>
                         </KeyboardAvoidingView>
                         {selectedPlace && <ConfirmationDrawer />}
                     </>

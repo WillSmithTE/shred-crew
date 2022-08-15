@@ -7,7 +7,7 @@ export type MultiSelectorOption<S> = {
     label: string,
 }
 type Thing<S extends string> = { [key in S]?: boolean }
-type MultiSelectorProps<S extends string> = {
+export type MultiSelectorProps<S extends string> = {
     selected: Thing<S>,
     set: (types: Thing<S>) => void,
     options: MultiSelectorOption<S>[],
