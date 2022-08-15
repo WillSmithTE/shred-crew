@@ -1,6 +1,7 @@
 import express from "express";
 import serverless from "serverless-http";
 import { resortService } from "./src/service/ResortService";
+import { skiSessionService } from "./src/service/SkiSessionService";
 import { userService } from "./src/service/UserService";
 
 const app = express();
@@ -23,6 +24,10 @@ app.post('/resort/coords', async function (req, res) {
 })
 app.get("/resort/:resortId", async function (req, res) {
   resortService.getById(req, res)
+});
+
+app.post('/ski-session', async function (req, res) {
+  skiSessionService.add(req, res)
 });
 
 app.get('/bonjour', async function (req, res) {

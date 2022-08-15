@@ -5,7 +5,8 @@ frameworkVersion: '3'
 
 custom:
   usersTableName: 'shred-crew-users-${sls:stage}'
-  resortsTableName: 'shred-crew-resorts-${sls:stage}'
+  resortsTableName: 'shred-crew-resort-${sls:stage}'
+  skiSessionsTableName: 'shred-crew-sessions-${sls:stage}'
   dynamodb:
     start:
       migrate: true
@@ -29,12 +30,15 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - !Sub '${ResortsTable.Arn}/*'
+            - Fn::GetAtt: [ ResortsTable, Arn ]
             - !Sub '${UsersTable.Arn}/*'
             - Fn::GetAtt: [ UsersTable, Arn ]
-            - Fn::GetAtt: [ ResortsTable, Arn ]
+            - !Sub '${SkiSessionsTable.Arn}/*'
+            - Fn::GetAtt: [ SkiSessionsTable, Arn ]
   environment:
     USERS_TABLE: ${self:custom.usersTableName}
     RESORTS_TABLE: ${self:custom.resortsTableName}
+    SKI_SESSIONS_TABLE: ${self:custom.skiSessionsTableName}
 
 functions:
   api:
@@ -45,6 +49,7 @@ functions:
 resources:
   - ${file(db/users.yml)}
   - ${file(db/resorts.yml)}
+  - ${file(db/ski-sessions.yml)}
 
 plugins:
   - serverless-dynamodb-local

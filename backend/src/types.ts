@@ -71,3 +71,13 @@ export type ResortStore = {
     id: string,
     name: string,
 }
+
+export type CreateSessionRequest = Place
+export type CreateSessionResponse = SkiSession
+
+export type SkiSession = {
+    id: string,
+    userId: string,
+    place: Place,
+    createdAt: number,
+}

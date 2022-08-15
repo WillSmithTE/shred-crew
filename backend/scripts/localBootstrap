@@ -1,6 +1,6 @@
 #!/bin/bash
 
 export IS_OFFLINE=true
-export RESORTS_TABLE=shred-crew-resorts-dev
+export RESORTS_TABLE=shred-crew-resort-dev
 node dist/src/bootstrapResorts.js
 

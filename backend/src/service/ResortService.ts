@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import geohash from 'ngeohash';
 import { removeDuplicates } from "../util/removeDuplicates";
 import { MyLocation, Place, ViewPort } from "../types";
+import { verifyDefined, verifyNumber } from "../util/validateHttpBody";
 
 const coordinateSearchMargin = 0.05
 export const resortService = {
@@ -75,21 +76,10 @@ export const resortService = {
     },
 }
 
-
 function verifyCoordinates(location: MyLocation, res: Response) {
     verifyDefined(location, res, 'location')
     verifyNumber(location.lat, res, 'location.lat')
     verifyNumber(location.lng, res, 'location.lng')
-}
-
-function verifyDefined(a: any, res: Response, fieldName: string) {
-    if (a === undefined) {
-        throw new Error(`${fieldName} can't be undefined`)
-    }
-}
-function verifyNumber(a: any, res: Response, fieldName: string): a is number {
-    if (typeof a === 'number') return true
-    throw new Error(`${fieldName} must be a number`)
 }
 
 function sortByClosest(location: MyLocation, resorts: Place[]): Place[] {
