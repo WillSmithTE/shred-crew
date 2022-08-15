@@ -34,7 +34,7 @@ export const ResortLookup = ({ control, errors, fieldName = 'resort', setValue, 
                 {(resortResults?.length === 1 && resortResults[0].name === homeMountainSearchQuery ? [] : resortResults ?? [])
                     .map(({ id, name: label }, index) => <>
                         <TouchableOpacity onPress={() => { setValue(fieldName, label); onSelectResort(id) }}
-                            style={styles.searchResult} key={label}>
+                            style={styles.searchResult} key={id}>
                             <Text style={{ fontSize: 16, }} key={label}>{label}</Text>
                         </TouchableOpacity>
                     </>)

@@ -9,6 +9,7 @@ import { useUserLoginCheck } from './services/useUserLoginCheck';
 import { View } from 'react-native';
 import { DefaultTheme as PaperDefaultTheme, DarkTheme as PaperDarkTheme, Provider as PaperProvider } from 'react-native-paper';
 import { colors } from './constants/colors';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -48,12 +49,12 @@ const AppInternals = () => {
   }
 
   return <>
-    <View style={{ flex: 1, }} onLayout={onLayoutRootView}>
-      <NavigationContainer theme={DefaultTheme}>
-        <Navigation />
-      </NavigationContainer>
-      <FlashMessage position='bottom' duration={3000} style={{ alignItems: 'center' }} />
-    </View>
+    <GestureHandlerRootView style={{ flex: 1}} onLayout={onLayoutRootView}>
+        <NavigationContainer theme={DefaultTheme}>
+          <Navigation />
+        </NavigationContainer>
+        <FlashMessage position='bottom' duration={3000} style={{ alignItems: 'center' }} />
+    </GestureHandlerRootView>
   </>
 }
 

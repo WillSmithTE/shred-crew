@@ -36,3 +36,5 @@ DONE- search by resort id doesn't work
    - feat: backend verify logins/generate access tokens
    - feat: frontend 401 refresh token then call again
    - feat: backend offer refresh api 
+- feat: location finder update to new UI (14.8.22)
+- display multiple markers on map
