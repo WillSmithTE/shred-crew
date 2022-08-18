@@ -39,7 +39,7 @@ export const PeopleFeed = () => {
                     return <View key={id} style={{ flex: 1, minHeight: 360 }}>
                         <Image source={imageUri} resizeMode='contain' style={{ resizeMode: 'cover', width: '100%', flex: 1 }} />
                         <View style={{ flexDirection: 'row', paddingTop: 15, minHeight: 70, }}>
-                            <View style={{ backgroundColor: '#2FCE5C', width: 10, height: 10, borderRadius: 5, marginHorizontal: 10 }}></View>
+                            <View style={{ backgroundColor: '#2FCE5C', width: 10, height: 10, borderRadius: 5, marginHorizontal: 10, marginTop: 5, }}></View>
                             <View>
                                 <Text style={{ fontWeight: '700' }}>{name}</Text>
                                 <Text style={{ textDecorationLine: 'underline' }}>See more</Text>

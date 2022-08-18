@@ -10,4 +10,3 @@ export const showError2 = (options: MessageOptions) => {
 }
 
 export const showComingSoon = () => { showMessage({ message: 'Coming soon!', type: 'success' }) }
-

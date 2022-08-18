@@ -4,7 +4,7 @@ import { FullScreenLoader } from "./Loading"
 import { Text, View, StyleSheet, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
 import MapView, { LatLng, Marker, Region, PROVIDER_GOOGLE } from 'react-native-maps';
 import { MultiSelector, MultiSelectorOption, SingleSelector } from "./MultiSelector";
-import { dummyPlace, placeToRegion as googlePlaceToRegion, locationToLatLng, GooglePlace, userLocationToRegion, Place, CreateSessionRequest, CreateSessionResponse, dummyLoginRegisterResponse } from "../types";
+import { dummyPlace, placeToRegion as googlePlaceToRegion, locationToLatLng, GooglePlace, userLocationToRegion as myLocationToRegion, Place, CreateSessionRequest, CreateSessionResponse, dummyLoginRegisterResponse, MyLocation } from "../types";
 import { Button, IconButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { BackButton } from "./BackButton";
@@ -25,12 +25,14 @@ import { createSkiSessionComplete } from "../redux/userReducer";
 import { RootState } from "../redux/reduxStore";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MainStackParams } from "../navigation/Navigation";
+import Icon from "./Icon";
+// import BottomSheet from 'reanimated-bottom-sheet';
 
 function useLoader() {
     const { findNearbyResorts, findResort } = useResortApi()
     return {
-        findNearbyResorts: async ({ latitude, longitude }: LatLng) => {
-            return await findNearbyResorts({ lat: latitude, lng: longitude });
+        findNearbyResorts: async (location: MyLocation) => {
+            return await findNearbyResorts(location);
         },
         findResort: async (id: string) => {
             return await findResort(id)
@@ -55,6 +57,7 @@ export const LocationFinder = () => {
     const actions = useActions()
     const [error, setError] = useState<string | undefined>()
     const [loading, setLoading] = useState(false)
+    const [showConfirmation, setShowConfirmation] = useState(false)
     const userLocation = useUserLocation()
     const dispatch = useDispatch()
 
@@ -91,10 +94,10 @@ export const LocationFinder = () => {
         setYesNo1(val)
     }, [initialPlace])
 
-    const onPressNext = useCallback(async () => {
-        if (selectedPlace) {
+    const goNextScreen = useCallback(async () => {
+        if (selectedPlace && userLocation) {
             tryCatchAsync(
-                () => actions.createSkiSession(selectedPlace),
+                () => actions.createSkiSession({ userLocation, resort: selectedPlace }),
                 (session) => {
                     dispatch(createSkiSessionComplete(session))
                     navigation.navigate('PeopleFeed')
@@ -102,7 +105,7 @@ export const LocationFinder = () => {
                 setError,
             )
         } else {
-            console.error(`shouldn't be here, pressed next without selecting a resort`)
+            showError(`shouldn't be here, need userLocation and selectedPlace`)
         }
     }, [selectedPlace])
     const onClickSugggestedPlace = useCallback((place) => {
@@ -123,7 +126,7 @@ export const LocationFinder = () => {
 
     return <>
         <BackButton />
-        <View style={{ flex: 1, }}>
+        <View style={[{ flex: 1, }]}>
             {(() => {
                 if (error) {
                     return <Text>oops</Text>
@@ -131,10 +134,10 @@ export const LocationFinder = () => {
                     return <FullScreenLoader />
                 } else if (userLocation && (places !== undefined)) {
                     const place = selectedPlace || initialPlace
-                    const region = place ? googlePlaceToRegion(place.googlePlace, mapWidth, mapHeight) : userLocationToRegion(userLocation)
+                    const region = place ? googlePlaceToRegion(place.googlePlace, mapWidth, mapHeight) : myLocationToRegion(userLocation)
                     const markerPlaces = selectedPlace && !places.map((it) => it.id).includes(selectedPlace.id) ? [selectedPlace, ...places] : places
                     return <>
-                        {<MapView provider={Device.isDevice ? PROVIDER_GOOGLE : undefined} style={styles.map} region={region} showsUserLocation={true}>
+                        {<MapView provider={Device.isDevice ? PROVIDER_GOOGLE : undefined} style={[styles.map,]} region={region} showsUserLocation={true}>
                             {markerPlaces.map((it) => <Marker coordinate={locationToLatLng(it.googlePlace.geometry.location)} key={it.id} />)}
                         </MapView>}
                         <KeyboardAvoidingView style={[styles.form, { marginTop: 15 }]}
@@ -157,11 +160,11 @@ export const LocationFinder = () => {
                             </>}
                             <View style={{ flex: 1 }} />
                         </KeyboardAvoidingView>
-                        {selectedPlace && <Button color='black' mode='text' onPress={onPressNext} style={styles.nextButton} uppercase={false}
+                        {selectedPlace && <Button color='black' mode='text' onPress={() => setShowConfirmation(true)} style={styles.nextButton} uppercase={false}
                             icon='arrow-right' contentStyle={{ flexDirection: 'row-reverse' }}>
                             Next
                         </Button>}
-                        {/* {selectedPlace && <ConfirmationDrawer />} */}
+                        <ConfirmationDrawer {...{ placeName: selectedPlace?.name, confirmNext: goNextScreen, show: showConfirmation, setShow: setShowConfirmation }} />
                     </>
 
                 } else {
@@ -202,25 +205,48 @@ const createStyles = (mapWidth: number, mapHeight: number) => StyleSheet.create(
     },
 })
 
-const ConfirmationDrawer = () => {
-    const bottomSheetRef = useRef<BottomSheet>(null);
-    const snapPoints = useMemo(() => ['25%', '50%'], []);
-
-    // callbacks
-    const handleSheetChanges = useCallback((index: number) => {
-        console.log('handleSheetChanges', index);
-    }, []);
-
-    return <>
-        <BottomSheet
-            ref={bottomSheetRef}
-            index={1}
-            snapPoints={snapPoints}
-            onChange={handleSheetChanges}
-        >
-            <View style={{}}>
-                <Text>Awesome 🎉</Text>
-            </View>
-        </BottomSheet>
-    </>
+type ConfirmationDrawerProps = {
+    show: boolean, setShow: (val: boolean) => void, confirmNext: () => void, placeName?: string,
 }
+const ConfirmationDrawer = ({ show, setShow, confirmNext, placeName }: ConfirmationDrawerProps) => {
+    const bottomSheetRef = useRef<BottomSheet>(null);
+    const snapPoints = useMemo(() => ['40%'], []);
+    const [selection, setSelection] = useState<'yes' | 'no' | undefined>()
+
+    const handleSheetChanges = useCallback((index: number) => {
+        if (index === -1) setShow(false)
+    }, [setShow]);
+    useEffect(() => {
+        if (selection === 'yes') {
+            setShow(false)
+            confirmNext()
+        } else if (selection === 'no') setShow(false)
+    }, [selection])
+
+    return <BottomSheet
+        ref={bottomSheetRef}
+        index={show ? 0 : -1}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
+        enablePanDownToClose
+        handleIndicatorStyle={{ backgroundColor: '#D9D9D9', width: 60, }}
+    >
+        <View style={{ flex: 1, padding: 20 }}>
+            <View style={{ flexDirection: 'row' }}>
+                <Icon name='map-marker' />
+                <Text>{placeName}</Text>
+            </View>
+            <View>
+                <Text style={subHeader}>Ready to find a Shred Crew?</Text>
+                <SingleSelector options={[
+                    { label: 'Yes, take me to the shredders', value: 'yes' },
+                    { label: 'No, choose other resort', value: 'no' },
+                ]} selected={selection} set={setSelection} />
+            </View>
+        </View>
+    </BottomSheet>
+}
+
+const drawerStyles = StyleSheet.create({
+
+})

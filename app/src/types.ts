@@ -97,10 +97,10 @@ export function placeToRegion(place: GooglePlace, mapWidth: number, mapHeight: n
 export function locationToLatLng({ lat, lng }: MyLocation): LatLng {
     return { latitude: lat, longitude: lng, }
 }
-export function userLocationToRegion({ latitude, longitude }: LatLng): Region {
+export function userLocationToRegion({ lat, lng }: MyLocation): Region {
     return {
-        latitude,
-        longitude,
+        latitude: lat,
+        longitude: lng,
         latitudeDelta: .02,
         longitudeDelta: .02,
     }
@@ -111,12 +111,31 @@ export type ResortStore = {
     name: string,
 }
 
-export type CreateSessionRequest = Place
+type ResortOrCustomResort =
+    { resort: Place, customResort?: never } |
+    { resort?: never, customResort: { name: string } }
+
+export type CreateSessionRequest = {
+    userLocation: MyLocation,
+} & ResortOrCustomResort
+
 export type CreateSessionResponse = SkiSession
 
 export type SkiSession = {
     id: string,
     userId: string,
-    place: Place,
     createdAt: number,
+    userLocation: MyLocation,
+} & ResortOrCustomResort
+
+export type GetPeopleFeedResponse = {
+    skiSession: SkiSession,
+    people: {}[
+
+    ],
+}
+export type PersonInFeed = {
+    id: string,
+    name: string,
+    imageUri?: string,
 }

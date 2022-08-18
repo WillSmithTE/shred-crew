@@ -28,7 +28,10 @@ DONE- search by resort id doesn't work
     - backend: notify of new conversation when new match
     - frontend: display little number on messages icon bottom right witth new conversations/messages
 - feat: newsfeed with people
-    - frontend: basic ui, can poke people
+    - DONEfrontend: basic ui, can poke people
+    - frontend: infinite scroll style with FlatList onEndReached onEndReachedThreshold, footer? from here
+      https://morioh.com/p/70af0a802e0f
+    - frontend: pull down to refresh, in ^ too
     - backend: endpoint get users with open sessions, plus session place name. separate table SkiSession? with geohash.
        needs to expire sometime so need a cleanup job? nah, let user do it for now
 - feat: backend store users
@@ -37,4 +40,4 @@ DONE- search by resort id doesn't work
    - feat: frontend 401 refresh token then call again
    - feat: backend offer refresh api 
 - feat: location finder update to new UI (14.8.22)
-- display multiple markers on map
+DONE- display multiple markers on map

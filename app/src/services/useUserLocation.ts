@@ -19,5 +19,8 @@ export const useUserLocation = () => {
         })();
     }, []);
 
-    return location
+    return location ? {
+        lat: location.latitude,
+        lng: location.longitude
+    } : undefined
 }
