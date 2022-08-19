@@ -63,9 +63,7 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
                     const onPoke = () => setPoked({ ...poked, [id]: isPoked ? undefined : true })
                     const onPressSeeMore = showComingSoon
                     return <View key={id} style={{ flex: 1, minHeight: 360 }}>
-                        {/* <View style={{ flex: 1 }}> */}
                         <ImageSwiper person={person} />
-                        {/* </View> */}
                         <View style={{ flexDirection: 'row', paddingTop: 15, minHeight: 70, }}>
                             <View style={{ backgroundColor: '#2FCE5C', width: 10, height: 10, borderRadius: 5, marginHorizontal: 10, marginTop: 5, }}></View>
                             <View>
