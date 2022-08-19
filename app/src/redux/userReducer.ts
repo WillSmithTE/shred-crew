@@ -8,7 +8,7 @@ export interface UserState {
     user?: UserDetails,
     loginState?: LoginState,
     skiSession?: SkiSession,
-    loading: { [actionType in ActionType]?: boolean }
+    loading?: { [actionType in ActionType]?: boolean }
 }
 const initialState: UserState = { loading: {} }
 

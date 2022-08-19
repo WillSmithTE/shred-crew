@@ -8,13 +8,13 @@ import { Login } from '../screens/Login';
 import { LoginEmail } from '../screens/LoginEmail';
 import { Register } from '../screens/Register';
 import { RegisterEmail } from '../screens/RegisterEmail';
-import { DarkTheme, NavigationContainer } from '@react-navigation/native';
 import { CreateProfile } from '../screens/CreateProfile';
 import { GetStarted } from '../screens/GetStarted';
 import { LocationFinder } from '../components/LocationFinder';
 import { Profile } from '../screens/Profile';
 import { EditProfile } from '../screens/EditProfile';
 import { PeopleFeed } from '../screens/PeopleFeed';
+import { Place } from '../types';
 
 export type MainStackParams = {
   Home: { showOptions?: boolean };
@@ -24,7 +24,7 @@ export type MainStackParams = {
   LoginEmail: undefined;
   CreateProfile: undefined
   GetStarted: undefined
-  LocationFinder: undefined
+  LocationFinder?: { initialPlace?: Place }
   EditProfile: undefined
   PeopleFeed?: { firstLoad?: boolean }
 };

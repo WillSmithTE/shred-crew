@@ -25,7 +25,7 @@ import { FullScreenLoader } from "./Loading";
 import { colors } from "../constants/colors";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-const loader: (idToken: string) => Promise<LoginRegisterResponse> = async (idToken: string) => {
+const googleLoginLoader: (idToken: string) => Promise<LoginRegisterResponse> = async (idToken: string) => {
     const { name, picture }: any = jwtDecode(idToken)
     await new Promise(r => setTimeout(r, 1000));
     return dummyLoginRegisterResponse({ name, imageUri: picture })
@@ -55,7 +55,7 @@ export const LoginRegister = ({ mode }: Props) => {
             if (response.type === 'error') throw new Error(response.error?.message);
             if (response.type !== 'success') return;
             if (!!!response.params.id_token) throw new Error(`no id_token (response=${jsonString(response)})`)
-            const { user, auth } = await loader(response.params.id_token)
+            const { user, auth } = await googleLoginLoader(response.params.id_token)
             dispatch(loginUser({ user, loginState: auth }))
         } catch (err) {
             showError2({ message: `google login failed`, description: (err as any).toString() });

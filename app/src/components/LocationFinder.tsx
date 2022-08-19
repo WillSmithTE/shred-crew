@@ -22,7 +22,7 @@ import { useResortApi } from "../api/resortApi";
 import { useSkiSessionApi } from "../api/skiSessionApi";
 import { createSkiSessionComplete } from "../redux/userReducer";
 import { RootState } from "../redux/reduxStore";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MainStackParams } from "../navigation/Navigation";
 import Icon from "./Icon";
 import { MyButton } from "./MyButton";
@@ -48,9 +48,11 @@ function useActions() {
         }
     }
 }
-export const LocationFinder = () => {
+type Props = NativeStackScreenProps<MainStackParams, 'LocationFinder'> & {
+};
+export const LocationFinder = ({ route: { params } }: Props) => {
     const [places, setPlaces] = useState<Place[] | undefined>()
-    const [selectedPlace, setSelectedPlace] = useState<Place | undefined>()
+    const [selectedPlace, setSelectedPlace] = useState<Place | undefined>(params?.initialPlace)
     const [initialPlace, setInitialPlace] = useState<Place | undefined>()
     const [yesNo1, setYesNo1] = useState<'yes' | 'no' | undefined>()
     const [howAboutHere, setHowAboutHere] = useState<string | undefined>()
@@ -80,10 +82,10 @@ export const LocationFinder = () => {
     }, [userLocation])
 
     useEffect(() => {
-        if (places !== undefined && places.length > 0) {
+        if (initialPlace === undefined && places !== undefined && places.length > 0) {
             setInitialPlace(places[0])
         }
-    }, [places])
+    }, [places, initialPlace])
 
     useEffect(() => {
         setSelectedPlace(places?.find(({ id }) => id === howAboutHere))
@@ -104,6 +106,7 @@ export const LocationFinder = () => {
             tryCatchAsync(
                 () => actions.createSkiSession({ userLocation: latLngToLocation(userLocation), resort: selectedPlace }),
                 (session) => {
+                    console.log({ session })
                     dispatch(createSkiSessionComplete(session))
                     navigation.navigate('PeopleFeed', { firstLoad: true })
                 },
@@ -128,6 +131,7 @@ export const LocationFinder = () => {
         )
     }
     const resortLookupFieldName = 'resort'
+    console.log({ navState: navigation.getState() })
 
     return <>
         <BackButton />

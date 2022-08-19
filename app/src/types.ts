@@ -149,13 +149,10 @@ export type ResortStore = {
     name: string,
 }
 
-type ResortOrCustomResort =
-    { resort: Place, customResort?: never } |
-    { resort?: never, customResort: { name: string } }
-
 export type CreateSessionRequest = {
     userLocation: MyLocation,
-} & ResortOrCustomResort
+    resort: Place,
+}
 
 export type CreateSessionResponse = SkiSession
 
@@ -164,7 +161,8 @@ export type SkiSession = {
     userId: string,
     createdAt: number,
     userLocation: MyLocation,
-} & ResortOrCustomResort
+    resort: Place,
+}
 
 export type GetPeopleFeedResponse = {
     skiSession: SkiSession,

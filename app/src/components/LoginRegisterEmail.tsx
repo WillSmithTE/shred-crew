@@ -17,7 +17,6 @@ type RegisterRequest = { name: string, email: string, password: string }
 const registerAction: (request: RegisterRequest) => Promise<LoginRegisterResponse> = async ({ name, email, password }) => {
     await new Promise(r => setTimeout(r, 1000));
     return dummyLoginRegisterResponse({ name, email })
-
 }
 type LoginRequest = { email: string, password: string }
 const loginAction: (request: LoginRequest) => Promise<LoginRegisterResponse> = async ({ email, password }) => {
@@ -36,7 +35,7 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
     const { goBack } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
     const [loading, setLoading] = useState(false)
 
-    const { control, handleSubmit, formState: { errors } } = useForm({
+    const { control, handleSubmit, formState } = useForm({
         defaultValues: {
             name: '',
             email: '',
@@ -61,20 +60,20 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
                 <Text style={{ fontWeight: 'bold', fontSize: 30, marginBottom: 30, }}>{loginMode ? 'Login' : 'Create your account'}</Text>
                 {!loginMode && <View style={styles.inputContainer}>
                     <MyTextInput {...{
-                        control, errors, fieldName: 'name', placeholder: 'Name',
+                        control, formState, fieldName: 'name', placeholder: 'Name',
                         rules: { required: requiredRule, maxLength: maxLenRule, }
                     }} />
                 </View>
                 }
                 <View style={styles.inputContainer}>
                     <MyTextInput {...{
-                        control, errors, fieldName: 'email', placeholder: 'Email',
+                        control, formState, fieldName: 'email', placeholder: 'Email',
                         rules: { required: requiredRule, maxLength: maxLenRule, pattern: emailRule }
                     }} />
                 </View>
                 <View style={styles.inputContainer}>
                     <MyTextInput {...{
-                        control, errors, fieldName: 'password', placeholder: 'Password', secureTextEntry: true,
+                        control, formState, fieldName: 'password', placeholder: 'Password', secureTextEntry: true,
                         rules: { required: requiredRule, maxLength: maxLenRule, minLength: minLenRule }
                     }} />
                 </View>

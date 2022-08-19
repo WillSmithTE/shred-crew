@@ -1,9 +1,9 @@
 import BottomSheet from "@gorhom/bottom-sheet"
-import { NativeStackScreenProps } from "@react-navigation/native-stack"
+import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from "react-native"
-import { Avatar, IconButton } from "react-native-paper"
+import { Avatar, IconButton, Portal, Modal } from "react-native-paper"
 import Icon from "../components/Icon"
 import { MultiSelector, SingleSelector } from "../components/MultiSelector"
 import { MyButton } from "../components/MyButton"
@@ -15,6 +15,10 @@ import { getTagsFromSkiDetails, UserDetails } from "../types"
 import { skiDisciplineOptions, skiStyleOptions } from "./Profile"
 import Swiper from 'react-native-swiper'
 import { showComingSoon } from "../components/Error"
+import { useSelector } from "react-redux"
+import { RootState } from "../redux/reduxStore"
+import { FullScreenLoader } from "../components/Loading"
+import { useNavigation } from "@react-navigation/native"
 
 const people = [
     {
@@ -46,14 +50,25 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
     const [poked, setPoked] = useState<{ [id: string]: boolean | undefined }>({})
     const [showFilters, setShowFilters] = useState(!!params?.firstLoad)
     const [filters, setFilters] = useState<{ [key: string]: boolean }>({})
+    const skiSession = useSelector((root: RootState) => root.user.skiSession)
+    console.log({ skiSession })
+    const { navigate, getState, push } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
+    console.log({ navStatePeople: getState() })
+
+    if (skiSession === undefined) return <FullScreenLoader />
+
+    const onPressLocation = () => {
+        push('LocationFinder', { initialPlace: skiSession.resort })
+    }
     return <>
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <View style={styles.banner}>
                 <Avatar.Image size={56} source={require('../../assets/avatar.png')} style={{ marginRight: 13 }} />
-                <View>
+                <View style={{ flex: 1 }}>
                     <Text style={styles.bannerHeader}>Welcome to your Shred Feed</Text>
-                    <Text>Verbier Mountain Resort</Text>
+                    <TouchableOpacity onPress={onPressLocation}><Text>{skiSession.resort?.name ?? 'Verbier Mountain Resort'}</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => setShowFilters(true)} style={{ position: 'absolute', right: 20, bottom: 0 }}><Icon name='sliders-h' family='FontAwesome5' size={20} /></TouchableOpacity>
                 </View>
             </View>
             <ScrollView style={{ flex: 1 }}>
@@ -83,7 +98,7 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
                     </View>
                 })}
             </ScrollView>
-            <FilterDrawer {...{ filters, setFilters, show: showFilters, setShow: setShowFilters, confirmNext: console.log }} />
+            <FilterDrawer {...{ filters, setFilters, show: showFilters, setShow: setShowFilters, confirmNext: () => { setShowFilters(false) } }} />
         </View>
     </>
 }
@@ -105,7 +120,14 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 10,
         marginHorizontal: 5,
-    }
+    },
+    firstLoadModalContainer: {
+        position: 'absolute',
+        top: 0,
+        backgroundColor: 'white',
+        height: '90%',
+        width: '100%',
+    },
 })
 
 type FilterDrawerProps = {
@@ -114,11 +136,6 @@ type FilterDrawerProps = {
 }
 const FilterDrawer = ({ show, setShow, confirmNext, filters, setFilters }: FilterDrawerProps) => {
     const bottomSheetRef = useRef<BottomSheet>(null);
-    const form = useForm({
-        defaultValues: {
-            dayMission: ''
-        }
-    });
 
     const handleSheetChanges = useCallback((index: number) => {
         if (index === -1) {
@@ -140,18 +157,7 @@ const FilterDrawer = ({ show, setShow, confirmNext, filters, setFilters }: Filte
         enablePanDownToClose
         handleIndicatorStyle={{ backgroundColor: '#D9D9D9', width: 60, }}
     >
-        <View style={{ flex: 1, paddingHorizontal: 20, }}>
-            <Text style={[subHeader, { paddingBottom: 10 }]}>Filter</Text>
-            <Text style={{ paddingBottom: 10 }}>What are you looking for today?</Text>
-            <View>
-                <MultiSelector {...{ options: [...skiDisciplineOptions, ...skiStyleOptions], selected: filters, set: setFilters }} />
-                <TouchableOpacity style={{ position: 'absolute', right: 0, bottom: -5 }} onPress={() => setFilters({})}>
-                    <Text style={{ textDecorationLine: 'underline' }}>Clear all</Text>
-                </TouchableOpacity>
-            </View>
-            <MyTextInput {...{ ...form, fieldName: 'dayMission', multiline: true, style: { marginTop: 30, }, placeholder: 'This description will be shown to others in their feed...' }} />
-            <MyButton text='View Shredders' icon='arrow-down' onPress={() => { confirmNext(); setShow(false) }} style={{ width: 154, alignSelf: 'center', }} />
-        </View>
+        <Filters {...{ next: confirmNext, filters, setFilters }} />
     </BottomSheet>
 }
 
@@ -193,4 +199,31 @@ const ImageSwiper = ({ person: { imageUri, ski, otherImages } }: ImageSwiperProp
         </View>
     </>
 
+}
+
+type FiltersProps = {
+    next: () => void,
+    filters: { [key: string]: boolean },
+    setFilters: (it: { [key: string]: boolean }) => void,
+}
+const Filters = ({ filters, setFilters, next }: FiltersProps) => {
+
+    const form = useForm({
+        defaultValues: {
+            dayMission: ''
+        }
+    });
+
+    return <View style={{ flex: 1, paddingHorizontal: 20, }}>
+        <Text style={[subHeader, { paddingBottom: 10 }]}>Filter</Text>
+        <Text style={{ paddingBottom: 10 }}>What are you looking for today?</Text>
+        <View>
+            <MultiSelector {...{ options: [...skiDisciplineOptions, ...skiStyleOptions], selected: filters, set: setFilters }} />
+            <TouchableOpacity style={{ position: 'absolute', right: 0, bottom: -5 }} onPress={() => setFilters({})}>
+                <Text style={{ textDecorationLine: 'underline' }}>Clear all</Text>
+            </TouchableOpacity>
+        </View>
+        <MyTextInput {...{ ...form, fieldName: 'dayMission', multiline: true, style: { marginTop: 30, }, placeholder: 'This description will be shown to others in their feed...' }} />
+        <MyButton text='View Shredders' icon='arrow-down' onPress={next} style={{ width: 154, alignSelf: 'center', }} />
+    </View>
 }
