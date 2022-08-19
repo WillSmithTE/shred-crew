@@ -5,7 +5,6 @@ import { LatLng } from "react-native-maps";
 
 export const useUserLocation = () => {
     const [location, setLocation] = useState<LatLng | undefined>()
-
     useEffect(() => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
@@ -19,8 +18,5 @@ export const useUserLocation = () => {
         })();
     }, []);
 
-    return location ? {
-        lat: location.latitude,
-        lng: location.longitude
-    } : undefined
+    return location
 }

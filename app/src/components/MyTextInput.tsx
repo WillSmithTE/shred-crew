@@ -3,13 +3,13 @@ import { Text, StyleSheet, StyleProp, TextStyle, TextInput as NativeTextInput } 
 import { TextInput } from 'react-native-paper'
 import {
     Controller, DeepRequired, FieldErrorsImpl,
-    RegisterOptions, FieldPath
+    RegisterOptions, FieldPath, FormState
 } from "react-hook-form";
 import { useTheme } from 'react-native-paper';
 
-type Props = {
+type Props<T> = {
     control: any,
-    errors: FieldErrorsImpl<DeepRequired<{}>>,
+    formState: FormState<T>,
     rules?: Omit<RegisterOptions<{}, FieldPath<{}>>, 'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'>;
     fieldName: string,
     label?: string,
@@ -18,7 +18,7 @@ type Props = {
     style?: StyleProp<TextStyle>,
     secureTextEntry?: boolean,
 }
-export const MyTextInput = ({ control, errors, rules = {}, fieldName, label, placeholder, multiline, style, secureTextEntry, }: Props) => {
+export const MyTextInput = <T,>({ control, rules = {}, fieldName, label, placeholder, multiline, style, secureTextEntry, formState }: Props<T>) => {
     const theme = useTheme()
 
     return <>
@@ -54,7 +54,7 @@ export const MyTextInput = ({ control, errors, rules = {}, fieldName, label, pla
                 )}
                 name={fieldName}
             />
-            <Text style={styles(theme).errorText}>{(errors as any)[fieldName]?.message ?? ' '}</Text>
+            <Text style={styles(theme).errorText}>{(formState.errors as any)[fieldName]?.message ?? ' '}</Text>
         </>
     </>
 }

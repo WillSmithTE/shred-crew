@@ -11,6 +11,7 @@ export type UserDetails = {
     ski: SkiDetails,
     bio?: string,
     createdAt?: number,
+    otherImages?: string[]
 }
 export type LoginState = {
     accessToken: string,
@@ -53,11 +54,45 @@ export type SkiDetails = {
     skillLevel: number, // 1-5
     backcountryDetails?: string,
 }
+export function skillLevelDescription(level: number) {
+    switch (level) {
+        case 1: return 'Beginner'
+        case 2:
+        case 3: return 'Intermediate'
+        case 4:
+        case 5: return 'Advanced'
+    }
+}
+export function getTagsFromSkiDetails(skiDetails?: SkiDetails): string[] {
+    if (skiDetails === undefined) return []
+    return [
+        skillLevelDescription(skiDetails.skillLevel)!!,
+        ...(Object.keys(skiDetails.disciplines) as SkiDiscipline[])
+            .filter((key) => skiDetails.disciplines[key] === true)
+            .map(formatSkiDiscipline)
+    ]
+}
+export const skiDisciplines: SkiDiscipline[] = ['ski', 'snowboard', 'ski-skate']
 export type SkiDiscipline = 'ski' | 'snowboard' | 'ski-skate'
-export type UserDisciplines = { [key in SkiDiscipline]?: boolean }
-
+export type UserDisciplines = { [key in SkiDiscipline]?: boolean } & Object
+export function formatSkiDiscipline(discipline: SkiDiscipline) {
+    switch (discipline) {
+        case 'ski': return 'Skiier'
+        case 'snowboard': return 'Snowboarder'
+        case 'ski-skate': return 'Ski Skater'
+    }
+}
+export const skiStyles: SkiStyle[] = ['moguls', 'piste', 'off-piste', 'backcountry',]
 export type SkiStyle = 'moguls' | 'piste' | 'off-piste' | 'backcountry'
 export type UserStyles = { [key in SkiStyle]?: boolean }
+export function formatSkiStyle(style: SkiStyle) {
+    switch (style) {
+        case 'moguls': return 'Moguls'
+        case 'piste': return 'Piste'
+        case 'off-piste': return 'Off-Piste'
+        case 'backcountry': return 'Backcountry'
+    }
+}
 
 export type Place = {
     id: string,
@@ -97,10 +132,13 @@ export function placeToRegion(place: GooglePlace, mapWidth: number, mapHeight: n
 export function locationToLatLng({ lat, lng }: MyLocation): LatLng {
     return { latitude: lat, longitude: lng, }
 }
-export function userLocationToRegion({ lat, lng }: MyLocation): Region {
+export function latLngToLocation({ latitude, longitude }: LatLng): MyLocation {
+    return { lat: latitude, lng: longitude, }
+}
+export function latLngToRegion({ latitude, longitude }: LatLng): Region {
     return {
-        latitude: lat,
-        longitude: lng,
+        latitude,
+        longitude,
         latitudeDelta: .02,
         longitudeDelta: .02,
     }

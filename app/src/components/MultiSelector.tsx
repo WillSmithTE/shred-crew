@@ -45,6 +45,22 @@ export function SingleSelector<S>({ selected, set, options, idResolver = (it) =>
     </View >
 }
 
+type SelectorButtonsProps<S> = {
+    onPress: (newVal?: S) => void,
+    options: MultiSelectorOption<S>[],
+    idResolver?: (it: S) => string,
+}
+export function SelectorButtons<S>({ onPress, options }: SelectorButtonsProps<S>) {
+    return < View style={styles.container}>
+        {options.map(({ value, label }, index) => {
+            return <TouchableOpacity onPress={() => onPress(value)} style={buttonStyles(false).button} key={index}>
+                <Text style={{ color: 'black' }}>{label}</Text>
+            </TouchableOpacity>
+        }
+        )}
+    </View >
+}
+
 const styles = StyleSheet.create({
     container: { flexDirection: 'row', flexWrap: 'wrap', paddingTop: 10, },
 })
@@ -58,5 +74,9 @@ const buttonStyles = (isSelected: boolean) => StyleSheet.create({
         marginBottom: 10,
         minWidth: 50,
         alignItems: 'center',
+        shadowOffset: { height: 4, width: 0 },
+        shadowOpacity: 1,
+        shadowColor: '#00000040',
+        shadowRadius: 4,
     }
 })

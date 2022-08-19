@@ -3,9 +3,8 @@ import { subHeader } from "../services/styles"
 import { FullScreenLoader } from "./Loading"
 import { Text, View, StyleSheet, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
 import MapView, { LatLng, Marker, Region, PROVIDER_GOOGLE } from 'react-native-maps';
-import { MultiSelector, MultiSelectorOption, SingleSelector } from "./MultiSelector";
-import { dummyPlace, placeToRegion as googlePlaceToRegion, locationToLatLng, GooglePlace, userLocationToRegion as myLocationToRegion, Place, CreateSessionRequest, CreateSessionResponse, dummyLoginRegisterResponse, MyLocation } from "../types";
-import { Button, IconButton } from "react-native-paper";
+import { MultiSelector, MultiSelectorOption, SelectorButtons, SingleSelector } from "./MultiSelector";
+import { dummyPlace, placeToRegion as googlePlaceToRegion, locationToLatLng, GooglePlace, latLngToRegion as myLocationToRegion, Place, CreateSessionRequest, CreateSessionResponse, dummyLoginRegisterResponse, MyLocation, latLngToLocation } from "../types";
 import { useNavigation } from "@react-navigation/native";
 import { BackButton } from "./BackButton";
 import { useForm } from "react-hook-form";
@@ -26,6 +25,8 @@ import { RootState } from "../redux/reduxStore";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MainStackParams } from "../navigation/Navigation";
 import Icon from "./Icon";
+import { MyButton } from "./MyButton";
+import { colors } from "../constants/colors";
 // import BottomSheet from 'reanimated-bottom-sheet';
 
 function useLoader() {
@@ -70,7 +71,7 @@ export const LocationFinder = () => {
         (async () => {
             if (userLocation !== undefined) {
                 tryCatchAsync(
-                    () => loader.findNearbyResorts(userLocation),
+                    () => loader.findNearbyResorts(latLngToLocation(userLocation)),
                     setPlaces,
                     setError,
                 )
@@ -94,13 +95,17 @@ export const LocationFinder = () => {
         setYesNo1(val)
     }, [initialPlace])
 
+    const onPressNext = () => {
+        goNextScreen()
+    }
+
     const goNextScreen = useCallback(async () => {
         if (selectedPlace && userLocation) {
             tryCatchAsync(
-                () => actions.createSkiSession({ userLocation, resort: selectedPlace }),
+                () => actions.createSkiSession({ userLocation: latLngToLocation(userLocation), resort: selectedPlace }),
                 (session) => {
                     dispatch(createSkiSessionComplete(session))
-                    navigation.navigate('PeopleFeed')
+                    navigation.navigate('PeopleFeed', { firstLoad: true })
                 },
                 setError,
             )
@@ -113,7 +118,7 @@ export const LocationFinder = () => {
         if (place !== undefined) setValue(resortLookupFieldName, '')
     }, [])
 
-    const { control, handleSubmit, formState: { errors }, setValue } = useForm<{ resort: string }>();
+    const { control, handleSubmit, formState, setValue } = useForm<{ resort: string }>();
 
     const onClickResortSearchResult = (id: string) => {
         tryCatchAsync(
@@ -153,18 +158,15 @@ export const LocationFinder = () => {
                                 <View style={{ paddingTop: 20 }} />
                                 <ResortLookup {...{
                                     placeholder: 'Where you at?', fieldName: resortLookupFieldName, onClear: () => setSelectedPlace(undefined),
-                                    onSelectResort: onClickResortSearchResult, control, errors, setValue
+                                    onSelectResort: onClickResortSearchResult, control, formState, setValue
                                 }} />
                                 <SingleSelector selected={selectedPlace} set={onClickSugggestedPlace} idResolver={(place) => place.id}
                                     options={[...places.slice(1, 5).map((it) => ({ value: it, label: it.name }))]} />
                             </>}
                             <View style={{ flex: 1 }} />
                         </KeyboardAvoidingView>
-                        {selectedPlace && <Button color='black' mode='text' onPress={() => setShowConfirmation(true)} style={styles.nextButton} uppercase={false}
-                            icon='arrow-right' contentStyle={{ flexDirection: 'row-reverse' }}>
-                            Next
-                        </Button>}
-                        <ConfirmationDrawer {...{ placeName: selectedPlace?.name, confirmNext: goNextScreen, show: showConfirmation, setShow: setShowConfirmation }} />
+                        {selectedPlace && <MyButton text='Next' onPress={onPressNext} style={styles.nextButton} />}
+                        {/* <ConfirmationDrawer {...{ placeName: selectedPlace?.name, confirmNext: goNextScreen, show: showConfirmation, setShow: setShowConfirmation }} /> */}
                     </>
 
                 } else {
@@ -193,15 +195,8 @@ const createStyles = (mapWidth: number, mapHeight: number) => StyleSheet.create(
     },
     nextButton: {
         position: 'absolute',
-        backgroundColor: 'white',
         right: 32,
         bottom: 22,
-        borderRadius: 6,
-        fontWeight: 'bold',
-        shadowOffset: { height: 4, width: 0 },
-        shadowOpacity: 1,
-        shadowColor: '#00000040',
-        shadowRadius: 4,
     },
 })
 
@@ -213,16 +208,18 @@ const ConfirmationDrawer = ({ show, setShow, confirmNext, placeName }: Confirmat
     const snapPoints = useMemo(() => ['40%'], []);
     const [selection, setSelection] = useState<'yes' | 'no' | undefined>()
 
+    console.log({ show })
+
     const handleSheetChanges = useCallback((index: number) => {
+        console.log({ index })
         if (index === -1) setShow(false)
     }, [setShow]);
-    useEffect(() => {
-        if (selection === 'yes') {
-            setShow(false)
-            confirmNext()
-        } else if (selection === 'no') setShow(false)
-    }, [selection])
-
+    console.log({ index: show ? 0 : -1 })
+    const onPressButton = useCallback((val) => {
+        console.log('in here', val)
+        if (val === 'yes') confirmNext()
+        else if (val === 'no') setShow(false)
+    }, [])
     return <BottomSheet
         ref={bottomSheetRef}
         index={show ? 0 : -1}
@@ -233,15 +230,15 @@ const ConfirmationDrawer = ({ show, setShow, confirmNext, placeName }: Confirmat
     >
         <View style={{ flex: 1, padding: 20 }}>
             <View style={{ flexDirection: 'row' }}>
-                <Icon name='map-marker' />
-                <Text>{placeName}</Text>
+                <Icon name='map-marker' color={colors.primary} />
+                <Text style={{ paddingLeft: 10 }}>{placeName}</Text>
             </View>
             <View>
-                <Text style={subHeader}>Ready to find a Shred Crew?</Text>
-                <SingleSelector options={[
+                <Text style={[subHeader, { paddingVertical: 10 }]}>Ready to find a Shred Crew?</Text>
+                <SelectorButtons options={[
                     { label: 'Yes, take me to the shredders', value: 'yes' },
                     { label: 'No, choose other resort', value: 'no' },
-                ]} selected={selection} set={setSelection} />
+                ]} onPress={onPressButton} />
             </View>
         </View>
     </BottomSheet>

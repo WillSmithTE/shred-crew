@@ -26,7 +26,7 @@ export type MainStackParams = {
   GetStarted: undefined
   LocationFinder: undefined
   EditProfile: undefined
-  PeopleFeed: undefined
+  PeopleFeed?: { firstLoad?: boolean }
 };
 
 const Stack = createNativeStackNavigator<MainStackParams>();

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react"
-import { FieldErrorsImpl, DeepRequired, UseFormWatch, UseFormSetValue, useWatch } from "react-hook-form"
+import { FieldErrorsImpl, DeepRequired, UseFormWatch, UseFormSetValue, useWatch, FormState } from "react-hook-form"
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { IconButton } from "react-native-paper"
 import { colors } from "../constants/colors"
@@ -17,14 +17,14 @@ const searchResorts = async (place: string) => {
 }
 type Props = {
     control: any,
-    errors: FieldErrorsImpl<DeepRequired<{}>>,
+    formState: FormState<{}>,
     setValue: UseFormSetValue<any>,
     fieldName?: string,
     placeholder?: string,
     onSelectResort: (resortId: string) => void,
     onClear?: () => void,
 }
-export const ResortLookup = ({ control, errors, fieldName = 'resort', setValue, placeholder, onSelectResort, onClear }: Props) => {
+export const ResortLookup = ({ control, formState, fieldName = 'resort', setValue, placeholder, onSelectResort, onClear }: Props) => {
     const { setInputText: setHomeMountainInput, searchResults: { result: resortResults } } = useDebouncedSearch((place) => searchResorts(place));
     const searchQuery = useWatch({ control, name: fieldName })
 
@@ -35,7 +35,7 @@ export const ResortLookup = ({ control, errors, fieldName = 'resort', setValue, 
     }, [fieldName, setValue])
     return <>
         <View style={{ zIndex: 100, elevation: 100, }}>
-            <MyTextInput {...{ fieldName, placeholder, control, errors, }} />
+            <MyTextInput {...{ fieldName, placeholder, control, formState, }} />
             {searchQuery !== undefined && searchQuery.length > 0 && <IconButton onPress={onPressX} icon='close' size={20} style={{ position: 'absolute', right: 8, top: 8 }} />}
             <View style={{ position: 'absolute', marginTop: 64, width: '100%' }}>
                 {(resortResults?.length === 1 && resortResults[0].name === searchQuery ? [] : resortResults ?? [])

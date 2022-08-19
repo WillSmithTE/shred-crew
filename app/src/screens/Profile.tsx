@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { MyTextInput, requiredRule } from '../components/MyTextInput';
 import { Slider } from '@sharcoux/slider'
 import { colors } from '../constants/colors';
-import { SkiDiscipline, SkiStyle, UserDetails, UserDisciplines, UserStyles } from '../types';
+import { formatSkiDiscipline, formatSkiStyle, SkiDiscipline, skiDisciplines, SkiStyle, skiStyles, UserDetails, UserDisciplines, UserStyles } from '../types';
 import { FullScreenLoader } from '../components/Loading';
 import { logoutUser, setUserState, } from '../redux/userReducer';
 import { ImagePicker } from '../components/ImagePicker';
@@ -44,7 +44,7 @@ export const Profile = ({ mode }: Props) => {
     const [disciplines, setDisciplines] = useState<UserDisciplines>(user.ski.disciplines ?? {})
     const [skiStyles, setSkiStyles] = useState<UserStyles>(user.ski.styles ?? {})
     const isCreate = mode === 'create'
-    const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<FormData>({
+    const { control, handleSubmit, formState, watch, setValue } = useForm<FormData>({
         defaultValues: {
             name: user?.name ?? '',
             bio: user?.bio ?? '',
@@ -75,7 +75,7 @@ export const Profile = ({ mode }: Props) => {
 
     return (<ScrollView >
         <BackButton />
-        <ImageBackground style={styles.background} source={require('../../assets/splash.png')} />
+        {/* <ImageBackground style={styles.background} source={require('../../assets/splash.png')} /> */}
         <View style={styles.container}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20, }}>
                 <Text style={styles.header}>{isCreate ? 'Create' : 'Edit'} your profile</Text>
@@ -83,12 +83,12 @@ export const Profile = ({ mode }: Props) => {
             </View>
             <View style={{ paddingHorizontal: 20 }}>
                 <ImagePicker {...{ imageUri, setImageUri }} />
-                <MyTextInput {...{ fieldName: 'name', placeholder: 'Name', rules: { required: requiredRule }, control, errors, }} />
+                <MyTextInput {...{ fieldName: 'name', placeholder: 'Name', rules: { required: requiredRule }, control, formState, }} />
                 <MyTextInput {...{
                     multiline: true, fieldName: 'bio', placeholder: 'Tell us about yourself...', rules: { maxLength: { value: 1000, message: 'Too long' } },
-                    control, errors, style: { height: 100, paddingTop: 5, }
+                    control, formState, style: { height: 100, paddingTop: 5, }
                 }} />
-                <ResortLookup {...{ fieldName: 'homeMountain', control, errors, watch, setValue, placeholder: 'Home mountain' }} />
+                <ResortLookup {...{ fieldName: 'homeMountain', control, formState, watch, setValue, placeholder: 'Home mountain' }} />
                 <View style={{ paddingTop: 0 }}><Text style={[styles.subHeader, {}]}>Ability level</Text></View>
                 <SkillLevelSlider {...{ skillLevel, setSkillLevel }} />
                 <Text style={styles.subHeader}>Type of shredder</Text>
@@ -98,7 +98,7 @@ export const Profile = ({ mode }: Props) => {
                 {skiStyles.backcountry && <MyTextInput {...{
                     multiline: true, fieldName: 'backcountryDetails', placeholder: 'Tell us more about your backcountry experience:\n\nExamples:\n  \u2022 What equipment do you have?\n  \u2022 How experienced are you?',
                     rules: {},
-                    control, errors, style: { height: 200, marginTop: 20, paddingTop: 5 }
+                    control, formState, style: { height: 200, marginTop: 20, paddingTop: 5 }
                 }} />}
 
             </View>
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        paddingVertical: 50,
+        paddingVertical: 70,
     },
     header: {
         // color: 'white',
@@ -172,30 +172,25 @@ const SkillLevelSlider = ({ skillLevel, setSkillLevel }: SliderProps) => {
 
 }
 
-const skiDisciplines: MultiSelectorOption<SkiDiscipline>[] = [
-    { value: 'ski', label: 'Skiier' },
-    { value: 'snowboard', label: 'Snowboarder' },
-    { value: 'ski-skate', label: 'Ski Skater' },
-]
+export const skiDisciplineOptions: MultiSelectorOption<SkiDiscipline>[] = skiDisciplines.map((id) => ({
+    value: id, label: formatSkiDiscipline(id)
+}))
 type SkiDisciplineSelectorProps = {
     selected: UserDisciplines,
     set: (types: UserDisciplines) => void,
 }
 const SkiDisciplineSelector = ({ selected, set }: SkiDisciplineSelectorProps) => {
-    return <MultiSelector {...{ options: skiDisciplines, selected, set }} />
+    return <MultiSelector {...{ options: skiDisciplineOptions, selected, set }} />
 }
-const skiStyles: MultiSelectorOption<SkiStyle>[] = [
-    { value: 'moguls', label: 'Moguls' },
-    { value: 'piste', label: 'Piste' },
-    { value: 'off-piste', label: 'Off-Piste' },
-    { value: 'backcountry', label: 'Backcountry' },
-]
+export const skiStyleOptions: MultiSelectorOption<SkiStyle>[] = skiStyles.map((id) => ({
+    value: id, label: formatSkiStyle(id)
+}))
 type SkiStylesSelectorProps = {
     selected: UserStyles,
     set: (types: UserStyles) => void,
 }
 const SkiStylesSelector = ({ selected, set }: SkiStylesSelectorProps) => {
-    console.log({selected})
-    return <MultiSelector {...{ options: skiStyles, selected, set }} />
+    console.log({ selected })
+    return <MultiSelector {...{ options: skiStyleOptions, selected, set }} />
 }
 
