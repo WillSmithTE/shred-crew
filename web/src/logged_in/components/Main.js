@@ -231,7 +231,7 @@ function Main(props) {
 
   const selectDashboard = useCallback(() => {
     smoothScrollTop();
-    document.title = "WaVer - Dashboard";
+    document.title = "Shred Crew - Dashboard";
     setSelectedTab("Dashboard");
     if (!hasFetchedCardChart) {
       setHasFetchedCardChart(true);
@@ -248,7 +248,7 @@ function Main(props) {
 
   const selectPosts = useCallback(() => {
     smoothScrollTop();
-    document.title = "WaVer - Posts";
+    document.title = "Shred Crew - Posts";
     setSelectedTab("Posts");
     if (!hasFetchedEmojiTextArea) {
       setHasFetchedEmojiTextArea(true);
@@ -292,7 +292,7 @@ function Main(props) {
 
   const selectSubscription = useCallback(() => {
     smoothScrollTop();
-    document.title = "WaVer - Subscription";
+    document.title = "Shred Crew - Subscription";
     setSelectedTab("Subscription");
   }, [setSelectedTab]);
 

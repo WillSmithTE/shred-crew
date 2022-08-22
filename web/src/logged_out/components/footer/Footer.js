@@ -99,7 +99,7 @@ const socialIcons = [
       </svg>
     ),
     label: "Github",
-    href: "https://github.com/dunky11/react-saas-template",
+    href: "https://github.com/WillSmithTE",
   },
   {
     icon: (
@@ -131,7 +131,7 @@ const socialIcons = [
       </svg>
     ),
     label: "LinkedIn",
-    href: "https://www.linkedin.com/",
+    href: "https://www.linkedin.com/in/willsmithte/",
   },
   {
     icon: (

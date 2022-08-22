@@ -115,8 +115,7 @@ function HeadSection(props) {
                     >
                       <Box mb={4}>
                         <Typography variant={isWidthUpLg ? "h3" : "h4"}>
-                          Free Template for building a SaaS app using
-                          Material-UI
+                          Find your Crew or plan a trip
                         </Typography>
                       </Box>
                       <div>

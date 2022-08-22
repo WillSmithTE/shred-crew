@@ -235,7 +235,7 @@ function NavBar(props) {
                 display="inline"
                 color="primary"
               >
-                Wa
+                Shred
               </Typography>
               <Typography
                 variant="h4"
@@ -243,7 +243,7 @@ function NavBar(props) {
                 display="inline"
                 color="secondary"
               >
-                Ver
+                Crew
               </Typography>
             </Hidden>
           </Box>
