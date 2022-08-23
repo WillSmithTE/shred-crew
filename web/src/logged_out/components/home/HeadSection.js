@@ -1,10 +1,9 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { Grid, Typography, Card, Button, Hidden, Box } from "@mui/material";
+import { Grid, Typography, Card, Button, Box } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import WaveBorder from "../../../shared/components/WaveBorder";
-import ZoomImage from "../../../shared/components/ZoomImage";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 const styles = (theme) => ({
@@ -15,6 +14,8 @@ const styles = (theme) => ({
     },
   },
   extraLargeButton: {
+    // marginLeft: 'auto',
+    alignSelf: 'center',
     paddingTop: theme.spacing(1.5),
     paddingBottom: theme.spacing(1.5),
     [theme.breakpoints.up("xs")]: {
@@ -91,7 +92,7 @@ const styles = (theme) => ({
 });
 
 function HeadSection(props) {
-  const { classes, theme } = props;
+  const { classes, theme, openRegisterDialog } = props;
   const isWidthUpLg = useMediaQuery(theme.breakpoints.up("lg"));
 
   return (
@@ -105,8 +106,8 @@ function HeadSection(props) {
               data-aos="zoom-in"
             >
               <div className={classNames(classes.containerFix, "container")}>
-                <Box justifyContent="space-between" className="row">
-                  <Grid item xs={12} md={5}>
+                <Box justifyContent="center" className="row">
+                  <Grid item xs={12} md={9}>
                     <Box
                       display="flex"
                       flexDirection="column"
@@ -115,33 +116,37 @@ function HeadSection(props) {
                     >
                       <Box mb={4}>
                         <Typography variant={isWidthUpLg ? "h3" : "h4"}>
-                          Find your Crew or plan a trip
+                          Want to find new friends to shred the mountain with this winter?
                         </Typography>
                       </Box>
-                      <div>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <Box mb={2}>
                           <Typography
                             variant={isWidthUpLg ? "h6" : "body1"}
                             color="textSecondary"
+                            style={{textAlign: 'center'}}
                           >
-                            Lorem ipsum dolor sit amet, consetetur sadipscing
-                            elitr, sed diam nonumy eirmod tempor invidunt
+                            The Shred Crew app is your path to finding like-minded skiers and snowboarders.
+                            Register for free to meet other riders instantly on the mountain, plan a trip to the snow, or find the best resorts by checking out reviewers by others like you.
+                            Don’t miss out on the fresh pow!<br /><br />
+                            <b>Break the ice</b> and join our exclusive beta now.
                           </Typography>
+
                         </Box>
                         <Button
                           variant="contained"
                           color="secondary"
-                          fullWidth
+                          // fullWidth
                           className={classes.extraLargeButton}
                           classes={{ label: classes.extraLargeButtonLabel }}
-                          href="https://github.com/dunky11/react-saas-template"
+                          onClick={openRegisterDialog}
                         >
-                          Download from GitHub
+                          Get invited
                         </Button>
                       </div>
                     </Box>
                   </Grid>
-                  <Hidden mdDown>
+                  {/* <Hidden mdDown>
                     <Grid item md={6}>
                       <ZoomImage
                         src={`${process.env.PUBLIC_URL}/images/logged_out/headerImage.jpg`}
@@ -149,7 +154,7 @@ function HeadSection(props) {
                         alt="header example"
                       />
                     </Grid>
-                  </Hidden>
+                  </Hidden> */}
                 </Box>
               </div>
             </Card>
@@ -169,6 +174,7 @@ function HeadSection(props) {
 HeadSection.propTypes = {
   classes: PropTypes.object,
   theme: PropTypes.object,
+  openRegisterDialog: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(HeadSection);

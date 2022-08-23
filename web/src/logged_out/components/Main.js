@@ -131,6 +131,7 @@ function Main(props) {
         blogPosts={blogPosts}
         selectHome={selectHome}
         selectBlog={selectBlog}
+        openRegisterDialog={openRegisterDialog}
       />
       <Footer />
     </div>

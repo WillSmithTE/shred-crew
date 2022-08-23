@@ -7,21 +7,21 @@ import Blog from "./blog/Blog";
 import BlogPost from "./blog/BlogPost";
 
 function Routing(props) {
-  const { blogPosts, selectBlog, selectHome } = props;
+  const { blogPosts, selectBlog, selectHome, openRegisterDialog } = props;
   return (
     <Switch>
       {blogPosts.map((post) => (
         <PropsRoute
           path={post.url}
           component={BlogPost}
-            title={post.title}
-            key={post.title}
-            src={post.src}
-            date={post.date}
-            content={post.content}
-            otherArticles={blogPosts.filter(
-              (blogPost) => blogPost.id !== post.id
-            )}
+          title={post.title}
+          key={post.title}
+          src={post.src}
+          date={post.date}
+          content={post.content}
+          otherArticles={blogPosts.filter(
+            (blogPost) => blogPost.id !== post.id
+          )}
         />
       ))}
       <PropsRoute
@@ -31,15 +31,23 @@ function Routing(props) {
         selectBlog={selectBlog}
         blogPosts={blogPosts}
       />
-      <PropsRoute path="/" component={Home} selectHome={selectHome} />
+      <PropsRoute
+        path="/"
+        component={Home}
+        selectHome={selectHome}
+        openRegisterDialog={openRegisterDialog}
+        blogPosts={blogPosts}
+        selectBlog={selectBlog}
+      />
     </Switch>
   );
 }
 
 Routing.propTypes = {
-  blogposts: PropTypes.arrayOf(PropTypes.object),
+  blogPosts: PropTypes.arrayOf(PropTypes.object),
   selectHome: PropTypes.func.isRequired,
   selectBlog: PropTypes.func.isRequired,
+  openRegisterDialog: PropTypes.func.isRequired,
 };
 
 export default memo(Routing);

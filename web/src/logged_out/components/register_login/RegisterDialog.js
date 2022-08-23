@@ -5,7 +5,6 @@ import withStyles from '@mui/styles/withStyles';
 import FormDialog from "../../../shared/components/FormDialog";
 import HighlightedInformation from "../../../shared/components/HighlightedInformation";
 import ButtonCircularProgress from "../../../shared/components/ButtonCircularProgress";
-import VisibilityPasswordTextField from "../../../shared/components/VisibilityPasswordTextField";
 
 const styles = (theme) => ({
   link: {
@@ -28,7 +27,6 @@ function RegisterDialog(props) {
   const { setStatus, theme, onClose, openTermsDialog, status, classes } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [hasTermsOfServiceError, setHasTermsOfServiceError] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const registerTermsCheckbox = useRef();
   const registerPassword = useRef();
   const registerPasswordRepeat = useRef();
@@ -89,69 +87,6 @@ function RegisterDialog(props) {
             }}
             FormHelperTextProps={{ error: true }}
           />
-          <VisibilityPasswordTextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            error={
-              status === "passwordTooShort" || status === "passwordsDontMatch"
-            }
-            label="Password"
-            inputRef={registerPassword}
-            autoComplete="off"
-            onChange={() => {
-              if (
-                status === "passwordTooShort" ||
-                status === "passwordsDontMatch"
-              ) {
-                setStatus(null);
-              }
-            }}
-            helperText={(() => {
-              if (status === "passwordTooShort") {
-                return "Create a password at least 6 characters long.";
-              }
-              if (status === "passwordsDontMatch") {
-                return "Your passwords dont match.";
-              }
-              return null;
-            })()}
-            FormHelperTextProps={{ error: true }}
-            isVisible={isPasswordVisible}
-            onVisibilityChange={setIsPasswordVisible}
-          />
-          <VisibilityPasswordTextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            error={
-              status === "passwordTooShort" || status === "passwordsDontMatch"
-            }
-            label="Repeat Password"
-            inputRef={registerPasswordRepeat}
-            autoComplete="off"
-            onChange={() => {
-              if (
-                status === "passwordTooShort" ||
-                status === "passwordsDontMatch"
-              ) {
-                setStatus(null);
-              }
-            }}
-            helperText={(() => {
-              if (status === "passwordTooShort") {
-                return "Create a password at least 6 characters long.";
-              }
-              if (status === "passwordsDontMatch") {
-                return "Your passwords dont match.";
-              }
-            })()}
-            FormHelperTextProps={{ error: true }}
-            isVisible={isPasswordVisible}
-            onVisibilityChange={setIsPasswordVisible}
-          />
           <FormControlLabel
             style={{ marginRight: 0 }}
             control={
@@ -199,14 +134,10 @@ function RegisterDialog(props) {
               service.
             </FormHelperText>
           )}
-          {status === "accountCreated" ? (
+          {status === "accountCreated" && (
             <HighlightedInformation>
               We have created your account. Please click on the link in the
               email we have sent to you before logging in.
-            </HighlightedInformation>
-          ) : (
-            <HighlightedInformation>
-              Registration is disabled until we go live.
             </HighlightedInformation>
           )}
         </Fragment>
