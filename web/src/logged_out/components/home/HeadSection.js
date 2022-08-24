@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { Grid, Typography, Card, Button, Box } from "@mui/material";
+import { Grid, Typography, Card, Button, Box, Hidden, } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import WaveBorder from "../../../shared/components/WaveBorder";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -106,7 +106,7 @@ function HeadSection(props) {
               data-aos="zoom-in"
             >
               <div className={classNames(classes.containerFix, "container")}>
-                <Box justifyContent="center" className="row">
+                <Box justifyContent="space-between" className="row">
                   <Grid item xs={12} md={9}>
                     <Box
                       display="flex"
@@ -124,7 +124,7 @@ function HeadSection(props) {
                           <Typography
                             variant={isWidthUpLg ? "h6" : "body1"}
                             color="textSecondary"
-                            style={{textAlign: 'center'}}
+                            style={{ textAlign: 'center' }}
                           >
                             The Shred Crew app is your path to finding like-minded skiers and snowboarders.
                             Register for free to meet other riders instantly on the mountain, plan a trip to the snow, or find the best resorts by checking out reviewers by others like you.
@@ -146,15 +146,13 @@ function HeadSection(props) {
                       </div>
                     </Box>
                   </Grid>
-                  {/* <Hidden mdDown>
-                    <Grid item md={6}>
-                      <ZoomImage
-                        src={`${process.env.PUBLIC_URL}/images/logged_out/headerImage.jpg`}
-                        className={classes.image}
-                        alt="header example"
-                      />
+                  <Hidden mdDown>
+                    <Grid item md={3}>
+                      <video loop autoPlay muted className={classes.image} style={{boxShadow: 'none'}}>
+                        <source src={`${process.env.PUBLIC_URL}/images/logged_out/wave-video-cropped.mp4`} type="video/mp4" />
+                      </video>
                     </Grid>
-                  </Hidden> */}
+                  </Hidden>
                 </Box>
               </div>
             </Card>

@@ -5,6 +5,7 @@ import withStyles from '@mui/styles/withStyles';
 import FormDialog from "../../../shared/components/FormDialog";
 import HighlightedInformation from "../../../shared/components/HighlightedInformation";
 import ButtonCircularProgress from "../../../shared/components/ButtonCircularProgress";
+import { useUserApi } from "../../../api/userApi";
 
 const styles = (theme) => ({
   link: {
@@ -27,9 +28,11 @@ function RegisterDialog(props) {
   const { setStatus, theme, onClose, openTermsDialog, status, classes } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [hasTermsOfServiceError, setHasTermsOfServiceError] = useState(false);
+  const registerEmail = useRef();
   const registerTermsCheckbox = useRef();
   const registerPassword = useRef();
   const registerPasswordRepeat = useRef();
+  const userApi = useUserApi()
 
   const register = useCallback(() => {
     if (!registerTermsCheckbox.current.checked) {
@@ -44,16 +47,11 @@ function RegisterDialog(props) {
     }
     setStatus(null);
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
+    userApi.add(registerEmail)
+    setIsLoading(false);
   }, [
-    setIsLoading,
-    setStatus,
-    setHasTermsOfServiceError,
-    registerPassword,
-    registerPasswordRepeat,
-    registerTermsCheckbox,
+    setIsLoading, setStatus, setHasTermsOfServiceError, registerPassword, registerPasswordRepeat, registerTermsCheckbox, userApi,
+    registerEmail
   ]);
 
   return (
@@ -71,6 +69,7 @@ function RegisterDialog(props) {
       content={
         <Fragment>
           <TextField
+            inputRef={registerEmail}
             variant="outlined"
             margin="normal"
             required
