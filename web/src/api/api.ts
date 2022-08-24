@@ -17,7 +17,7 @@ const useBaseApiBuilder = ({ baseUrl = '', fetchWith = fetch }) => {
     const deleteX = async (url: string, options = {}, accessToken = undefined) =>
         request(url, { ...options, method: 'DELETE' }, true, accessToken);
 
-    const request = async <T = any,>(url: string, options: RequestInit = {}, invokeErrorCallbacks = true, accessToken) => {
+    const request = async <T = any,>(url: string, options: RequestInit = {}, invokeErrorCallbacks = true, accessToken?: string) => {
         console.debug(`about to fetch (baseUrl=${baseUrl}, path=${url}, body=${options.body})`)
         return fetchWith(`${baseUrl}${url}`, { // could add refresh token ${auth ? `?refresh_token=${loginState!!.refreshToken}` : ''}
             ...options,

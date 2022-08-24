@@ -116,7 +116,7 @@ function HeadSection(props) {
                     >
                       <Box mb={4}>
                         <Typography variant={isWidthUpLg ? "h3" : "h4"}>
-                          Want to find new friends to shred the mountain with this winter?
+                          Build your Shred Crew!
                         </Typography>
                       </Box>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -127,8 +127,8 @@ function HeadSection(props) {
                             style={{ textAlign: 'center' }}
                           >
                             The Shred Crew app is your path to finding like-minded skiers and snowboarders.
-                            Register for free to meet other riders instantly on the mountain, plan a trip to the snow, or find the best resorts by checking out reviewers by others like you.
-                            Don’t miss out on the fresh pow!<br /><br />
+                            Register for free to meet ski & snowboard friends, plan your trip to the snow and find the best resorts.
+                            Don’t miss out!<br /><br />
                             <b>Break the ice</b> and join our exclusive beta now.
                           </Typography>
 

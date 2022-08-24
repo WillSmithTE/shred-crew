@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Dialog, DialogContent, Box } from "@mui/material";
 import withStyles from '@mui/styles/withStyles';
 import DialogTitleWithCloseIcon from "./DialogTitleWithCloseIcon";
+import { FullScreenLoading } from "../../logged_out/components/FullScreenLoading";
 
 const styles = theme => ({
   dialogPaper: {
@@ -38,7 +39,7 @@ function FormDialog(props) {
     onFormSubmit,
     content,
     actions,
-    hideBackdrop
+    hideBackdrop,
   } = props;
   return (
     <Dialog
@@ -50,6 +51,7 @@ function FormDialog(props) {
         paperScrollPaper: classes.dialogPaperScrollPaper
       }}
       hideBackdrop={hideBackdrop ? hideBackdrop : false}>
+      {loading && <FullScreenLoading />}
       <DialogTitleWithCloseIcon
         title={headline}
         onClose={onClose}
@@ -76,7 +78,7 @@ FormDialog.propTypes = {
   onFormSubmit: PropTypes.func.isRequired,
   content: PropTypes.element.isRequired,
   actions: PropTypes.element.isRequired,
-  hideBackdrop: PropTypes.bool.isRequired
+  hideBackdrop: PropTypes.bool.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(FormDialog);
