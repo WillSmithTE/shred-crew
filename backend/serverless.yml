@@ -61,6 +61,7 @@ plugins:
   - serverless-dynamodb-local
   - serverless-offline
   - serverless-dynamodb-seed
+  - serverless-dotenv-plugin
 
 package:
   patterns:
