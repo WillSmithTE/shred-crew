@@ -1,5 +1,6 @@
 import express from "express";
 import serverless from "serverless-http";
+import { betaRegisteredUsersService } from "./src/service/BetaRegisteredUsersService";
 import { resortService } from "./src/service/ResortService";
 import { skiSessionService } from "./src/service/SkiSessionService";
 import { userService } from "./src/service/UserService";
@@ -28,6 +29,10 @@ app.get("/resort/:resortId", async function (req, res) {
 
 app.post('/ski-session', async function (req, res) {
   skiSessionService.add(req, res)
+});
+
+app.post('/beta-registered-user', async function (req, res) {
+  betaRegisteredUsersService.add(req, res)
 });
 
 app.get('/bonjour', async function (req, res) {

@@ -1,4 +1,4 @@
 #!/bin/bash
 
 tsc
-serverless offline start
+serverless offline start --httpPort 8080
