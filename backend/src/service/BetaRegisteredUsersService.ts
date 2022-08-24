@@ -19,7 +19,7 @@ export const betaRegisteredUsersService = {
 
         try {
             await dynamoDbClient.put(params).promise();
-            emailService.sendWelcome(email)
+            await emailService.sendWelcome(email)
             res.json({ email });
         } catch (error) {
             console.log(error);

@@ -20,7 +20,7 @@ const createHandlebarOptions: () => NodemailerExpressHandlebarsOptions = () => (
 })
 
 export const emailService = {
-    sendWelcome: (email: string) => {
+    sendWelcome: async (email: string) => {
         console.debug(`sending welcome email (email=${email})`)
         const transport = createTransport()
         const handlebarOptions = createHandlebarOptions()
@@ -39,12 +39,9 @@ export const emailService = {
             //     cid: 'icon'
             // }],
         };
-        transport.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log(error)
-            }
-            console.log('Message sent: ' + info.response);
-        });
-
+        const info = await transport.sendMail(mailOptions);
+        console.debug(`email sent (response=${info.response})`)
     },
 }
+
+function sleep(ms: number) { return new Promise((resolve) => { setTimeout(resolve, ms); }); }
