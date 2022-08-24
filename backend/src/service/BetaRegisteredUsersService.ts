@@ -1,5 +1,6 @@
 import { BETA_REGISTERED_USERS_TABLE, dynamoDbClient, RESORTS_TABLE, USERS_TABLE } from "../database";
 import { Request, Response } from 'express';
+import { emailService } from "./EmailService";
 
 export const betaRegisteredUsersService = {
     add: async (req: Request<{}, { email: string }>, res: Response) => {
@@ -18,6 +19,7 @@ export const betaRegisteredUsersService = {
 
         try {
             await dynamoDbClient.put(params).promise();
+            emailService.sendWelcome(email)
             res.json({ email });
         } catch (error) {
             console.log(error);

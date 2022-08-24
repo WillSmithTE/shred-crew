@@ -21,6 +21,7 @@ const createHandlebarOptions: () => NodemailerExpressHandlebarsOptions = () => (
 
 export const emailService = {
     sendWelcome: (email: string) => {
+        console.debug(`sending welcome email (email=${email})`)
         const transport = createTransport()
         const handlebarOptions = createHandlebarOptions()
         transport.use('compile', hbs(handlebarOptions))
@@ -28,15 +29,15 @@ export const emailService = {
             from: `"Shred Crew" <${process.env.EMAIL_USERNAME}>`,
             to: email,
             subject: 'Welcome to the Shred Crew',
-            template: 'email', // the name of the template file i.e email.handlebars
+            template: 'email',
             context: {
                 // name: "Adebola", // replace {{name}} with Adebola
             },
-            attachments: [{
-                filename: 'icon.png',
-                path: `./src/emailViews/icon.png`,
-                cid: 'icon'
-            }],
+            // attachments: [{
+            //     filename: 'icon.png',
+            //     path: `./src/emailViews/icon.png`,
+            //     cid: 'icon'
+            // }],
         };
         transport.sendMail(mailOptions, function (error, info) {
             if (error) {
@@ -47,5 +48,3 @@ export const emailService = {
 
     },
 }
-
-emailService.sendWelcome('willsmithte@gmail.com')
