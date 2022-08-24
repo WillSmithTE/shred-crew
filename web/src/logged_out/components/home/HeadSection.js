@@ -147,7 +147,7 @@ function HeadSection(props) {
                     </Box>
                   </Grid>
                   <Hidden mdDown>
-                    <Grid item md={3}>
+                    <Grid item md={3} style={{paddingLeft: '20px'}}>
                       <video loop autoPlay muted className={classes.image} style={{boxShadow: 'none'}}>
                         <source src={`${process.env.PUBLIC_URL}/images/logged_out/wave-video-cropped.mp4`} type="video/mp4" />
                       </video>

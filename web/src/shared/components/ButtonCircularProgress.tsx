@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { CircularProgress, Box } from "@mui/material";
 
 import withStyles from '@mui/styles/withStyles';

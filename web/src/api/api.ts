@@ -83,7 +83,7 @@ const myError: (error: string) => MyResponse<void> = (error) => ({
 })
 
 const BASE_URL = process.env.NODE_ENV === 'development' ?
-    'http://localhost:8080' : 'https://1xhyqk0q87.execute-api.eu-central-1.amazonaws.com'
+    'http://localhost:8080' : 'https://b01cg79fb2.execute-api.eu-central-1.amazonaws.com'
 
 export function useBaseApi() {
     return useBaseApiBuilder({ baseUrl: BASE_URL })
