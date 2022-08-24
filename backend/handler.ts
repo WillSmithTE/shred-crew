@@ -4,9 +4,11 @@ import { betaRegisteredUsersService } from "./src/service/BetaRegisteredUsersSer
 import { resortService } from "./src/service/ResortService";
 import { skiSessionService } from "./src/service/SkiSessionService";
 import { userService } from "./src/service/UserService";
+import cors from 'cors'
 
 const app = express();
 
+app.use(cors())
 app.use(express.json());
 
 app.get("/user/:userId", async function (req, res) {
