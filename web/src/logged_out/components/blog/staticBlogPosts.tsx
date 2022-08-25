@@ -10,6 +10,5 @@ export const staticBlogPosts = [
       snippet: SkiFriendsBlog24822.snippet,
       content: SkiFriendsBlog24822.content(),
     },
-    dummyPosts[0]
   ]
   
