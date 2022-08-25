@@ -40,7 +40,20 @@
     }(window.location))
   </script>
   <!-- End Single Page Apps for GitHub Pages -->
-  
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2RWPPRMXEC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    console.debug({ hostname: location.hostname })
+    if (location.hostname === 'localhost') {
+      window['ga-disable-G-2RWPPRMXEC'] = true;
+    }
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-2RWPPRMXEC');
+
+  </script>
 
   <!--
       Notice the use of %PUBLIC_URL% in the tags above.

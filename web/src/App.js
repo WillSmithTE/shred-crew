@@ -10,7 +10,6 @@ const LoggedInComponent = lazy(() => import("./logged_in/components/Main"));
 const LoggedOutComponent = lazy(() => import("./logged_out/components/Main"));
 
 function App() {
-  console.log({url: process.env.PUBLIC_URL})
   return (
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       <StyledEngineProvider injectFirst>
