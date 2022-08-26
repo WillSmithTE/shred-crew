@@ -56,7 +56,7 @@ export const Profile = ({ mode }: Props) => {
         setLoading(true)
         try {
             const response = await action({
-                id: user.id, email: user.email, bio, imageUri, name, loginType: user.loginType,
+                userId: user.userId, email: user.email, bio, imageUri, name, loginType: user.loginType,
                 ski: { disciplines, skillLevel, styles: skiStyles, backcountryDetails, homeMountain }
             })
             dispatch(setUserState(response))

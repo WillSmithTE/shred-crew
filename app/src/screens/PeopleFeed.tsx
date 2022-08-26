@@ -54,8 +54,6 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
     console.log({ skiSession })
     const { navigate, getState, push } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
-    console.log({ navStatePeople: getState() })
-
     if (skiSession === undefined) return <FullScreenLoader />
 
     const onPressLocation = () => {

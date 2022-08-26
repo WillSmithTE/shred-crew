@@ -4,7 +4,7 @@ import { myUuid } from "./services/myUuid"
 export type UserDetails = {
     name: string,
     email: string,
-    id: string,
+    userId: string,
     hasDoneInitialSetup?: boolean,
     imageUri?: string,
     loginType: LoginType,
@@ -33,7 +33,7 @@ export const dummyLoginRegisterResponse: (userDetails: Partial<UserDetails>) => 
         user: {
             name,
             email,
-            id: myUuid(),
+            userId: myUuid(),
             imageUri,
             loginType: LoginType.EMAIL,
             ski: { disciplines: {}, styles: {}, skillLevel: 3 }, bio: '',
@@ -51,7 +51,7 @@ export type SkiDetails = {
     homeMountain?: string,
     disciplines: UserDisciplines,
     styles: UserStyles,
-    skillLevel: number, // 1-5
+    skillLevel?: number, // 1-5
     backcountryDetails?: string,
 }
 export function skillLevelDescription(level: number) {
@@ -175,3 +175,6 @@ export type PersonInFeed = {
     name: string,
     imageUri?: string,
 }
+
+export type RegisterRequest = { name: string, email: string, password: string }
+export type LoginRequest = { email: string, password: string }

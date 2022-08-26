@@ -13,12 +13,12 @@ DONE- store geo data like this https://jason.wadsworth.dev/working-with-geo-data
 DONE- proper google logo
 DONE- use special limited keys  for ios and android in app.json like this https://docs.expo.dev/versions/latest/sdk/map-view/#deploying-to-a-standalone-app-on-android
 - feat: add error log on google fail, not just showError
-- featT: x on resort lookup textinput to clear
+DONE- featT: x on resort lookup textinput to clear
 DONE- change backend to return ordered list of closest resorts
 DONE- search by resort id doesn't work
-- bug: resorts in berlin???
-- bug: multiselect selects all not just 1
-- feat: change location finder to popup
+DONE- bug: resorts in berlin???
+DONE- bug: multiselect selects all not just 1
+DONE- feat: change location finder to popup
 - feat: bottom tab nav with messages
 - feat: messages
     - frontend: basic messages ui like messenger or bumble
@@ -39,5 +39,6 @@ DONE- search by resort id doesn't work
    - feat: backend verify logins/generate access tokens
    - feat: frontend 401 refresh token then call again
    - feat: backend offer refresh api 
-- feat: location finder update to new UI (14.8.22)
+DONE- feat: location finder update to new UI (14.8.22)
 DONE- display multiple markers on map
+- messaging ui?: https://www.figma.com/community/file/881015895655545375

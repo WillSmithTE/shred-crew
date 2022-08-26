@@ -7,23 +7,24 @@ import { MainStackParams } from "../navigation/Navigation";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useForm, Controller } from "react-hook-form";
 import { loginUser, setLoginState } from "../redux/userReducer";
-import { dummyLoginRegisterResponse, LoginRegisterResponse, LoginType } from "../types";
+import { dummyLoginRegisterResponse, LoginRegisterResponse, LoginRequest, LoginType, RegisterRequest } from "../types";
 import { setUserState } from "../redux/userReducer";
 import { Loading } from "./Loading";
 import { myUuid } from "../services/myUuid";
 import { MyTextInput } from "./MyTextInput";
+import { useUserApi } from "../api/userApi";
 
-type RegisterRequest = { name: string, email: string, password: string }
-const registerAction: (request: RegisterRequest) => Promise<LoginRegisterResponse> = async ({ name, email, password }) => {
-    await new Promise(r => setTimeout(r, 1000));
-    return dummyLoginRegisterResponse({ name, email })
+const useActions = () => {
+    const userApi = useUserApi()
+    return {
+        register: async (request: RegisterRequest) => {
+            return await userApi.register(request)
+        },
+        login: async (request: LoginRequest) => {
+            return await userApi.login(request)
+        },
+    }
 }
-type LoginRequest = { email: string, password: string }
-const loginAction: (request: LoginRequest) => Promise<LoginRegisterResponse> = async ({ email, password }) => {
-    await new Promise(r => setTimeout(r, 1000));
-    return dummyLoginRegisterResponse({ email })
-}
-
 type Mode = 'login' | 'register'
 
 type Props = {
@@ -34,6 +35,7 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
     const dispatch = useDispatch()
     const { goBack } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
     const [loading, setLoading] = useState(false)
+    const actions = useActions()
 
     const { control, handleSubmit, formState } = useForm({
         defaultValues: {
@@ -44,7 +46,7 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
     });
     const onSubmit = async (data: LoginRequest | RegisterRequest) => {
         setLoading(true)
-        const { user, auth } = await (loginMode ? loginAction(data) : registerAction(data as RegisterRequest))
+        const { user, auth } = await (loginMode ? actions.login(data as LoginRequest) : actions.register(data as RegisterRequest))
         setLoading(false)
         dispatch(loginUser({ user, loginState: auth }))
     }
@@ -79,7 +81,7 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
                 </View>
             </View>
             <View style={{ marginLeft: 'auto', padding: 20, }}>
-                <Button onPress={handleSubmit(onSubmit)} style={{  }} mode='contained'>Next</Button>
+                <Button onPress={handleSubmit(onSubmit)} style={{}} mode='contained'>Next</Button>
             </View>
         </View>
         {loading && <Loading />}
