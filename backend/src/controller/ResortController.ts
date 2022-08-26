@@ -6,7 +6,7 @@ import { MyLocation, Place, ViewPort } from "../types";
 import { verifyDefined, verifyNumber } from "../util/validateHttpBody";
 
 const coordinateSearchMargin = 0.05
-export const resortService = {
+export const resortController = {
     search: async (req: Request, res: Response) => {
         const params = {
             TableName: RESORTS_TABLE,
@@ -77,9 +77,9 @@ export const resortService = {
 }
 
 function verifyCoordinates(location: MyLocation, res: Response) {
-    verifyDefined(location, res, 'location')
-    verifyNumber(location.lat, res, 'location.lat')
-    verifyNumber(location.lng, res, 'location.lng')
+    verifyDefined(location, 'location')
+    verifyNumber(location.lat, 'location.lat')
+    verifyNumber(location.lng, 'location.lng')
 }
 
 function sortByClosest(location: MyLocation, resorts: Place[]): Place[] {

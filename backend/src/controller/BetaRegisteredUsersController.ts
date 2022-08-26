@@ -1,8 +1,8 @@
 import { BETA_REGISTERED_USERS_TABLE, dynamoDbClient, RESORTS_TABLE, USERS_TABLE } from "../database";
 import { Request, Response } from 'express';
-import { emailService } from "./EmailService";
+import { emailService } from "../service/EmailService";
 
-export const betaRegisteredUsersService = {
+export const betaRegisteredUsersController = {
     add: async (req: Request<{}, { email: string }>, res: Response) => {
         const { email } = req.body;
         console.debug(`adding user to beta list (email=${email})`)

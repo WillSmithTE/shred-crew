@@ -4,7 +4,7 @@ import { CreateSessionRequest, CreateSessionResponse, Place } from "../types";
 import { validateHttpBody } from "../util/validateHttpBody";
 import geohash from 'ngeohash';
 
-export const skiSessionService = {
+export const skiSessionController = {
     add: async (req: Request<{}, CreateSessionRequest>, res: Response<CreateSessionResponse>) => {
         const place = req.body;
         validateHttpBody(place, res, verifyPlace, () => {

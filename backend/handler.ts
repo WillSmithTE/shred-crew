@@ -1,10 +1,11 @@
 import express from "express";
 import serverless from "serverless-http";
-import { betaRegisteredUsersService } from "./src/service/BetaRegisteredUsersService";
-import { resortService } from "./src/service/ResortService";
-import { skiSessionService } from "./src/service/SkiSessionService";
-import { userService } from "./src/service/UserService";
+import { betaRegisteredUsersController } from "./src/controller/BetaRegisteredUsersController";
+import { resortController } from "./src/controller/ResortController";
+import { skiSessionController } from "./src/controller/SkiSessionController";
+import { userController } from "./src/controller/UserController";
 import cors from 'cors'
+import { authController } from "./src/controller/AuthController";
 
 const app = express();
 
@@ -12,29 +13,36 @@ app.use(cors())
 app.use(express.json());
 
 app.get("/user/:userId", async function (req, res) {
-  userService.get(req, res)
+  userController.get(req, res)
 });
 
-app.post("/users", async function (req, res) {
-  userService.add(req, res)
+app.put("/user", async function (req, res) {
+  userController.add(req, res)
 });
 
 app.get("/resort", async function (req, res) {
-  resortService.search(req, res)
+  resortController.search(req, res)
 });
 app.post('/resort/coords', async function (req, res) {
-  resortService.getAllNearCoordinates(req, res)
+  resortController.getAllNearCoordinates(req, res)
 })
 app.get("/resort/:resortId", async function (req, res) {
-  resortService.getById(req, res)
+  resortController.getById(req, res)
 });
 
 app.post('/ski-session', async function (req, res) {
-  skiSessionService.add(req, res)
+  skiSessionController.add(req, res)
 });
 
 app.post('/beta-registered-user', async function (req, res) {
-  betaRegisteredUsersService.add(req, res)
+  betaRegisteredUsersController.add(req, res)
+});
+
+app.post('/auth/login', async function (req, res) {
+  authController.login(req, res)
+});
+app.post('/auth/register', async function (req, res) {
+  authController.register(req, res)
 });
 
 app.get('/bonjour', async function (req, res) {

@@ -1,7 +1,7 @@
 export type UserDetails = {
     name: string,
     email: string,
-    id: string,
+    userId: string,
     hasDoneInitialSetup?: boolean,
     imageUri?: string,
     loginType: LoginType,
@@ -28,7 +28,7 @@ export type SkiDetails = {
     homeMountain?: string,
     disciplines: UserDisciplines,
     styles: UserStyles,
-    skillLevel: number, // 1-5
+    skillLevel?: number, // 1-5
     backcountryDetails?: string,
 }
 export type SkiDiscipline = 'ski' | 'snowboard' | 'ski-skate'
@@ -81,3 +81,6 @@ export type SkiSession = {
     place: Place,
     createdAt: number,
 }
+
+export type RegisterRequest = { name: string, email: string, password: string }
+export type LoginRequest = { email: string, password: string }

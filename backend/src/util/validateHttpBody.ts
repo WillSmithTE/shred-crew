@@ -13,13 +13,17 @@ export function validateHttpBody<T>(item: T, res: Response, validate: (item: T) 
     }
 }
 
-export function verifyDefined(a: any, res: Response, fieldName: string) {
+export function verifyDefined(a: any, fieldName: string) {
     if (a === undefined) {
         throw new Error(`${fieldName} can't be undefined`)
     }
 }
-export function verifyNumber(a: any, res: Response, fieldName: string): a is number {
+export function verifyNumber(a: any, fieldName: string): a is number {
     if (typeof a === 'number') return true
     throw new Error(`${fieldName} must be a number`)
+}
+export function verifyString(a: any, fieldName: string): a is string {
+    if (typeof a === 'string') return true
+    throw new Error(`${fieldName} must be a string`)
 }
 
