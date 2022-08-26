@@ -47,6 +47,7 @@ function RegisterDialog(props: Props) {
     setIsLoading(true);
     try {
       await userApi.add(registerEmail.current!!.value)
+      if (typeof (window as any).gtag !== 'undefined') (window as any).gtag("event", "beta_register")
       setStatus('accountCreated')
     } catch (e: any) { setFormSubmitError(e); console.error(e) }
     setIsLoading(false);

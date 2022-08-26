@@ -47,6 +47,7 @@
     window.dataLayer = window.dataLayer || [];
     console.debug({ hostname: location.hostname })
     if (location.hostname === 'localhost') {
+      console.debug('disabling google analytics')
       window['ga-disable-G-2RWPPRMXEC'] = true;
     }
     function gtag() { dataLayer.push(arguments); }
