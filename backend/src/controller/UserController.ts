@@ -1,6 +1,9 @@
 import { dynamoDbClient, RESORTS_TABLE, USERS_TABLE } from "../database";
 import { Request, Response } from 'express';
 import { userService } from "../service/UserService";
+import { MyResponse, UserDetails } from "../types";
+import { validateHttpBody, verifyDefined } from "../util/validateHttpBody";
+import { withJwt } from "../util/withJwt";
 
 export const userController = {
     get: async (req: Request, res: Response) => {
@@ -19,28 +22,29 @@ export const userController = {
         }
 
     },
-    add: async (req: Request, res: Response) => {
-        const { userId, name } = req.body;
-        if (typeof userId !== "string") {
-            res.status(400).json({ error: 'userId must be a string' });
-        } else if (typeof name !== "string") {
-            res.status(400).json({ error: 'name must be a string' });
-        }
-
-        const params = {
-            TableName: USERS_TABLE,
-            Item: {
-                userId: userId,
-                name: name,
-            },
-        };
-
-        try {
-            await dynamoDbClient.put(params).promise();
-            res.json({ userId, name });
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: "Could not create user" });
-        }
+    update: async (req: Request<{}, {}, UserDetails>, res: Response<MyResponse<UserDetails>>) => {
+        validateHttpBody(req.body, res, validateUserDetails, async () => {
+            withJwt(req, res, async (jwtInfo) => {
+                const user = req.body
+                if (user.userId !== jwtInfo.userId) res.status(400).json({ error: `user id doesn't match user id in token (token=${jwtInfo.userId}, body=${user.userId})` })
+                const preExistingUser = await userService.get(user.userId)
+                try {
+                    const result = await userService.upsert({ ...preExistingUser, ...user })
+                    res.json(result);
+                } catch (error) {
+                    console.log(error);
+                    res.status(500).json({ error: `Could not update user - ${error.toString()}` });
+                }
+            })
+        })
     }
+}
+
+function validateUserDetails(a: any): a is UserDetails {
+    verifyDefined(a.name, 'name')
+    verifyDefined(a.email, 'email')
+    verifyDefined(a.userId, 'userId')
+    verifyDefined(a.loginType, 'loginType')
+    verifyDefined(a.ski, 'ski')
+    return true
 }

@@ -1,5 +1,4 @@
-import { dynamoDbClient, RESORTS_TABLE, USERS_TABLE } from "../database";
-import { Request, Response } from 'express';
+import { dynamoDbClient, USERS_TABLE } from "../database";
 import { UserDetails } from "../types";
 import { UserDetailsWithPassword } from "../backendTypes";
 
@@ -14,7 +13,7 @@ export const userService = {
         const { Item } = await dynamoDbClient.get(params).promise();
         return Item as UserDetailsWithPassword
     },
-    getByEmail: async function (email: string): Promise<UserDetails> {
+    getByEmail: async function (email: string) {
         const { Items } = await dynamoDbClient.query({
             TableName: USERS_TABLE,
             IndexName: 'gsi1',
@@ -28,28 +27,18 @@ export const userService = {
         }).promise()
         return (Items.length > 0 ? Items[0] : undefined) as UserDetailsWithPassword
     },
-    add: async (req: Request<{}, {}, UserDetailsWithPassword>, res: Response) => {
-        const user = req.body;
-        if (typeof user.userId !== "string") {
-            res.status(400).json({ error: 'userId must be a string' });
-        } else if (typeof name !== "string") {
-            res.status(400).json({ error: 'name must be a string' });
-        }
-
+    upsert: async function (user: UserDetailsWithPassword): Promise<UserDetails> {
+        console.debug(`upserting user (id=${user.userId})`)
         const params = {
             TableName: USERS_TABLE,
-            Item: {
-                userId: userId,
-                name: name,
-            },
+            Item: user,
         };
-
-        try {
-            await dynamoDbClient.put(params).promise();
-            res.json({ userId, name });
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: "Could not create user" });
-        }
+        await dynamoDbClient.put(params).promise()
+        return withoutPassword(user as UserDetailsWithPassword)
     }
+}
+
+export function withoutPassword(withPassword: UserDetailsWithPassword): UserDetails {
+    const { password, ...user } = withPassword
+    return user
 }

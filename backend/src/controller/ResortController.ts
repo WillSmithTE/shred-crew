@@ -26,7 +26,6 @@ export const resortController = {
             const [southwestLat, southwestLng] = [location.lat - coordinateSearchMargin, location.lng - coordinateSearchMargin]
             const [northeastLat, northeastLng] = [location.lat + coordinateSearchMargin, location.lng + coordinateSearchMargin]
             const hashes = geohash.bboxes(southwestLat, southwestLng, northeastLat, northeastLng, 4);
-            console.info(JSON.stringify({ hashes }));
             const places = await Promise.all(hashes.map((hash) =>
                 dynamoDbClient.query({
                     TableName: RESORTS_TABLE,
@@ -48,7 +47,7 @@ export const resortController = {
 
             const placesWithoutDuplicates = removeDuplicates(places, 'id')
             const sorted = sortByClosest(location, placesWithoutDuplicates)
-            res.status(200).json(sorted)
+            res.json(sorted)
         } catch (e) {
             res.status(400).json({ error: e.toString() })
         }
@@ -66,8 +65,10 @@ export const resortController = {
             } else {
                 res
                     .status(404)
-                    .json({ error: `Could not find resort (id=${req.params.resortId}, 
-                        error=${$response.error}, data=${$response.data})` });
+                    .json({
+                        error: `Could not find resort (id=${req.params.resortId}, 
+                        error=${$response.error}, data=${$response.data})`
+                    });
             }
         } catch (error) {
             console.log(error);

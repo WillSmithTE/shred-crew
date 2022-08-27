@@ -17,12 +17,12 @@ app.get("/user/:userId", async function (req, res) {
 });
 
 app.put("/user", async function (req, res) {
-  userController.add(req, res)
+  userController.update(req, res)
 });
 
-app.get("/resort", async function (req, res) {
-  resortController.search(req, res)
-});
+// app.get("/resort", async function (req, res) {
+//   resortController.search(req, res)
+// });
 app.post('/resort/coords', async function (req, res) {
   resortController.getAllNearCoordinates(req, res)
 })

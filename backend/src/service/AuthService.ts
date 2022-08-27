@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { myConfig } from "../myConfig";
 
 export const authService = {
-    generateTokens: (userId: string, email: string) => {
+    generateTokens: function (userId: string, email: string) {
         const jwtUserInfo = { userId: userId, email: email }
         const accessToken = jwt.sign(jwtUserInfo, myConfig.accessTokenSecret, { expiresIn: myConfig.accessTokenLife })
         const refreshToken = jwt.sign(jwtUserInfo, myConfig.refreshTokenSecret, { expiresIn: myConfig.refreshTokenLife })

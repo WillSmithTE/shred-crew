@@ -13,7 +13,8 @@ export const betaRegisteredUsersController = {
         const params = {
             TableName: BETA_REGISTERED_USERS_TABLE,
             Item: {
-                email
+                email,
+                createdAt: new Date().getTime(),
             },
         };
 

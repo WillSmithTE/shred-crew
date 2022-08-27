@@ -1,8 +1,4 @@
-import { dynamoDbClient, RESORTS_TABLE } from "../database";
-import { Request, Response } from 'express';
-import geohash from 'ngeohash';
-import { removeDuplicates } from "../util/removeDuplicates";
-import { MyLocation, Place, ViewPort } from "../types";
+import { Response } from 'express';
 
 export function validateHttpBody<T>(item: T, res: Response, validate: (item: T) => void, onSuccessValidation: (item: T) => void,) {
     try {
