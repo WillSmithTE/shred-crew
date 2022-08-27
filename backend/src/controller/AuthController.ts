@@ -1,7 +1,7 @@
 import { dynamoDbClient, RESORTS_TABLE, USERS_TABLE } from "../database";
 import { Request, Response } from 'express';
 import { LoginRegisterResponse, LoginRequest, LoginType, RegisterRequest, UserDetails } from "../types";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { validateHttpBody, verifyDefined as validateDefined, verifyString as validateString } from "../util/validateHttpBody";
 import { userService } from "../service/UserService";
 import { v4 as uuidv4 } from 'uuid';

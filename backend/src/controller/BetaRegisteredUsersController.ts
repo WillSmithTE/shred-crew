@@ -8,23 +8,24 @@ export const betaRegisteredUsersController = {
         console.debug(`adding user to beta list (email=${email})`)
         if (typeof email !== "string" || email === undefined) {
             res.status(400).json({ error: `email must be a string (email=${email})` });
-        }
+        } else {
 
-        const params = {
-            TableName: BETA_REGISTERED_USERS_TABLE,
-            Item: {
-                email,
-                createdAt: new Date().getTime(),
-            },
-        };
+            const params = {
+                TableName: BETA_REGISTERED_USERS_TABLE,
+                Item: {
+                    email,
+                    createdAt: new Date().getTime(),
+                },
+            };
 
-        try {
-            await dynamoDbClient.put(params).promise();
-            await emailService.sendWelcome(email)
-            res.json({ email });
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: "Could not create user" });
+            try {
+                await dynamoDbClient.put(params).promise();
+                await emailService.sendWelcome(email)
+                res.json({ email });
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({ error: "Could not create user" });
+            }
         }
     }
 }

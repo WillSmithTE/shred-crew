@@ -7,7 +7,7 @@ custom:
   usersTableName: 'shred-crew-users-${sls:stage}'
   resortsTableName: 'shred-crew-resort-${sls:stage}'
   skiSessionsTableName: 'shred-crew-sessions-${sls:stage}'
-  betaRegisteredUsersTableName: 'shred-crew-beta-registered-users-${sls:stage}'
+  betaRegisteredUsersTableName: 'shred-crew-beta-registered-users-2-${sls:stage}'
   dynamodb:
     start:
       migrate: true
