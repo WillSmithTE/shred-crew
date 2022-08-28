@@ -16,10 +16,10 @@ function getConfig() {
     const environment: 'dev' | 'prod' | undefined = process.env['ENVIRONMENT'] as 'dev' | 'prod' | undefined
 
     if (environment === 'prod') {
-        return { apiBaseUrl: '', }
+        return { apiBaseUrl: 'https://b01cg79fb2.execute-api.eu-central-1.amazonaws.com', }
     } else if (environment === 'dev') {
         return { apiBaseUrl: 'https://cfwjn30knb.execute-api.eu-central-1.amazonaws.com', }
     } else {
-        return { apiBaseUrl: 'http://localhost:3000', }
+        return { apiBaseUrl: 'http://localhost:8080', }
     }
 }

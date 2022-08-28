@@ -17,8 +17,9 @@ type Props<T> = {
     multiline?: boolean,
     style?: StyleProp<TextStyle>,
     secureTextEntry?: boolean,
+    autoCapitalize?: 'none' | 'characters' | 'words' | 'sentences'
 }
-export const MyTextInput = <T,>({ control, rules = {}, fieldName, label, placeholder, multiline, style, secureTextEntry, formState }: Props<T>) => {
+export const MyTextInput = <T,>({ control, rules = {}, fieldName, label, placeholder, multiline, style, secureTextEntry, formState, autoCapitalize = 'sentences' }: Props<T>) => {
     const theme = useTheme()
 
     return <>
@@ -50,6 +51,7 @@ export const MyTextInput = <T,>({ control, rules = {}, fieldName, label, placeho
                                 ]}
                             />
                         )}
+                        autoCapitalize={autoCapitalize}
                     />
                 )}
                 name={fieldName}

@@ -61,12 +61,16 @@ export function skillLevelDescription(level: number) {
         case 3: return 'Intermediate'
         case 4:
         case 5: return 'Advanced'
+        default:
+            console.error(`failed to get description for skill level (level=${level})`)
+            return ''
     }
 }
+const thing = [...[], '']
 export function getTagsFromSkiDetails(skiDetails?: SkiDetails): string[] {
     if (skiDetails === undefined) return []
     return [
-        skillLevelDescription(skiDetails.skillLevel)!!,
+        ...(skiDetails.skillLevel ? [skillLevelDescription(skiDetails.skillLevel)] : []),
         ...(Object.keys(skiDetails.disciplines) as SkiDiscipline[])
             .filter((key) => skiDetails.disciplines[key] === true)
             .map(formatSkiDiscipline)

@@ -11,6 +11,7 @@ export const colors = {
   secondary: '#7ED6F2',
   gray300: '#E0E0E0',
   darkGray: '#7F7F7F',
+  darkDarkGray: '#524e4e',
   border: '#c6c6c6',
   white: '#fff',
   error: '#b55464',

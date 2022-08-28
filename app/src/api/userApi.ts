@@ -20,19 +20,5 @@ export function useUserApi() {
             },
             'error getting user details',
         ),
-        login: async (request: LoginRequest) => await baseApiRequest<LoginRegisterResponse>(
-            () => {
-                console.debug(`attempting login (email=${request.email})`)
-                return baseApi.post<LoginRegisterResponse>(`/auth/login`)
-            },
-            `error logging in (email=${request.email})`,
-        ),
-        register: async (request: RegisterRequest) => await baseApiRequest<LoginRegisterResponse>(
-            () => {
-                console.debug(`attempting registration (email=${request.email})`)
-                return baseApi.post<LoginRegisterResponse>(`/auth/register`)
-            },
-            `error registering (email=${request.email})`,
-        ),
     }
 }

@@ -13,15 +13,17 @@ import { Loading } from "./Loading";
 import { myUuid } from "../services/myUuid";
 import { MyTextInput } from "./MyTextInput";
 import { useUserApi } from "../api/userApi";
+import { useAuthApi } from "../api/authApi";
+import { BackButton } from "./BackButton";
 
 const useActions = () => {
-    const userApi = useUserApi()
+    const authApi = useAuthApi()
     return {
         register: async (request: RegisterRequest) => {
-            return await userApi.register(request)
+            return await authApi.register(request)
         },
         login: async (request: LoginRequest) => {
-            return await userApi.login(request)
+            return await authApi.login(request)
         },
     }
 }
@@ -52,18 +54,13 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
     }
     return <>
         <View style={styles.container}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 20, }}>
-                <IconButton onPress={() => goBack()} icon='close' size={40} style={styles.closeButton} />
-                <Text style={{ flex: 1, justifyContent: 'center', textAlign: 'center' }}>Icon</Text>
-                <IconButton icon='close' size={40} style={[styles.closeButton, { opacity: 0 }]}
-                />
-            </View>
+            <BackButton />
             <View style={{ paddingHorizontal: 20, width: '90%', }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 30, marginBottom: 30, }}>{loginMode ? 'Login' : 'Create your account'}</Text>
+                <Text style={{ fontWeight: 'bold', fontSize: 30, marginBottom: 30, alignSelf: 'center'}}>{loginMode ? 'Login' : 'Create account'}</Text>
                 {!loginMode && <View style={styles.inputContainer}>
                     <MyTextInput {...{
                         control, formState, fieldName: 'name', placeholder: 'Name',
-                        rules: { required: requiredRule, maxLength: maxLenRule, }
+                        rules: { required: requiredRule, maxLength: maxLenRule, },
                     }} />
                 </View>
                 }
@@ -76,7 +73,7 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
                 <View style={styles.inputContainer}>
                     <MyTextInput {...{
                         control, formState, fieldName: 'password', placeholder: 'Password', secureTextEntry: true,
-                        rules: { required: requiredRule, maxLength: maxLenRule, minLength: minLenRule }
+                        rules: { required: requiredRule, maxLength: maxLenRule, minLength: minLenRule }, autoCapitalize: 'none'
                     }} />
                 </View>
             </View>
@@ -114,6 +111,7 @@ const styles = StyleSheet.create({
         // justifyContent: 'space-between',
         flex: 1,
         alignItems: 'center',
+        paddingTop: 30,
     },
     inputContainer: {
         // width: '80%',

@@ -35,6 +35,7 @@ const useBaseApiBuilder = ({ baseUrl = '', fetchWith = fetch, }) => {
             // credentials: 'include',
             headers: {
                 ...(auth ? { Authorization: `Bearer ${loginState!!.accessToken}` } : {}),
+                ...(options.body ? { "Content-Type": "application/json", } : {}),
                 ...options.headers
             }
         })
