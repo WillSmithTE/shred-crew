@@ -17,12 +17,12 @@ export const userService = {
         const { Items } = await dynamoDbClient.query({
             TableName: USERS_TABLE,
             IndexName: 'gsi1',
-            KeyConditionExpression: '#pk = :pk',
+            KeyConditionExpression: '#email = :email',
             ExpressionAttributeNames: {
-                '#pk': 'gsi1pk',
+                '#email': 'email',
             },
             ExpressionAttributeValues: {
-                ':pk': email,
+                ':email': email,
             },
         }).promise()
         return (Items.length > 0 ? Items[0] : undefined) as UserDetailsWithPassword

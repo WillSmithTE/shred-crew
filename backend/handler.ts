@@ -44,9 +44,12 @@ app.post('/auth/login', async function (req, res) {
 app.post('/auth/register', async function (req, res) {
   authController.register(req, res)
 });
+app.post('/auth/refresh-auth', async function (req, res) {
+  authController.refreshAuth(req, res)
+});
 
 app.get('/bonjour', async function (req, res) {
-  res.json({ message: 'salut' })
+  res.json({ message: `salut ${process.env.TEST_VAR}` })
 })
 
 app.use((req, res, next) => {
