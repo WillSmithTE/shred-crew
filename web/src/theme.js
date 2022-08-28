@@ -3,7 +3,7 @@ import { colors } from './colors'
 
 // colors
 const primary = colors.primary;
-const secondary = "#4829B2";
+const secondary = "#FFA768";
 const black = "#343a40";
 const darkBlack = "rgb(36, 40, 44)";
 const background = "#f5f5f5";

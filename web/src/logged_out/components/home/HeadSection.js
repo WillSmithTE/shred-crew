@@ -67,8 +67,12 @@ const styles = (theme) => ({
     verticalAlign: "middle",
     borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[4],
+    maxHeight: '200px',
   },
   container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: theme.spacing(6),
     marginBottom: theme.spacing(12),
     [theme.breakpoints.down("lg")]: {
@@ -97,65 +101,82 @@ function HeadSection(props) {
 
   return (
     <Fragment>
-      <div className={classNames("lg-p-top", classes.wrapper)}>
+      <div className={classNames("sm-p-top", classes.wrapper)} style={{height: '100vh', display: 'flex'}}>
         <div className={classNames("container-fluid", classes.container)}>
-          <Box display="flex" justifyContent="center" className="row">
+          <Box display="flex" justifyContent="center" className="column">
             <Card
               className={classes.card}
               data-aos-delay="200"
               data-aos="zoom-in"
+              style={{ maxWidth: '650px' }}
             >
               <div className={classNames(classes.containerFix, "container")}>
-                <Box justifyContent="space-between" className="row">
-                  <Grid item xs={12} md={9}>
+                <Box justifyContent="center" className="row" align='center' flex='none' style={{paddingRight: '0px', paddingLeft: '0px'}}>
+                  <Grid item xs={12} md={12}>
                     <Box
                       display="flex"
                       flexDirection="column"
-                      justifyContent="space-between"
+                      justifyContent="center"
                       height="100%"
+                      width='100%'
                     >
                       <Box mb={4}>
-                        <Typography variant={isWidthUpLg ? "h3" : "h4"}>
-                          Build your Shred Crew!
+                        <Typography variant={isWidthUpLg ? "h3" : "h4"} align='center'>
+                          Build your Shred Crew
                         </Typography>
                       </Box>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <Box mb={2}>
-                          <Typography
-                            variant={isWidthUpLg ? "h6" : "body1"}
-                            color="textSecondary"
-                            style={{ textAlign: 'center' }}
-                          >
-                            The Shred Crew app is your path to finding like-minded skiers and snowboarders.
-                            Register for free to meet ski & snowboard friends, plan your trip to the snow and find the best resorts.
-                            Don’t miss out!<br /><br />
-                            <b>Break the ice</b> and join our exclusive beta now.
-                          </Typography>
+                      {/* <div style={{ display: 'flex', flexDirection: 'column' }}>  */}
+                      <Box mb={2} alignItems='center' paddingRight='36px' paddingLeft='36px'>
+                        <Typography
+                          variant={isWidthUpLg ? "h6" : "body1"}
+                          color="textSecondary"
+                          style={{ textAlign: 'center', }}
+                          align='center'
 
-                        </Box>
-                        <Button
-                          variant="contained"
-                          color="secondary"
-                          // fullWidth
-                          className={classes.extraLargeButton}
-                          classes={{ label: classes.extraLargeButtonLabel }}
-                          onClick={openRegisterDialog}
                         >
-                          Get invited
-                        </Button>
-                      </div>
+                          The Shred Crew app is your path to finding like-minded skiers and snowboarders.
+                        </Typography>
+                        <Grid>
+                          <video loop autoPlay muted className={classes.image} style={{ boxShadow: 'none' }}>
+                            <source src={`${process.env.PUBLIC_URL}/images/logged_out/wave-video-cropped.mp4`} type="video/mp4" />
+                          </video>
+                        </Grid>
+                        <Typography
+                          variant={isWidthUpLg ? "h6" : "body1"}
+                          color="textSecondary"
+                          style={{ textAlign: 'center' }}
+                          align='center'
+
+                        >
+                          <b>Break the ice</b> and join our exclusive beta now
+                        </Typography>
+
+                      </Box>
+                      {/* </div> */}
                     </Box>
                   </Grid>
-                  <Hidden mdDown>
-                    <Grid item md={3} style={{paddingLeft: '20px'}}>
-                      <video loop autoPlay muted className={classes.image} style={{boxShadow: 'none'}}>
-                        <source src={`${process.env.PUBLIC_URL}/images/logged_out/wave-video-cropped.mp4`} type="video/mp4" />
-                      </video>
-                    </Grid>
-                  </Hidden>
                 </Box>
               </div>
             </Card>
+            <Box mt={3} alignContent='center' justifyContent='center' alignItems='center' display='flex'>
+              <Button
+                variant="contained"
+                color="primary"
+                // fullWidth
+                style={{ borderRadius: '11px', minWidth: '400px' }}
+                onClick={openRegisterDialog}
+              >
+                <Typography
+                  variant={isWidthUpLg ? "h2" : "h3"}
+                  color="textSecondary"
+                  style={{ textAlign: 'center' }}
+                  align='center'
+                  style={{ fontFamily: 'Baloo Bhaijaan', color: 'white', paddingRight: '50px', paddingLeft: '50px'}}
+                >
+                  Get Invited
+                </Typography>
+              </Button>
+            </Box>
           </Box>
         </div>
       </div>
@@ -165,7 +186,7 @@ function HeadSection(props) {
         className={classes.waveBorder}
         animationNegativeDelay={2}
       />
-    </Fragment>
+    </Fragment >
   );
 }
 

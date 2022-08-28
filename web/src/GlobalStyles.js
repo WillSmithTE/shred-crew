@@ -45,6 +45,13 @@ const styles = theme => ({
       marginRight: -theme.spacing(2),
       marginLeft: -theme.spacing(2)
     },
+    ".column": {
+      display: "flex",
+      flexWrap: "wrap",
+      flexDirection: 'column',
+      marginRight: -theme.spacing(2),
+      marginLeft: -theme.spacing(2)
+    },
     ".container-fluid": {
       width: "100%",
       paddingRight: theme.spacing(2),
@@ -87,6 +94,18 @@ const styles = theme => ({
       },
       [theme.breakpoints.down('sm')]: {
         paddingTop: `${theme.spacing(14)} !important`
+      }
+    },
+    ".sm-p-top": {
+      paddingTop: `${theme.spacing(12)} !important`,
+      [theme.breakpoints.down('lg')]: {
+        paddingTop: `${theme.spacing(12)} !important`
+      },
+      [theme.breakpoints.down('md')]: {
+        paddingTop: `${theme.spacing(11)} !important`
+      },
+      [theme.breakpoints.down('sm')]: {
+        paddingTop: `${theme.spacing(10)} !important`
       }
     }
   }
