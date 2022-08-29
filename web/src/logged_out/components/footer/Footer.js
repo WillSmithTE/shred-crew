@@ -209,6 +209,7 @@ function Footer(props) {
                     className={classes.socialIcon}
                     href={socialIcon.href}
                     size="large"
+                    target="_blank"
                   >
                     {socialIcon.icon}
                   </IconButton>
