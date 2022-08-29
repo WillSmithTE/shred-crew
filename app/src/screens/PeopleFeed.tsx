@@ -9,7 +9,7 @@ import { MultiSelector, SingleSelector } from "../components/MultiSelector"
 import { MyButton } from "../components/MyButton"
 import { MyTextInput } from "../components/MyTextInput"
 import { colors } from "../constants/colors"
-import { RootStackParams } from "../navigation/Navigation"
+import { RootStackParams, RootTabParamList } from "../navigation/Navigation"
 import { subHeader } from "../services/styles"
 import { getTagsFromSkiDetails, UserDetails } from "../types"
 import { skiDisciplineOptions, skiStyleOptions } from "./Profile"
@@ -44,7 +44,7 @@ const people = [
     },
 ]
 const bannerHeight = 110
-type Props = NativeStackScreenProps<RootStackParams, 'PeopleFeed'> & {
+type Props = NativeStackScreenProps<RootTabParamList, 'PeopleFeed'> & {
 };
 export const PeopleFeed = ({ route: { params } }: Props) => {
     const [poked, setPoked] = useState<{ [id: string]: boolean | undefined }>({})
@@ -64,10 +64,10 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
             <View style={styles.banner}>
                 <Avatar.Image size={56} source={require('../../assets/avatar.png')} style={{ marginRight: 13 }} />
                 <View style={{ flex: 1 }}>
-                    <Text style={styles.bannerHeader}>Welcome to your Shred Feed</Text>
+                    <Text style={styles.bannerHeader}>Shred Crew Feed</Text>
                     <TouchableOpacity onPress={onPressLocation}><Text>{skiSession.resort?.name ?? 'Verbier Mountain Resort'}</Text></TouchableOpacity>
-                    <TouchableOpacity onPress={() => setShowFilters(true)} style={{ position: 'absolute', right: 20, bottom: 0 }}><Icon name='sliders-h' family='FontAwesome5' size={20} /></TouchableOpacity>
                 </View>
+                <TouchableOpacity onPress={() => setShowFilters(true)} style={{}}><Icon name='sliders-h' family='FontAwesome5' size={20} /></TouchableOpacity>
             </View>
             <ScrollView style={{ flex: 1 }}>
                 {people.map((person) => {
@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         minHeight: bannerHeight,
         paddingTop: 20,
+        paddingHorizontal: 20,
     },
     bannerHeader: {
         fontSize: 18,

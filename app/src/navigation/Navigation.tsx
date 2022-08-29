@@ -33,7 +33,6 @@ export type RootStackParams = {
   GetStarted: undefined
   LocationFinder?: { initialPlace?: Place }
   EditProfile: undefined
-  PeopleFeed?: { firstLoad?: boolean }
   Settings: undefined
 };
 
@@ -54,7 +53,6 @@ export const Navigation = () => {
             {/* <Stack.Screen name="Home" component={Home} /> */}
             <Stack.Screen name="LocationFinder" component={LocationFinder} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
-            <Stack.Screen name="PeopleFeed" component={PeopleFeed} />
             <Stack.Screen name="Settings" component={Settings} />
           </> :
             <>
@@ -77,6 +75,7 @@ export const Navigation = () => {
 export type RootTabParamList = {
   Home: { showOptions?: boolean };
   Messages: undefined
+  PeopleFeed?: { firstLoad?: boolean }
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
@@ -108,6 +107,13 @@ function BottomTabNavigator() {
           component={Home}
           options={({ navigation }: RootTabScreenProps<'Home'>) => ({
             tabBarIcon: ({ color }) => <TabBarIcon name="home" family='MaterialCommunityIcons' color={color} />,
+          })}
+        />
+        <BottomTab.Screen
+          name="PeopleFeed"
+          component={PeopleFeed}
+          options={({ navigation }: RootTabScreenProps<'PeopleFeed'>) => ({
+            tabBarIcon: ({ color }) => <TabBarIcon name="user-friends" family='FontAwesome5' color={color} />,
           })}
         />
         <BottomTab.Screen

@@ -5,7 +5,7 @@ import { colors } from '../constants/colors';
 import { ListItem, ListSeparator } from '../components/List';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearAuth, logoutUser } from '../redux/userReducer';
-import { RootStackParams, RootTabParamList } from '../navigation/Navigation';
+import { RootStackParams, RootTabParamList, RootTabScreenProps } from '../navigation/Navigation';
 import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootState } from '../redux/reduxStore';
 import { useNavigation } from '@react-navigation/native';
@@ -53,7 +53,7 @@ type Props = NativeStackScreenProps<RootTabParamList, 'Home'> & {
 export const Home = ({ route: { params } }: Props) => {
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user.user)
-  const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
+  const { navigate } = useNavigation()
   const logout = () => {
     dispatch(logoutUser())
   }
@@ -82,7 +82,7 @@ export const Home = ({ route: { params } }: Props) => {
                 </LinearGradient>)}
             </View>
           </ScrollView>
-          <WideButton text='Find a Shred Crew' onPress={() => navigate('LocationFinder')} icon={{ family: 'FontAwesome5', name: 'user-friends' }} />
+          <WideButton text='Find a Shred Crew' onPress={() => navigate('PeopleFeed')} icon={{ family: 'FontAwesome5', name: 'user-friends' }} />
           <WideButton text='Group Events' onPress={showComingSoon} icon={{ family: 'FontAwesome5', name: 'calendar' }} />
           <WideButton text='Search for mountain info' onPress={showComingSoon} icon={{ family: 'FontAwesome5', name: 'mountain' }} />
           <TouchableOpacity style={[styles.button, {

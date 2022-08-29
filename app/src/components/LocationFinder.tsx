@@ -64,8 +64,10 @@ export const LocationFinder = ({ route: { params } }: Props) => {
     const userLocation = useUserLocation()
     const dispatch = useDispatch()
 
+    const showSearchBar = yesNo1 === 'no' || initialPlace === undefined
+
     const mapWidth = Dimensions.get('window').width
-    const mapHeight = Dimensions.get('window').height * (yesNo1 === 'no' ? 0.3 : .65)
+    const mapHeight = Dimensions.get('window').height * (showSearchBar ? 0.3 : .65)
     const styles = createStyles(mapWidth, mapHeight)
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>()
 
@@ -155,9 +157,9 @@ export const LocationFinder = ({ route: { params } }: Props) => {
                                 <SingleSelector selected={yesNo1} set={onClickYesNo1} options={yesNoOptions} />
                             </> :
                                 <>
-                                    <Text>No resorts found nearby 😔</Text>
+                                    <Text style={{ paddingTop: 10 }}>No resorts found nearby 😔</Text>
                                 </>}
-                            {yesNo1 === 'no' && <>
+                            {showSearchBar && <>
                                 <View style={{ paddingTop: 20 }} />
                                 <ResortLookup {...{
                                     placeholder: 'Where you at?', fieldName: resortLookupFieldName, onClear: () => setSelectedPlace(undefined),
