@@ -101,17 +101,17 @@ function HeadSection(props) {
 
   return (
     <Fragment>
-      <div className={classNames("sm-p-top", classes.wrapper)} style={{height: '100vh', display: 'flex'}}>
-        <div className={classNames("container-fluid", classes.container)}>
+      <div className={classNames("sm-p-top", classes.wrapper)} style={{ height: '100vh', display: 'flex' }}>
+        <div className={classNames("container-fluid", classes.container)} style={{maxWidth: '750px'}}>
           <Box display="flex" justifyContent="center" className="column">
             <Card
               className={classes.card}
               data-aos-delay="200"
               data-aos="zoom-in"
-              style={{ maxWidth: '650px' }}
+              style={{ display: 'flex' }}
             >
               <div className={classNames(classes.containerFix, "container")}>
-                <Box justifyContent="center" className="row" align='center' flex='none' style={{paddingRight: '0px', paddingLeft: '0px'}}>
+                <Box justifyContent="center" className="row" align='center' flex='none' style={{ paddingRight: '0px', paddingLeft: '0px' }}>
                   <Grid item xs={12} md={12}>
                     <Box
                       display="flex"
@@ -126,7 +126,7 @@ function HeadSection(props) {
                         </Typography>
                       </Box>
                       {/* <div style={{ display: 'flex', flexDirection: 'column' }}>  */}
-                      <Box mb={2} alignItems='center' paddingRight='36px' paddingLeft='36px'>
+                      <Box mb={2} alignItems='center'>
                         <Typography
                           variant={isWidthUpLg ? "h6" : "body1"}
                           color="textSecondary"
@@ -163,7 +163,7 @@ function HeadSection(props) {
                 variant="contained"
                 color="primary"
                 // fullWidth
-                style={{ borderRadius: '11px', maxWidth: '80%', width: '500px' }}
+                style={{ borderRadius: '11px', }}
                 onClick={openRegisterDialog}
               >
                 <Typography
@@ -171,7 +171,7 @@ function HeadSection(props) {
                   color="textSecondary"
                   style={{ textAlign: 'center' }}
                   align='center'
-                  style={{ fontFamily: 'Baloo Bhaijaan', color: 'white', paddingRight: '50px', paddingLeft: '50px'}}
+                  style={{ fontFamily: 'Baloo Bhaijaan', color: 'white', paddingRight: '50px', paddingLeft: '50px' }}
                 >
                   Get Invited
                 </Typography>
