@@ -15,8 +15,7 @@ export function useUserApi() {
         upsert: async (userState: UserDetails) => await baseApiRequest<UserDetails>(
             () => {
                 console.debug(`Upserting user (id=${userState.userId}`)
-                if (devEnv) return Promise.resolve(MyResponseBuilder(dummyLoginRegisterResponse({ ...userState }).user))
-                return baseApi.put<UserDetails>(`/user`)
+                return baseApi.put<UserDetails>(`/user`, { body: JSON.stringify(userState) })
             },
             'error getting user details',
         ),

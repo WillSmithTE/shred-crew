@@ -17,4 +17,6 @@ export const colors = {
   error: '#b55464',
   background: '#eef0f3',
   lightGray: 'rgba(217, 217, 217, 0.22)',
+  orange: '#FFA768',
+  grayBackground: '#D9D9D9'
 }

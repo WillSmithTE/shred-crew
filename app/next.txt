@@ -42,3 +42,8 @@ DONE- feat: change location finder to popup
 DONE- feat: location finder update to new UI (14.8.22)
 DONE- display multiple markers on map
 - messaging ui?: https://www.figma.com/community/file/881015895655545375
+- feat: updatte web to new design (centered, orange, orange button with font)
+- feat: flow when no resorts found nearby
+- feat: update web font
+- bug: lowercase emails on registter/login
+- feat: web dancing man -  fix height before loads, load earlier

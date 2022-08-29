@@ -131,7 +131,6 @@ export const LocationFinder = ({ route: { params } }: Props) => {
         )
     }
     const resortLookupFieldName = 'resort'
-    console.log({ navState: navigation.getState() })
 
     return <>
         <BackButton />
@@ -230,7 +229,7 @@ const ConfirmationDrawer = ({ show, setShow, confirmNext, placeName }: Confirmat
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         enablePanDownToClose
-        handleIndicatorStyle={{ backgroundColor: '#D9D9D9', width: 60, }}
+        handleIndicatorStyle={{ backgroundColor: colors.grayBackground, width: 60, }}
     >
         <View style={{ flex: 1, padding: 20 }}>
             <View style={{ flexDirection: 'row' }}>

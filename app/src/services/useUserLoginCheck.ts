@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { clearAuth, isAuthEqual, loginUser, setLoginState } from "../redux/userReducer";
+import { clearAuth, loginUser } from "../redux/userReducer";
 import { RootState } from "../redux/reduxStore";
-import { myUuid } from "./myUuid";
-import { dummyLoginRegisterResponse, LoginRegisterResponse, LoginState, LoginType } from "../types";
+import { LoginRegisterResponse, LoginState } from "../types";
 import { useAuthApi } from "../api/authApi";
+import { showError } from "../components/Error";
 
 function useLoader() {
     const { refreshAuth: refreshAuthApi } = useAuthApi()
     return {
         refreshAuth: async function (auth: LoginState): Promise<LoginRegisterResponse> {
+            console.debug(1)
             return await refreshAuthApi(auth);
         },
     }
@@ -27,11 +28,18 @@ export function useUserLoginCheck() {
                 setDone(true)
             } else {
                 let response = undefined
-                try { response = await refreshAuth(auth) }
-                catch (e: any) { console.error(e.toString()) }
-                if (response === undefined) dispatch(clearAuth())
-                else dispatch(loginUser({ user: response.user, loginState: response.auth }))
-                setDone(true)
+                try {
+                    response = await refreshAuth(auth)
+                    console.debug({response})
+                    setDone(true)
+                    if (response === undefined) dispatch(clearAuth())
+                    else dispatch(loginUser({ user: response.user, loginState: response.auth }))
+                }
+                catch (e: any) {
+                    showError(e.toString())
+                    setDone(true)
+                    dispatch(clearAuth())
+                }
             }
         })()
 

@@ -2,9 +2,7 @@ import { HttpError } from '../model/HttpError';
 import { jsonString } from '../util/jsonString';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/reduxStore';
-import { dummyLoginRegisterResponse, MyLocation, Place, UserDetails } from '../types';
 import Constants from 'expo-constants';
-import { LatLng } from 'react-native-maps';
 
 const devEnv = Constants.manifest?.releaseChannel === undefined || Constants.manifest?.releaseChannel === 'dev'
 
@@ -46,16 +44,20 @@ const useBaseApiBuilder = ({ baseUrl = '', fetchWith = fetch, }) => {
                     redirected: fetchResponse.redirected,
                     headers: fetchResponse.headers,
                 }
+                console.debug({ baseResponse })
                 const contentType = fetchResponse.headers.get("content-type");
                 const isJson = contentType && contentType.indexOf("application/json") !== -1
-                const body = isJson ? await fetchResponse.json() : await fetchResponse.text()
-
+                const body = isJson && baseResponse.ok ? await fetchResponse.json() : await fetchResponse.text()
                 if (baseResponse.ok) {
                     return {
                         ...baseResponse,
                         body,
                     }
                 } else {
+                    console.debug({
+                        ...baseResponse,
+                        error: (body as any).error,
+                    })
                     return {
                         ...baseResponse,
                         error: (body as any).error,
@@ -68,12 +70,16 @@ const useBaseApiBuilder = ({ baseUrl = '', fetchWith = fetch, }) => {
 };
 
 export const baseApiRequest = async <T, U = T>(callback: () => Promise<MyResponse<U>>, errorMessage: string, mapper: ((a: U) => T) = (a) => (a as unknown as T)) => {
-    const response = await callback()
-    console.debug(`response received: ${jsonString(response)}`)
-    if (response.ok) {
-        return mapper(response.body!!)
-    } else {
-        throw new HttpError({ message: `${errorMessage} - ${response.error} - ${jsonString(response)}`, code: response.status })
+    try {
+        const response = await callback()
+        console.debug(`response received: ${jsonString(response)}`)
+        if (response.ok) {
+            return mapper(response.body!!)
+        } else {
+            throw new HttpError({ message: `${errorMessage} - ${response.error} - ${jsonString(response)}`, code: response.status })
+        }
+    } catch (e: any) {
+        throw new HttpError({ message: jsonString(e), code: e.code })
     }
 }
 

@@ -11,10 +11,13 @@ import { dummyLoginRegisterResponse, LoginRegisterResponse, LoginRequest, LoginT
 import { setUserState } from "../redux/userReducer";
 import { Loading } from "./Loading";
 import { myUuid } from "../services/myUuid";
-import { MyTextInput } from "./MyTextInput";
+import { ErrorText, MyTextInput } from "./MyTextInput";
 import { useUserApi } from "../api/userApi";
 import { useAuthApi } from "../api/authApi";
 import { BackButton } from "./BackButton";
+import { showError, showError2 } from "./Error";
+import { jsonString } from "../util/jsonString";
+import { HttpError } from "../model/HttpError";
 
 const useActions = () => {
     const authApi = useAuthApi()
@@ -38,6 +41,7 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
     const { goBack } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
     const [loading, setLoading] = useState(false)
     const actions = useActions()
+    const [error, setError] = useState<string | undefined>()
 
     const { control, handleSubmit, formState } = useForm({
         defaultValues: {
@@ -48,15 +52,21 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
     });
     const onSubmit = async (data: LoginRequest | RegisterRequest) => {
         setLoading(true)
-        const { user, auth } = await (loginMode ? actions.login(data as LoginRequest) : actions.register(data as RegisterRequest))
-        setLoading(false)
-        dispatch(loginUser({ user, loginState: auth }))
+        try {
+            const { user, auth } = await (loginMode ? actions.login(data as LoginRequest) : actions.register(data as RegisterRequest))
+            setLoading(false)
+            dispatch(loginUser({ user, loginState: auth }))
+        } catch (e: any) {
+            if (e instanceof HttpError && e.code === 409) setError('Account already exists with that email')
+            else showError(jsonString(e))
+            setLoading(false)
+        }
     }
     return <>
         <View style={styles.container}>
             <BackButton />
             <View style={{ paddingHorizontal: 20, width: '90%', }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 30, marginBottom: 30, alignSelf: 'center'}}>{loginMode ? 'Login' : 'Create account'}</Text>
+                <Text style={{ fontWeight: 'bold', fontSize: 30, marginBottom: 30, alignSelf: 'center' }}>{loginMode ? 'Login' : 'Create account'}</Text>
                 {!loginMode && <View style={styles.inputContainer}>
                     <MyTextInput {...{
                         control, formState, fieldName: 'name', placeholder: 'Name',
@@ -67,7 +77,8 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
                 <View style={styles.inputContainer}>
                     <MyTextInput {...{
                         control, formState, fieldName: 'email', placeholder: 'Email',
-                        rules: { required: requiredRule, maxLength: maxLenRule, pattern: emailRule }
+                        rules: { required: requiredRule, maxLength: maxLenRule, pattern: emailRule },
+                        autoCapitalize: 'none'
                     }} />
                 </View>
                 <View style={styles.inputContainer}>
@@ -76,6 +87,7 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
                         rules: { required: requiredRule, maxLength: maxLenRule, minLength: minLenRule }, autoCapitalize: 'none'
                     }} />
                 </View>
+                {error && <ErrorText error={error} />}
             </View>
             <View style={{ marginLeft: 'auto', padding: 20, }}>
                 <Button onPress={handleSubmit(onSubmit)} style={{}} mode='contained'>Next</Button>

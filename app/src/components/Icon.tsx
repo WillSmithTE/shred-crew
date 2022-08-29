@@ -38,22 +38,22 @@ export interface IC {
 	props?: object;
 }
 
-const Icon = ({ family = 'MaterialCommunityIcons', name, size = 24, color, props }: IC) => (
+const Icon = ({ family = 'MaterialCommunityIcons', name, size = 24, color, props, ...rest }: IC) => (
 	<>
-		{family === 'AntDesign' && <AntDesign name={name} size={size} color={color} {...props} />}
-		{family === 'Entypo' && <Entypo name={name} size={size} color={color} {...props} />}
-		{family === 'EvilIcons' && <EvilIcons name={name} size={size} color={color} {...props} />}
-		{family === 'Feather' && <Feather name={name} size={size} color={color} {...props} />}
-		{family === 'FontAwesome' && <FontAwesome name={name} size={size} color={color} {...props} />}
-		{family === 'FontAwesome5' && <FontAwesome5 name={name} size={size} color={color} {...props} />}
-		{family === 'Fontisto' && <Fontisto name={name} size={size} color={color} {...props} />}
-		{family === 'Foundation' && <Foundation name={name} size={size} color={color} {...props} />}
-		{family === 'Ionicons' && <Ionicons name={name} size={size} color={color} {...props} />}
-		{family === 'MaterialCommunityIcons' && <MaterialCommunityIcons name={name} size={size} color={color} {...props} />}
-		{family === 'MaterialIcons' && <MaterialIcons name={name} size={size} color={color} {...props} />}
-		{family === 'Octicons' && <Octicons name={name} size={size} color={color} {...props} />}
-		{family === 'SimpleLineIcons' && <SimpleLineIcons name={name} size={size} color={color} {...props} />}
-		{family === 'Zocial' && <Zocial name={name} size={size} color={color} {...props} />}
+		{family === 'AntDesign' && <AntDesign name={name} size={size} color={color} {...props} {...rest} />}
+		{family === 'Entypo' && <Entypo name={name} size={size} color={color} {...props} {...rest} />}
+		{family === 'EvilIcons' && <EvilIcons name={name} size={size} color={color} {...props} {...rest} />}
+		{family === 'Feather' && <Feather name={name} size={size} color={color} {...props} {...rest} />}
+		{family === 'FontAwesome' && <FontAwesome name={name} size={size} color={color} {...props} {...rest} />}
+		{family === 'FontAwesome5' && <FontAwesome5 name={name} size={size} color={color} {...props} {...rest} />}
+		{family === 'Fontisto' && <Fontisto name={name} size={size} color={color} {...props} {...rest} />}
+		{family === 'Foundation' && <Foundation name={name} size={size} color={color} {...props} {...rest} />}
+		{family === 'Ionicons' && <Ionicons name={name} size={size} color={color} {...props} {...rest} />}
+		{family === 'MaterialCommunityIcons' && <MaterialCommunityIcons name={name} size={size} color={color} {...props} {...rest} />}
+		{family === 'MaterialIcons' && <MaterialIcons name={name} size={size} color={color} {...props} {...rest} />}
+		{family === 'Octicons' && <Octicons name={name} size={size} color={color} {...props} {...rest} />}
+		{family === 'SimpleLineIcons' && <SimpleLineIcons name={name} size={size} color={color} {...props} {...rest} />}
+		{family === 'Zocial' && <Zocial name={name} size={size} color={color} {...props} {...rest} />}
 	</>
 );
 

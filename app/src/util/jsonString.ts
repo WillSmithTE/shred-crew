@@ -1,1 +1,1 @@
-export const jsonString = (val: {}) => JSON.stringify(val, null, 2)
+export const jsonString = (val: any) => JSON.stringify(val, null, 2)

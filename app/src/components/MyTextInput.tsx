@@ -56,9 +56,15 @@ export const MyTextInput = <T,>({ control, rules = {}, fieldName, label, placeho
                 )}
                 name={fieldName}
             />
-            <Text style={styles(theme).errorText}>{(formState.errors as any)[fieldName]?.message ?? ' '}</Text>
+            <ErrorText error={(formState.errors as any)[fieldName]?.message ?? ' '} />
         </>
     </>
+}
+
+export const ErrorText = ({ error }: { error: string }) => {
+    const theme = useTheme()
+
+    return <Text style={styles(theme).errorText}>{error}</Text>
 }
 
 export const requiredRule = { value: true, message: 'Required' }

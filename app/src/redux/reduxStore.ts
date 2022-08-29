@@ -13,6 +13,7 @@ import {
 // import createSensitiveStorage from "redux-persist-sensitive-storage";
 import createSecureStore from "redux-persist-expo-securestore";
 import { userReducer } from './userReducer';
+import { settingsReducer } from './settingsReducer';
 
 // const sensitiveStorage = createSensitiveStorage({
 //   keychainService: "myKeychain",
@@ -35,6 +36,7 @@ const securePersistConfig = {
 
 const rootReducer = combineReducers({
   user: persistReducer(unsecurePersistConfig, userReducer),
+  settings: persistReducer(unsecurePersistConfig, settingsReducer),
   // auth: persistReducer(securePersistConfig, authReducer)
 })
 

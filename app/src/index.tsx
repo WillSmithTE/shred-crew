@@ -10,6 +10,7 @@ import { View } from 'react-native';
 import { DefaultTheme as PaperDefaultTheme, DarkTheme as PaperDarkTheme, Provider as PaperProvider } from 'react-native-paper';
 import { colors } from './constants/colors';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useFonts } from 'expo-font';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -28,15 +29,18 @@ export default function App() {
 const AppInternals = () => {
   const [appIsReady, setAppIsReady] = useState(false);
   const isUserLoginCheckComplete = useUserLoginCheck()
+  const [fontsLoaded] = useFonts({
+    'Baloo-Bhaijaan': require('../assets/BalooBhaijaan-Regular.ttf'),
+  });
 
   useMemo(() => {
     (async () => {
-      if (isUserLoginCheckComplete) {
+      if (isUserLoginCheckComplete && fontsLoaded) {
         await new Promise(r => setTimeout(r, 100)) // wait for dispatches
         setAppIsReady(true);
       }
     })()
-  }, [isUserLoginCheckComplete]);
+  }, [isUserLoginCheckComplete, fontsLoaded]);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -49,11 +53,11 @@ const AppInternals = () => {
   }
 
   return <>
-    <GestureHandlerRootView style={{ flex: 1}} onLayout={onLayoutRootView}>
-        <NavigationContainer theme={DefaultTheme}>
-          <Navigation />
-        </NavigationContainer>
-        <FlashMessage position='bottom' duration={3000} style={{ alignItems: 'center' }} />
+    <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+      <NavigationContainer theme={DefaultTheme}>
+        <Navigation />
+      </NavigationContainer>
+      <FlashMessage position='bottom' duration={3000} style={{ alignItems: 'center' }} />
     </GestureHandlerRootView>
   </>
 }

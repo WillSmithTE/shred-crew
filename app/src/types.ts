@@ -48,7 +48,7 @@ export const dummyLoginRegisterResponse: (userDetails: Partial<UserDetails>) => 
 
 
 export type SkiDetails = {
-    homeMountain?: string,
+    homeMountain?: Place,
     disciplines: UserDisciplines,
     styles: UserStyles,
     skillLevel?: number, // 1-5

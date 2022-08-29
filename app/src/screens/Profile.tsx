@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { MyTextInput, requiredRule } from '../components/MyTextInput';
 import { Slider } from '@sharcoux/slider'
 import { colors } from '../constants/colors';
-import { formatSkiDiscipline, formatSkiStyle, SkiDiscipline, skiDisciplines, SkiStyle, skiStyles, UserDetails, UserDisciplines, UserStyles } from '../types';
+import { formatSkiDiscipline, formatSkiStyle, Place, SkiDiscipline, skiDisciplines, SkiStyle, skiStyles, UserDetails, UserDisciplines, UserStyles } from '../types';
 import { FullScreenLoader } from '../components/Loading';
 import { logoutUser, setUserState, } from '../redux/userReducer';
 import { ImagePicker } from '../components/ImagePicker';
@@ -20,7 +20,17 @@ import { MultiSelector, MultiSelectorOption } from '../components/MultiSelector'
 import { BackButton } from '../components/BackButton';
 import { ResortLookup } from '../components/ResortLookup';
 import { useUserApi } from '../api/userApi';
+import { useResortApi } from '../api/resortApi';
+import { tryCatchAsync } from '../util/tryCatchAsync';
 
+function useLoader() {
+    const { findResort } = useResortApi()
+    return {
+        findResort: async (id: string) => {
+            return await findResort(id)
+        }
+    }
+}
 function useAction() {
     const { upsert } = useUserApi()
     return async (userDetails: UserDetails) => {
@@ -40,24 +50,33 @@ export const Profile = ({ mode }: Props) => {
     const { navigate } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
     const [loading, setLoading] = useState(false)
     const [imageUri, setImageUri] = useState(user!!.imageUri)
-    const [skillLevel, setSkillLevel] = useState<number>(user!!.ski.skillLevel)
+    const [skillLevel, setSkillLevel] = useState<number>(user!!.ski.skillLevel ?? 3)
     const [disciplines, setDisciplines] = useState<UserDisciplines>(user.ski.disciplines ?? {})
     const [skiStyles, setSkiStyles] = useState<UserStyles>(user.ski.styles ?? {})
+    const [homeMountainPlace, setHomeMountainPlace] = useState<Place | undefined>(user.ski.homeMountain)
     const isCreate = mode === 'create'
+    const loader = useLoader()
     const { control, handleSubmit, formState, watch, setValue } = useForm<FormData>({
         defaultValues: {
             name: user?.name ?? '',
             bio: user?.bio ?? '',
-            homeMountain: user?.ski.homeMountain ?? '',
+            homeMountain: homeMountainPlace?.name ?? '',
             backcountryDetails: user?.ski.backcountryDetails ?? ''
         }
     });
+    const onClickResortSearchResult = (id: string) => {
+        tryCatchAsync(
+            () => loader.findResort(id),
+            setHomeMountainPlace,
+            (e) => showError2({ message: 'issue finding resort', description: e }),
+        )
+    }
     const onSubmit = async ({ name, bio, homeMountain, backcountryDetails, }: FormData) => {
         setLoading(true)
         try {
             const response = await action({
                 userId: user.userId, email: user.email, bio, imageUri, name, loginType: user.loginType,
-                ski: { disciplines, skillLevel, styles: skiStyles, backcountryDetails, homeMountain }
+                ski: { disciplines, skillLevel, styles: skiStyles, backcountryDetails, homeMountain: homeMountainPlace }
             })
             dispatch(setUserState(response))
             // setLoading(false)
@@ -88,7 +107,7 @@ export const Profile = ({ mode }: Props) => {
                     multiline: true, fieldName: 'bio', placeholder: 'Tell us about yourself...', rules: { maxLength: { value: 1000, message: 'Too long' } },
                     control, formState, style: { height: 100, paddingTop: 5, }
                 }} />
-                <ResortLookup {...{ fieldName: 'homeMountain', control, formState, watch, setValue, placeholder: 'Home mountain' }} />
+                <ResortLookup {...{ fieldName: 'homeMountain', control, formState, watch, setValue, placeholder: 'Home mountain', onSelectResort: onClickResortSearchResult }} />
                 <View style={{ paddingTop: 0 }}><Text style={[styles.subHeader, {}]}>Ability level</Text></View>
                 <SkillLevelSlider {...{ skillLevel, setSkillLevel }} />
                 <Text style={styles.subHeader}>Type of shredder</Text>
