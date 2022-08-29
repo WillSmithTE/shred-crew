@@ -5,7 +5,7 @@ import { colors } from '../constants/colors';
 import { ListItem } from './List';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearAuth, logoutUser } from '../redux/userReducer';
-import { MainStackParams } from '../navigation/Navigation';
+import { RootStackParams } from '../navigation/Navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootState } from '../redux/reduxStore';
 import { useNavigation } from '@react-navigation/native';
@@ -21,7 +21,7 @@ type Props = {
 export const SearchSuggestions = ({ items }: Props) => {
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user.user)
-  const { navigate } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+  const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const logout = () => {
     dispatch(logoutUser())
   }

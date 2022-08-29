@@ -3,7 +3,7 @@ import { Text, StyleSheet, View, } from "react-native"
 import { Button, IconButton, TextInput } from 'react-native-paper'
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { MainStackParams } from "../navigation/Navigation";
+import { RootStackParams } from "../navigation/Navigation";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useForm, Controller } from "react-hook-form";
 import { loginUser, setLoginState } from "../redux/userReducer";
@@ -38,7 +38,7 @@ type Props = {
 export const LoginRegisterEmail = ({ mode }: Props) => {
     const loginMode = mode === 'login'
     const dispatch = useDispatch()
-    const { goBack } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+    const { goBack } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
     const [loading, setLoading] = useState(false)
     const actions = useActions()
     const [error, setError] = useState<string | undefined>()

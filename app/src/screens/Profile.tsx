@@ -14,7 +14,7 @@ import { ImagePicker } from '../components/ImagePicker';
 import { showError2 } from '../components/Error';
 import { useNavigation } from '@react-navigation/native';
 import { jsonString } from '../util/jsonString';
-import { MainStackParams } from '../navigation/Navigation';
+import { RootStackParams } from '../navigation/Navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MultiSelector, MultiSelectorOption } from '../components/MultiSelector';
 import { BackButton } from '../components/BackButton';
@@ -47,7 +47,7 @@ export const Profile = ({ mode }: Props) => {
     const action = useAction()
     const user = useSelector((state: RootState) => state.user.user)
     if (user === undefined) return <FullScreenLoader />
-    const { navigate } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+    const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
     const [loading, setLoading] = useState(false)
     const [imageUri, setImageUri] = useState(user!!.imageUri)
     const [skillLevel, setSkillLevel] = useState<number>(user!!.ski.skillLevel ?? 3)

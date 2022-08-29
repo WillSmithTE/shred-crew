@@ -9,7 +9,7 @@ import { MultiSelector, SingleSelector } from "../components/MultiSelector"
 import { MyButton } from "../components/MyButton"
 import { MyTextInput } from "../components/MyTextInput"
 import { colors } from "../constants/colors"
-import { MainStackParams } from "../navigation/Navigation"
+import { RootStackParams } from "../navigation/Navigation"
 import { subHeader } from "../services/styles"
 import { getTagsFromSkiDetails, UserDetails } from "../types"
 import { skiDisciplineOptions, skiStyleOptions } from "./Profile"
@@ -44,7 +44,7 @@ const people = [
     },
 ]
 const bannerHeight = 110
-type Props = NativeStackScreenProps<MainStackParams, 'PeopleFeed'> & {
+type Props = NativeStackScreenProps<RootStackParams, 'PeopleFeed'> & {
 };
 export const PeopleFeed = ({ route: { params } }: Props) => {
     const [poked, setPoked] = useState<{ [id: string]: boolean | undefined }>({})
@@ -52,7 +52,7 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
     const [filters, setFilters] = useState<{ [key: string]: boolean }>({})
     const skiSession = useSelector((root: RootState) => root.user.skiSession)
     console.log({ skiSession })
-    const { navigate, getState, push } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+    const { navigate, getState, push } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
 
     if (skiSession === undefined) return <FullScreenLoader />
 

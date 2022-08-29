@@ -4,12 +4,12 @@ import React, { } from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
-import { MainStackParams } from '../navigation/Navigation';
+import { RootStackParams } from '../navigation/Navigation';
 import { logoutUser } from '../redux/userReducer';
 
 export const GetStarted = ({ }: Props) => {
   const dispatch = useDispatch()
-  const { navigate } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+  const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const onNextPress = () => {
     navigate('CreateProfile')
   }

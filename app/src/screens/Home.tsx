@@ -5,7 +5,7 @@ import { colors } from '../constants/colors';
 import { ListItem, ListSeparator } from '../components/List';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearAuth, logoutUser } from '../redux/userReducer';
-import { MainStackParams } from '../navigation/Navigation';
+import { RootStackParams, RootTabParamList } from '../navigation/Navigation';
 import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootState } from '../redux/reduxStore';
 import { useNavigation } from '@react-navigation/native';
@@ -15,6 +15,7 @@ import { showComingSoon } from '../components/Error';
 import { LocationFinder } from '../components/LocationFinder';
 import Icon from '../components/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
+import { header } from '../services/styles';
 
 const friends = [
   {
@@ -47,12 +48,12 @@ const screens = [
   },
 ];
 
-type Props = NativeStackScreenProps<MainStackParams, 'Home'> & {
+type Props = NativeStackScreenProps<RootTabParamList, 'Home'> & {
 };
 export const Home = ({ route: { params } }: Props) => {
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user.user)
-  const { navigate } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+  const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const logout = () => {
     dispatch(logoutUser())
   }
@@ -63,7 +64,7 @@ export const Home = ({ route: { params } }: Props) => {
         {/* <MyImageBackground /> */}
         < View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 40 }}>
           < View style={{ width: '100%', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}>
-            <Text style={{ fontSize: 30, fontWeight: '400', color: colors.orange, fontFamily: 'Baloo-Bhaijaan' }}>Welcome</Text>
+            <Text style={header}>Welcome</Text>
             <IconButton icon='cog-outline' color='black' onPress={() => navigate('Settings')} />
           </View>
           <ScrollView showsHorizontalScrollIndicator={false} horizontal style={{ flexGrow: 0, paddingTop: 5, marginBottom: 25 }}>
@@ -87,7 +88,7 @@ export const Home = ({ route: { params } }: Props) => {
           <TouchableOpacity style={[styles.button, {
             alignSelf: 'flex-start',
             backgroundColor: colors.grayBackground, justifyContent: 'flex-end', alignItems: 'flex-start',
-            marginTop: 5, height: 170, width: 170, flexDirection: 'column', padding: 20,
+            marginTop: 5, height: 130, width: 130, flexDirection: 'column', padding: 20,
           }]} onPress={() => navigate('EditProfile')}>
             <Icon family='FontAwesome5' name='user' />
             <Text style={{ paddingTop: 10 }}>My Profile</Text>

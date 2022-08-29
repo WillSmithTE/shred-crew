@@ -23,7 +23,7 @@ import { useSkiSessionApi } from "../api/skiSessionApi";
 import { createSkiSessionComplete } from "../redux/userReducer";
 import { RootState } from "../redux/reduxStore";
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
-import { MainStackParams } from "../navigation/Navigation";
+import { RootStackParams } from "../navigation/Navigation";
 import Icon from "./Icon";
 import { MyButton } from "./MyButton";
 import { colors } from "../constants/colors";
@@ -48,7 +48,7 @@ function useActions() {
         }
     }
 }
-type Props = NativeStackScreenProps<MainStackParams, 'LocationFinder'> & {
+type Props = NativeStackScreenProps<RootStackParams, 'LocationFinder'> & {
 };
 export const LocationFinder = ({ route: { params } }: Props) => {
     const [places, setPlaces] = useState<Place[] | undefined>()
@@ -67,7 +67,7 @@ export const LocationFinder = ({ route: { params } }: Props) => {
     const mapWidth = Dimensions.get('window').width
     const mapHeight = Dimensions.get('window').height * (yesNo1 === 'no' ? 0.3 : .65)
     const styles = createStyles(mapWidth, mapHeight)
-    const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>()
 
     useEffect(() => {
         (async () => {

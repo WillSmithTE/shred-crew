@@ -16,7 +16,7 @@ import { dummyLoginRegisterResponse, LoginRegisterResponse, LoginType } from "..
 import Constants from "expo-constants";
 import { jsonString } from "../util/jsonString";
 import { useNavigation } from "@react-navigation/native";
-import { MainStackParams } from "../navigation/Navigation";
+import { RootStackParams } from "../navigation/Navigation";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { setUserState } from "../redux/userReducer";
 import { myUuid } from "../services/myUuid";
@@ -38,7 +38,7 @@ type Props = {
 }
 export const LoginRegister = ({ mode }: Props) => {
     const dispatch = useDispatch()
-    const { navigate } = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+    const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
     const [loading, setLoading] = useState(false)
 
     const [request, _, promptAsync] = Google.useIdTokenAuthRequest({
