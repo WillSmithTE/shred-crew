@@ -3,7 +3,7 @@ import { colors } from './colors'
 
 // colors
 const primary = colors.primary;
-const secondary = "#FFA768";
+const secondary = colors.orange;
 const black = "#343a40";
 const darkBlack = "rgb(36, 40, 44)";
 const background = "#f5f5f5";
@@ -121,7 +121,13 @@ const theme = createTheme(adaptV4Theme({
     }
   },
   typography: {
-    useNextVariants: true
+    useNextVariants: true,
+    h4: {
+      fontFamily: "'Baloo Bhaijaan', cursive",
+    },
+    h3: {
+      fontFamily: "'Baloo Bhaijaan', cursive",
+    },
   }
 }));
 

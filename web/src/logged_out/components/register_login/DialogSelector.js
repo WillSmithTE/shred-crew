@@ -16,7 +16,7 @@ function DialogSelector(props) {
     onClose,
   } = props;
   const [loginStatus, setLoginStatus] = useState(null);
-  const [registerStatus, setRegisterStatus] = useState(null);
+  const [registerStatus, setRegisterStatus] = useState();
 
   const _onClose = useCallback(() => {
     setLoginStatus(null);

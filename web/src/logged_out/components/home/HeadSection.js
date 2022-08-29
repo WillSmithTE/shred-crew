@@ -67,7 +67,7 @@ const styles = (theme) => ({
     verticalAlign: "middle",
     borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[4],
-    maxHeight: '200px',
+    height: '200px',
   },
   container: {
     display: 'flex',
@@ -163,7 +163,7 @@ function HeadSection(props) {
                 variant="contained"
                 color="primary"
                 // fullWidth
-                style={{ borderRadius: '11px', minWidth: '400px' }}
+                style={{ borderRadius: '11px', width: '95%', maxWidth: '400px' }}
                 onClick={openRegisterDialog}
               >
                 <Typography

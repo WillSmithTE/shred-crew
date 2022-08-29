@@ -74,7 +74,7 @@ function RegisterDialog(props: Props) {
             <HighlightedInformation>
               Congrats! We've created your account. Please check your email for the next steps.
             </HighlightedInformation>
-            <video loop autoPlay muted className={classes.image} style={{ boxShadow: 'none', maxHeight: '200px' }}>
+            <video loop autoPlay muted className={classes.image} style={{ boxShadow: 'none', height: '200px' }}>
               <source src={`${process.env.PUBLIC_URL}/images/logged_out/success-video.mp4`} type="video/mp4" />
             </video>
           </Fragment> :
