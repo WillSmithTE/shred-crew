@@ -131,63 +131,36 @@ function Footer(props) {
       />
       <div className={classes.footerInner}>
         <Grid container spacing={isWidthUpMd ? 10 : 5}>
-          <Grid item xs={12} md={6} lg={4}>
-            {/* <form>
-              <Box display="flex" flexDirection="column">
-                <Box mb={1}>
-                  <TextField
-                    variant="outlined"
-                    multiline
-                    placeholder="Get in touch with us"
-                    InputProps={{
-                      className: classes.whiteBg,
-                      "aria-label": "Get in Touch",
-                    }}
-                    rows={4}
-                    fullWidth
-                    required
-                  />
-                </Box>
-                <ColoredButton
-                  color={theme.palette.common.white}
-                  variant="outlined"
-                  type="submit"
-                >
-                  Send Message
-                </ColoredButton>
-              </Box>
-            </form> */}
-          </Grid>
           {/* <Hidden lgDown> */}
-            <Grid item xs={12} md={6} lg={4}>
-              <Box display="flex" justifyContent="center">
-                <div>
-                  {infos.map((info, index) => (
-                    <Box display="flex" mb={1} key={index}>
-                      <Box mr={2}>
-                        <IconButton
-                          className={classes.infoIcon}
-                          tabIndex={-1}
-                          disabled
-                          size="large"
-                        >
-                          {info.icon}
-                        </IconButton>
-                      </Box>
-                      <Box
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="center"
+          <Grid item xs={12} md={6} lg={4}>
+            <Box display="flex" justifyContent="center">
+              <div>
+                {infos.map((info, index) => (
+                  <Box display="flex" mb={1} key={index}>
+                    <Box mr={2}>
+                      <IconButton
+                        className={classes.infoIcon}
+                        tabIndex={-1}
+                        disabled
+                        size="large"
                       >
-                        <Typography variant="h6" className="text-white">
-                          {info.description}
-                        </Typography>
-                      </Box>
+                        {info.icon}
+                      </IconButton>
                     </Box>
-                  ))}
-                </div>
-              </Box>
-            </Grid>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      justifyContent="center"
+                    >
+                      <Typography variant="h6" className="text-white">
+                        {info.description}
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+              </div>
+            </Box>
+          </Grid>
           {/* </Hidden> */}
           <Grid item xs={12} md={6} lg={4}>
             <Typography variant="h6" paragraph className="text-white">
@@ -215,6 +188,13 @@ function Footer(props) {
                   </IconButton>
                 </Box>
               ))}
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6} lg={4}>
+            <Box display="flex" flexDirection="column">
+              <Box mb={1}>
+                <img src={`${process.env.PUBLIC_URL}/images/icon.png`} alt='icon' style={{ width: '100%' }} />
+              </Box>
             </Box>
           </Grid>
         </Grid>
