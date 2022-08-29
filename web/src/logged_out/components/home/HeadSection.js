@@ -163,7 +163,7 @@ function HeadSection(props) {
                 variant="contained"
                 color="primary"
                 // fullWidth
-                style={{ borderRadius: '11px', maxWidth: '80%', width: '400px' }}
+                style={{ borderRadius: '11px', maxWidth: '80%', width: '500px' }}
                 onClick={openRegisterDialog}
               >
                 <Typography

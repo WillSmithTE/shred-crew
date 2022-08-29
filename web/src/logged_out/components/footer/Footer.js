@@ -132,7 +132,7 @@ function Footer(props) {
       <div className={classes.footerInner}>
         <Grid container spacing={isWidthUpMd ? 10 : 5}>
           <Grid item xs={12} md={6} lg={4}>
-            <form>
+            {/* <form>
               <Box display="flex" flexDirection="column">
                 <Box mb={1}>
                   <TextField
@@ -156,9 +156,9 @@ function Footer(props) {
                   Send Message
                 </ColoredButton>
               </Box>
-            </form>
+            </form> */}
           </Grid>
-          <Hidden lgDown>
+          {/* <Hidden lgDown> */}
             <Grid item xs={12} md={6} lg={4}>
               <Box display="flex" justifyContent="center">
                 <div>
@@ -188,7 +188,7 @@ function Footer(props) {
                 </div>
               </Box>
             </Grid>
-          </Hidden>
+          {/* </Hidden> */}
           <Grid item xs={12} md={6} lg={4}>
             <Typography variant="h6" paragraph className="text-white">
               About us
