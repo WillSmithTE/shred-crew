@@ -1,20 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, View, Text, TouchableOpacity, ScrollView, Image, Platform } from 'react-native';
+import React, {  } from 'react';
+import { StyleSheet, View, Text } from 'react-native';
 
 import { colors } from '../constants/colors';
-import { ListItem, ListSeparator } from '../components/List';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearAuth, logoutUser } from '../redux/userReducer';
-import { RootStackParams, RootTabParamList } from '../navigation/Navigation';
-import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { logoutUser } from '../redux/userReducer';
+import { RootStackParams } from '../navigation/Navigation';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootState } from '../redux/reduxStore';
 import { useNavigation } from '@react-navigation/native';
-import { Avatar, Button, IconButton } from 'react-native-paper';
-import { MyImageBackground } from '../components/MyImageBackground';
-import { showComingSoon } from '../components/Error';
-import { LocationFinder } from '../components/LocationFinder';
-import Icon from '../components/Icon';
-import { LinearGradient } from 'expo-linear-gradient';
 import { header } from '../services/styles';
 
 

@@ -38,6 +38,7 @@ const useBaseApiBuilder = ({ baseUrl = '', fetchWith = fetch, }) => {
             }
         })
             .then(async fetchResponse => {
+                console.debug(`response received (ok=${fetchResponse.ok})`)
                 const baseResponse = {
                     ok: fetchResponse.ok,
                     status: fetchResponse.status,

@@ -15,6 +15,8 @@ custom:
       - dev
       - prod
   logRetentionInDays: 14
+  serverless-offline:
+    host: '0.0.0.0'
 
 provider:
   name: aws

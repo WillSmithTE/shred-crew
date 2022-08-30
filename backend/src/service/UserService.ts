@@ -48,6 +48,7 @@ export const userService = {
 }
 
 export function withoutPassword(withPassword: UserDetailsWithPassword): UserDetails {
-    const { password, ...user } = withPassword
+    const user = { ...withPassword }
+    delete user.password
     return user
 }

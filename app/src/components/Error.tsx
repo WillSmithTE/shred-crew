@@ -5,7 +5,7 @@ export const showError = (message: string) => {
     showMessage({ message, type: 'danger' })
 }
 export const showError2 = (options: MessageOptions) => {
-    console.error(options.message)
+    console.error(options.message, options.description)
     showMessage({ ...options, type: 'danger' })
 }
 

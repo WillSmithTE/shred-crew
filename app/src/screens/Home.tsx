@@ -1,4 +1,4 @@
-import React, {  } from 'react';
+import React, { } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 
 import { colors } from '../constants/colors';
@@ -50,8 +50,8 @@ export const Home = ({ route: { params } }: Props) => {
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', }}>
             {friends.map((friend, i) =>
               <LinearGradient
-                colors={friend.id ? ['#7ED6F2', '#EFF17F', '#FFAC3E', '#F4AB74', '#FFA768'] : []}
-                style={{ marginRight: 4, borderRadius: avatarSize, padding: 3, }} key={i}
+                colors={friend.id === undefined ? [colors.background, colors.background] : ['#7ED6F2', '#EFF17F', '#FFAC3E', '#F4AB74', '#FFA768']}
+                style={[{ marginRight: 4, borderRadius: avatarSize, padding: 3, }]} key={i}
               >
                 <TouchableOpacity onPress={showComingSoon} activeOpacity={.2}>
                   <View style={{ backgroundColor: colors.background, padding: 3, borderRadius: avatarSize }}>

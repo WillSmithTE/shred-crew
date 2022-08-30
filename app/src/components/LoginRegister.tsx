@@ -56,7 +56,7 @@ export const LoginRegister = ({ mode }: Props) => {
             const { user, auth } = await loader.googleLogin(response.params.id_token)
             dispatch(loginUser({ user, loginState: auth }))
         } catch (err) {
-            showError2({ message: `google login failed`, description: (err as any).toString() });
+            showError2({ message: `google login failed`, description: jsonString(err) });
         }
     }
     const onEmailPress = () => {
