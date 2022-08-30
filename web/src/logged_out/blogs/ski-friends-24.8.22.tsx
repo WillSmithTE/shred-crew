@@ -84,7 +84,7 @@ export const SkiFriendsBlog24822 = {
             Conclusion
         </Typography>
         <Typography paragraph>
-            So there you have it: ways to make friends at snow. For more tips and tricks, be sure to sign up for our beta, keep track of our blog, and follow our <a href='https://www.instagram.com/shredcrews' target="_blank" rel="noreferrer">insta</a> if you haven't already. And if all else fails, remember that as long as there are people skiing and snowboarding around you, you're bound to meet someone new soon enough!
+            So there you have it: ways to make friends at snow. For more tips and tricks, be sure to sign up for our beta, keep track of our blog, and follow our <a href='https://www.instagram.com/shredcrew.app' target="_blank" rel="noreferrer">insta</a> if you haven't already. And if all else fails, remember that as long as there are people skiing and snowboarding around you, you're bound to meet someone new soon enough!
         </Typography>
     </Fragment>
 }
