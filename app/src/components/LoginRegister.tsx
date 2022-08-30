@@ -1,36 +1,33 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { ImageBackground, Text, StyleSheet, View, Image, } from "react-native"
-import { Button, IconButton } from 'react-native-paper'
-import { showComingSoon, showError, showError2 } from "../components/Error"
+import { Button } from 'react-native-paper'
+import { showError2 } from "../components/Error"
 // import {
 //     GoogleSigninButton,
 // } from '@react-native-google-signin/google-signin';
 import * as Google from 'expo-auth-session/providers/google';
-import * as AuthSession from 'expo-auth-session';
 // import * as GoogleNative from 'expo-google-app-auth';
-import * as WebBrowser from 'expo-web-browser';
-import { onGoogleSignInButtonPress } from "../components/GoogleSignInButton";
 import { useDispatch } from "react-redux";
 import { loginUser, } from "../redux/userReducer";
-import { dummyLoginRegisterResponse, LoginRegisterResponse, LoginType } from "../types";
+import { dummyLoginRegisterResponse, LoginRegisterResponse } from "../types";
 import Constants from "expo-constants";
 import { jsonString } from "../util/jsonString";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParams } from "../navigation/Navigation";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { setUserState } from "../redux/userReducer";
-import { myUuid } from "../services/myUuid";
-import jwtDecode from "jwt-decode";
 import { FullScreenLoader } from "./Loading";
 import { colors } from "../constants/colors";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useAuthApi } from "../api/authApi";
 
-const googleLoginLoader: (idToken: string) => Promise<LoginRegisterResponse> = async (idToken: string) => {
-    const { name, picture }: any = jwtDecode(idToken)
-    await new Promise(r => setTimeout(r, 1000));
-    return dummyLoginRegisterResponse({ name, imageUri: picture })
+const useLoader = () => {
+    const authApi = useAuthApi()
+    return {
+        googleLogin: async (idToken: string) => {
+            return await authApi.googleSignin(idToken)
+        }
+    }
 }
-
 type Mode = 'login' | 'register'
 
 type Props = {
@@ -40,6 +37,7 @@ export const LoginRegister = ({ mode }: Props) => {
     const dispatch = useDispatch()
     const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
     const [loading, setLoading] = useState(false)
+    const loader = useLoader()
 
     const [request, _, promptAsync] = Google.useIdTokenAuthRequest({
         webClientId: Constants.manifest?.extra!!.webClientId,
@@ -55,7 +53,7 @@ export const LoginRegister = ({ mode }: Props) => {
             if (response.type === 'error') throw new Error(response.error?.message);
             if (response.type !== 'success') return;
             if (!!!response.params.id_token) throw new Error(`no id_token (response=${jsonString(response)})`)
-            const { user, auth } = await googleLoginLoader(response.params.id_token)
+            const { user, auth } = await loader.googleLogin(response.params.id_token)
             dispatch(loginUser({ user, loginState: auth }))
         } catch (err) {
             showError2({ message: `google login failed`, description: (err as any).toString() });

@@ -28,5 +28,12 @@ export function useAuthApi() {
             },
             `error registering (email=${request.email})`,
         ),
+        googleSignin: async (idToken: string) => await baseApiRequest<LoginRegisterResponse>(
+            () => {
+                console.debug(`attempting google sign in`)
+                return baseApi.post<LoginRegisterResponse>(`/auth/google-sign-in`, { body: JSON.stringify({ idToken }) }, false)
+            },
+            `error attempting google sign in`,
+        ),
     }
 }

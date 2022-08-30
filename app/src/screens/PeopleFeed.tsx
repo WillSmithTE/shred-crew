@@ -48,14 +48,15 @@ type Props = NativeStackScreenProps<RootTabParamList, 'PeopleFeed'> & {
 };
 export const PeopleFeed = ({ route: { params } }: Props) => {
     const [poked, setPoked] = useState<{ [id: string]: boolean | undefined }>({})
-    const [showFilters, setShowFilters] = useState(!!params?.firstLoad)
-    const [filters, setFilters] = useState<{ [key: string]: boolean }>({})
     const skiSession = useSelector((root: RootState) => root.user.skiSession)
+    const [showFilters, setShowFilters] = useState(skiSession === undefined)
+    const [filters, setFilters] = useState<{ [key: string]: boolean }>({})
     console.log({ skiSession })
     const { navigate, getState, push } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
 
     if (skiSession === undefined) return <FullScreenLoader />
 
+    console.log({ skiSession })
     const onPressLocation = () => {
         push('LocationFinder', { initialPlace: skiSession.resort })
     }
