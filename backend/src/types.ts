@@ -74,13 +74,24 @@ export type ResortStore = {
 }
 
 export type CreateSessionRequest = Place
-export type CreateSessionResponse = SkiSession
 
 export type SkiSession = {
     id: string,
     userId: string,
-    place: Place,
     createdAt: number,
+    userLocation: MyLocation,
+    resort: Place,
+}
+export type GetPeopleFeedResponse = {
+    people: PersonInFeed[],
+}
+export type PersonInFeed = {
+    name: string,
+    userId: string,
+    imageUri?: string,
+    ski: SkiDetails,
+    bio?: string,
+    sessionResort: Place,
 }
 
 export type RegisterRequest = { name: string, email: string, password: string }

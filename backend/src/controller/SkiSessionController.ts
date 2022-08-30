@@ -1,11 +1,11 @@
 import { dynamoDbClient, RESORTS_TABLE, USERS_TABLE } from "../database";
 import { Request, Response } from 'express';
-import { CreateSessionRequest, CreateSessionResponse, Place } from "../types";
+import { CreateSessionRequest, CreateSessionResponse, Place, SkiSession } from "../types";
 import { validateHttpBody } from "../util/validateHttpBody";
 import geohash from 'ngeohash';
 
 export const skiSessionController = {
-    add: async (req: Request<{}, CreateSessionRequest>, res: Response<CreateSessionResponse>) => {
+    add: async (req: Request<{}, CreateSessionRequest>, res: Response<SkiSession>) => {
         const place = req.body;
         validateHttpBody(place, res, verifyPlace, () => {
             res.json({ createdAt: 5, id: '123', place, userId: '999' })
