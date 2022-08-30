@@ -3,7 +3,10 @@ import { Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { myConfig } from "../myConfig";
 import { JwtUserInfo, MyJwtPayload } from "../backendTypes";
+import { OAuth2Client } from 'google-auth-library';
+import { defaultSkiDetails, LoginType, UserDetails } from "../types";
 
+const googleClient = new OAuth2Client(myConfig.googleExpoClientId)
 export const authService = {
     generateToken: function (jwtUserInfo: JwtUserInfo, secret: string, expiresIn: string) {
         return jwt.sign(jwtUserInfo, secret, { expiresIn })
@@ -23,6 +26,24 @@ export const authService = {
             return { ...decoded, userId, email }
         } catch (e) {
             return undefined
+        }
+    },
+    // https://developers.google.com/identity/sign-in/web/backend-auth
+    googleIdTokenToUserDetails: async function (idToken: string): Promise<UserDetails> {
+        console.debug(`verify google sign in (idToken=${idToken})`)
+        const ticket = await googleClient.verifyIdToken({
+            idToken,
+            audience: [myConfig.googleAndroidClientId, myConfig.googleExpoClientId, myConfig.googleIosClientId],
+        });
+        const payload = ticket.getPayload();
+        return {
+            userId: `google:${payload.sub}`,
+            imageUri: payload.picture,
+            createdAt: new Date().getTime(),
+            email: payload.email!!,
+            loginType: LoginType.GOOGLE,
+            name: payload.name ?? '',
+            ski: defaultSkiDetails,
         }
     }
 }

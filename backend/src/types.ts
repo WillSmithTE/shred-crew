@@ -25,12 +25,13 @@ export type LoginRegisterResponse = {
 }
 
 export type SkiDetails = {
-    homeMountain?: string,
+    homeMountain?: Place,
     disciplines: UserDisciplines,
     styles: UserStyles,
     skillLevel?: number, // 1-5
     backcountryDetails?: string,
 }
+export const defaultSkiDetails: SkiDetails = { disciplines: {}, styles: {}, }
 export type SkiDiscipline = 'ski' | 'snowboard' | 'ski-skate'
 export type UserDisciplines = { [key in SkiDiscipline]?: boolean }
 
@@ -87,3 +88,7 @@ export type LoginRequest = { email: string, password: string }
 
 export type MyResponse<T> =
     { error: string } | T
+
+export type GoogleSignInRequest = {
+    idToken: string
+}

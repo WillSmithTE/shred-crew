@@ -35,7 +35,16 @@ export const userService = {
         };
         await dynamoDbClient.put(params).promise()
         return withoutPassword(user as UserDetailsWithPassword)
-    }
+    },
+    upsertWithoutPassword: async function (user: UserDetails): Promise<UserDetails> {
+        console.debug(`upserting user without password (id=${user.userId})`)
+        const params = {
+            TableName: USERS_TABLE,
+            Item: user,
+        };
+        await dynamoDbClient.put(params).promise()
+        return user
+    },
 }
 
 export function withoutPassword(withPassword: UserDetailsWithPassword): UserDetails {

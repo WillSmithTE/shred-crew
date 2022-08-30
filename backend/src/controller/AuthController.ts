@@ -1,13 +1,12 @@
 import { dynamoDbClient, RESORTS_TABLE, USERS_TABLE } from "../database";
 import { Request, Response } from 'express';
-import { LoginRegisterResponse, LoginRequest, LoginState, LoginType, RegisterRequest, UserDetails } from "../types";
+import { defaultSkiDetails, GoogleSignInRequest, LoginRegisterResponse, LoginRequest, LoginState, LoginType, RegisterRequest, UserDetails } from "../types";
 import bcrypt from "bcryptjs";
 import { validateHttpBody, verifyDefined as validateDefined, verifyString as validateString } from "../util/validateHttpBody";
 import { userService, withoutPassword } from "../service/UserService";
 import { v4 as uuidv4 } from 'uuid';
 import { authService } from "../service/AuthService";
 import { myConfig } from "../myConfig";
-import { access } from "fs";
 
 export const authController = {
     login: async (req: Request<{}, LoginRequest>, res: Response<LoginRegisterResponse>) => {
@@ -41,7 +40,7 @@ export const authController = {
                     password: saltedPassword,
                     loginType: LoginType.EMAIL,
                     email: body.email,
-                    ski: { disciplines: {}, styles: {}, },
+                    ski: defaultSkiDetails,
                 }
                 try {
                     const userResponse = await userService.upsert(user)
@@ -67,7 +66,21 @@ export const authController = {
                     accessTokenToReturn = authService.generateToken(refreshToken, myConfig.accessTokenSecret, myConfig.accessTokenLife)
                 }
                 const user = withoutPassword(await userService.get(refreshToken.userId))
-                return { user, auth: { accessToken: accessTokenToReturn, refreshToken } }
+                return res.json({ user, auth: { accessToken: accessTokenToReturn, refreshToken: body.refreshToken } })
+            }
+        })
+    },
+    googleSignIn: async (req: Request<{}, {}, GoogleSignInRequest>, res: Response<LoginRegisterResponse>) => {
+        const body = req.body
+        validateHttpBody(body, res, validateGoogleSignInRequest, async () => {
+            try {
+                const user = await authService.googleIdTokenToUserDetails(body.idToken)
+                const userResponse = await userService.upsertWithoutPassword(user)
+                const loginState = authService.generateTokens(user.userId, user.email)
+                res.json({ user: userResponse, auth: loginState });
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({ error: `Could not sign in with google: ${error}` } as any);
             }
         })
     },
@@ -89,4 +102,8 @@ function validateLoginState(a: LoginState) {
     validateString(a.accessToken, 'accessToken')
     validateDefined(a.refreshToken, 'refreshToken')
     validateString(a.refreshToken, 'refreshToken')
+}
+function validateGoogleSignInRequest(a: GoogleSignInRequest) {
+    validateDefined(a.idToken, 'idToken')
+    validateString(a.idToken, 'idToken')
 }
