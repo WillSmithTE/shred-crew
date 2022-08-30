@@ -9,7 +9,6 @@ import * as Google from 'expo-auth-session/providers/google';
 // import * as GoogleNative from 'expo-google-app-auth';
 import { useDispatch } from "react-redux";
 import { loginUser, } from "../redux/userReducer";
-import { dummyLoginRegisterResponse, LoginRegisterResponse } from "../types";
 import Constants from "expo-constants";
 import { jsonString } from "../util/jsonString";
 import { useNavigation } from "@react-navigation/native";

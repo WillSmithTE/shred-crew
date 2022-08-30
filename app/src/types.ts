@@ -11,7 +11,9 @@ export type UserDetails = {
     ski: SkiDetails,
     bio?: string,
     createdAt?: number,
-    otherImages?: string[]
+    otherImages?: string[],
+    matches?: { [userId: string]: boolean },
+    poked?: { [userId: string]: boolean },
 }
 export type LoginState = {
     accessToken: string,
@@ -168,16 +170,21 @@ export type SkiSession = {
     resort: Place,
 }
 
+export type GetPeopleFeedRequest = {
+    userId: string,
+    location: MyLocation,
+}
 export type GetPeopleFeedResponse = {
-    skiSession: SkiSession,
-    people: {}[
-
-    ],
+    people: PersonInFeed[],
 }
 export type PersonInFeed = {
-    id: string,
     name: string,
+    userId: string,
     imageUri?: string,
+    ski: SkiDetails,
+    bio?: string,
+    sessionResort: Place,
+    otherImages: string[],
 }
 
 export type RegisterRequest = { name: string, email: string, password: string }

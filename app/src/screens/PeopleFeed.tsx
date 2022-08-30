@@ -11,55 +11,60 @@ import { MyTextInput } from "../components/MyTextInput"
 import { colors } from "../constants/colors"
 import { RootStackParams, RootTabParamList } from "../navigation/Navigation"
 import { subHeader } from "../services/styles"
-import { getTagsFromSkiDetails, UserDetails } from "../types"
+import { GetPeopleFeedRequest, getTagsFromSkiDetails, MyLocation, PersonInFeed, UserDetails } from "../types"
 import { skiDisciplineOptions, skiStyleOptions } from "./Profile"
 import Swiper from 'react-native-swiper'
 import { showComingSoon } from "../components/Error"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../redux/reduxStore"
 import { FullScreenLoader } from "../components/Loading"
 import { useNavigation } from "@react-navigation/native"
+import { dummyPeopleFeedPeople } from "../model/dummyData"
+import { useSkiSessionApi } from "../api/skiSessionApi"
+import { tryCatchAsync } from "../util/tryCatchAsync"
+import { logoutUser } from "../redux/userReducer"
 
-const people = [
-    {
-        id: '1',
-        name: 'Joos Hartmann',
-        imageUri: require('../../assets/peopleFeed1-1.png'),
-        ski: { disciplines: { ski: true, snowboard: true }, styles: {}, skillLevel: 5 },
-        otherImages: [require('../../assets/peopleFeed1-2.png')],
-    },
-    {
-        id: '2',
-        name: 'Pippi Kramer',
-        imageUri: require('../../assets/peopleFeed3.png'),
-        ski: { disciplines: { ski: true, }, styles: {}, skillLevel: 5 },
-        otherImages: [require('../../assets/peopleFeed3-2.png')],
-    },
-    {
-        id: '3',
-        name: 'Willi Smith',
-        imageUri: require('../../assets/peopleFeed2.png'),
-        ski: { disciplines: { ski: true, snowboard: true }, styles: {}, skillLevel: 3 },
-        otherImages: [require('../../assets/peopleFeed2-2.png')],
-    },
-]
+function useLoader() {
+    const skiSessionApi = useSkiSessionApi()
+    return {
+        findNearbyPeople: async (request: GetPeopleFeedRequest) => {
+            return await skiSessionApi.findNearbyPeople(request)
+        }
+    }
+}
+
 const bannerHeight = 110
 type Props = NativeStackScreenProps<RootTabParamList, 'PeopleFeed'> & {
 };
 export const PeopleFeed = ({ route: { params } }: Props) => {
-    const [poked, setPoked] = useState<{ [id: string]: boolean | undefined }>({})
+    const dispatch = useDispatch()
     const skiSession = useSelector((root: RootState) => root.user.skiSession)
+    const [poked, setPoked] = useState<{ [id: string]: boolean | undefined }>({})
     const [showFilters, setShowFilters] = useState(skiSession === undefined)
     const [filters, setFilters] = useState<{ [key: string]: boolean }>({})
-    console.log({ skiSession })
     const { navigate, getState, push } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
-
-    if (skiSession === undefined) return <FullScreenLoader />
-
+    const [people, setPeople] = useState<PersonInFeed[]>()
+    const [loading, setLoading] = useState(true)
+    if (skiSession === undefined) {
+        push('LocationFinder')
+        return <FullScreenLoader />
+    }
     console.log({ skiSession })
+
+    const loader = useLoader()
+    useEffect(() => {
+        tryCatchAsync(
+            () => loader.findNearbyPeople({ userId: skiSession.userId, location: skiSession.resort.googlePlace.geometry.location }),
+            (response) => {
+                setPeople(response.people)
+            },
+        )
+    }, [skiSession])
+
     const onPressLocation = () => {
         push('LocationFinder', { initialPlace: skiSession.resort })
     }
+
     return <>
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <View style={styles.banner}>
@@ -70,33 +75,38 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
                 </View>
                 <TouchableOpacity onPress={() => setShowFilters(true)} style={{}}><Icon name='sliders-h' family='FontAwesome5' size={20} /></TouchableOpacity>
             </View>
-            <ScrollView style={{ flex: 1 }}>
-                {people.map((person) => {
-                    const { id, name } = person
-                    const isPoked = poked[id] === true
-                    const onPoke = () => setPoked({ ...poked, [id]: isPoked ? undefined : true })
-                    const onPressSeeMore = showComingSoon
-                    return <View key={id} style={{ flex: 1, minHeight: 360 }}>
-                        <ImageSwiper person={person} />
-                        <View style={{ flexDirection: 'row', paddingTop: 15, minHeight: 70, }}>
-                            <View style={{ backgroundColor: '#2FCE5C', width: 10, height: 10, borderRadius: 5, marginHorizontal: 10, marginTop: 5, }}></View>
-                            <View>
-                                <Text style={{ fontWeight: '700' }}>{name}</Text>
-                                <TouchableOpacity onPress={onPressSeeMore}>
-                                    <Text style={{ textDecorationLine: 'underline' }}>See more</Text>
+            {people === undefined ? <View style={{ flex: 1 }}>
+                <FullScreenLoader background={false} />
+            </View> :
+                <ScrollView style={{ flex: 1 }}>
+                    {people.map((person) => {
+                        const { userId, name } = person
+                        const isPoked = poked && poked[userId] === true
+                        const onPressSeeMore = showComingSoon
+                        const onPoke = (userId: string, newVal: boolean) => setPoked({ ...poked, [userId]: isPoked ? undefined : true })
+
+                        return <View key={userId} style={{ flex: 1, minHeight: 360 }}>
+                            <ImageSwiper person={person} />
+                            <View style={{ flexDirection: 'row', paddingTop: 15, minHeight: 70, }}>
+                                <View style={{ backgroundColor: '#2FCE5C', width: 10, height: 10, borderRadius: 5, marginHorizontal: 10, marginTop: 5, }}></View>
+                                <View>
+                                    <Text style={{ fontWeight: '700' }}>{name}</Text>
+                                    <TouchableOpacity onPress={onPressSeeMore}>
+                                        <Text style={{ textDecorationLine: 'underline' }}>See more</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <TouchableOpacity onPress={() => onPoke(userId, !isPoked)} style={{
+                                    width: 44, height: 44, backgroundColor: isPoked ? colors.secondary : colors.lightGray,
+                                    flex: 0, marginLeft: 'auto', justifyContent: 'center', alignItems: 'center', marginRight: 12,
+                                    borderRadius: 7,
+                                }}>
+                                    <Image style={{ width: 24, height: 24 }} source={require('../../assets/horns.png')} resizeMode='contain' />
                                 </TouchableOpacity>
                             </View>
-                            <TouchableOpacity onPress={onPoke} style={{
-                                width: 44, height: 44, backgroundColor: isPoked ? colors.secondary : colors.lightGray,
-                                flex: 0, marginLeft: 'auto', justifyContent: 'center', alignItems: 'center', marginRight: 12,
-                                borderRadius: 7,
-                            }}>
-                                <Image style={{ width: 24, height: 24 }} source={require('../../assets/horns.png')} resizeMode='contain' />
-                            </TouchableOpacity>
                         </View>
-                    </View>
-                })}
-            </ScrollView>
+                    })}
+                </ScrollView>
+            }
             <FilterDrawer {...{ filters, setFilters, show: showFilters, setShow: setShowFilters, confirmNext: () => { setShowFilters(false) } }} />
         </View>
     </>
@@ -190,7 +200,7 @@ const ImageSwiper = ({ person: { imageUri, ski, otherImages } }: ImageSwiperProp
                 ref={swipeRef}
             >
                 {images.map((imgUri, index) =>
-                    <Image source={imgUri as any} resizeMode='cover' resizeMethod='resize' style={{ resizeMode: 'cover', width: '100%', height: '100%' }} key={index} />
+                    <Image source={{ uri: imgUri }} resizeMode='cover' resizeMethod='resize' style={{ resizeMode: 'cover', width: '100%', height: '100%' }} key={index} />
                 )}
             </Swiper>
             <View style={{ position: 'absolute', top: 12, left: 12, flexDirection: 'row' }}>

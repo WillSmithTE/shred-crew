@@ -50,7 +50,7 @@ export const Home = ({ route: { params } }: Props) => {
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', }}>
             {friends.map((friend, i) =>
               <LinearGradient
-                colors={friend.id === undefined ? [colors.background, colors.background] : ['#7ED6F2', '#EFF17F', '#FFAC3E', '#F4AB74', '#FFA768']}
+                colors={friend.id === undefined ? [colors.background, colors.background, colors.background] : ['#7ED6F2', '#EFF17F', '#FFAC3E', '#F4AB74', '#FFA768']}
                 style={[{ marginRight: 4, borderRadius: avatarSize, padding: 3, }]} key={i}
               >
                 <TouchableOpacity onPress={showComingSoon} activeOpacity={.2}>

@@ -1,21 +1,18 @@
 import React, { useState } from "react"
 import { Text, StyleSheet, View, } from "react-native"
-import { Button, IconButton, TextInput } from 'react-native-paper'
+import { Button } from 'react-native-paper'
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParams } from "../navigation/Navigation";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useForm, Controller } from "react-hook-form";
-import { loginUser, setLoginState } from "../redux/userReducer";
-import { dummyLoginRegisterResponse, LoginRegisterResponse, LoginRequest, LoginType, RegisterRequest } from "../types";
-import { setUserState } from "../redux/userReducer";
+import { useForm } from "react-hook-form";
+import { loginUser } from "../redux/userReducer";
+import { LoginRequest, RegisterRequest } from "../types";
 import { Loading } from "./Loading";
-import { myUuid } from "../services/myUuid";
 import { ErrorText, MyTextInput } from "./MyTextInput";
-import { useUserApi } from "../api/userApi";
 import { useAuthApi } from "../api/authApi";
 import { BackButton } from "./BackButton";
-import { showError, showError2 } from "./Error";
+import { showError } from "./Error";
 import { jsonString } from "../util/jsonString";
 import { HttpError } from "../model/HttpError";
 

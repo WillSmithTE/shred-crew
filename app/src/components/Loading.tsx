@@ -30,10 +30,17 @@ export const Loading = ({ theme = 'white', size = 'large', backgroundColor = 'wh
     );
 };
 
-export const FullScreenLoader = () => {
-    return <ImageBackground style={styles.background} source={require('../../assets/splash.png')}>
-        <Loading opacity={0.5}/>
-    </ImageBackground>
+type FullScreenLoaderProps = {
+    background?: boolean,
+}
+export const FullScreenLoader = ({ background = true }) => {
+    return background ?
+        <ImageBackground style={styles.background} source={require('../../assets/splash.png')}>
+            <Loading opacity={0.5} />
+        </ImageBackground> :
+        <View style={styles.background}>
+            <Loading opacity={0.5} />
+        </View>
 }
 
 

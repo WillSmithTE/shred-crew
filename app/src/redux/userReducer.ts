@@ -17,6 +17,7 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         setUserState: (state, action: PayloadAction<UserDetails>) => {
+            console.log({ user: action.payload })
             state.user = action.payload
             console.log('setting user state')
         },
@@ -34,6 +35,8 @@ export const userSlice = createSlice({
             console.log('logging out')
             state.loginState = undefined
             state.user = undefined
+            state.loading = undefined
+            state.skiSession = undefined
         },
         loginUser: (state, { payload: { user, loginState } }: PayloadAction<UserState>) => {
             state.loginState = loginState

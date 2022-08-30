@@ -2,20 +2,17 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { subHeader } from "../services/styles"
 import { FullScreenLoader } from "./Loading"
 import { Text, View, StyleSheet, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
-import MapView, { LatLng, Marker, Region, PROVIDER_GOOGLE } from 'react-native-maps';
-import { MultiSelector, MultiSelectorOption, SelectorButtons, SingleSelector } from "./MultiSelector";
-import { dummyPlace, placeToRegion as googlePlaceToRegion, locationToLatLng, GooglePlace, latLngToRegion as myLocationToRegion, Place, CreateSessionRequest, CreateSessionResponse, dummyLoginRegisterResponse, MyLocation, latLngToLocation } from "../types";
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { MultiSelectorOption, SelectorButtons, SingleSelector } from "./MultiSelector";
+import { placeToRegion as googlePlaceToRegion, locationToLatLng, latLngToRegion as myLocationToRegion, Place, CreateSessionRequest, MyLocation, latLngToLocation } from "../types";
 import { useNavigation } from "@react-navigation/native";
 import { BackButton } from "./BackButton";
 import { useForm } from "react-hook-form";
 import { ResortLookup } from "./ResortLookup";
 import { useUserLocation } from "../services/useUserLocation";
-import { jsonString } from "../util/jsonString";
-import { showError, showError2 } from "./Error";
+import { showError } from "./Error";
 import * as Device from 'expo-device'
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { tryCatchAsync } from "../util/tryCatchAsync";
-import { arrayToMap } from "../util/arrayToMap";
 import BottomSheet from '@gorhom/bottom-sheet';
 import { useDispatch, useSelector } from "react-redux";
 import { useResortApi } from "../api/resortApi";
@@ -51,10 +48,11 @@ function useActions() {
 type Props = NativeStackScreenProps<RootStackParams, 'LocationFinder'> & {
 };
 export const LocationFinder = ({ route: { params } }: Props) => {
+    const skiSession = useSelector((state: RootState) => state.user.skiSession)
     const [places, setPlaces] = useState<Place[] | undefined>()
     const [selectedPlace, setSelectedPlace] = useState<Place | undefined>(params?.initialPlace)
-    const [initialPlace, setInitialPlace] = useState<Place | undefined>()
-    const [yesNo1, setYesNo1] = useState<'yes' | 'no' | undefined>()
+    const [initialPlace, setInitialPlace] = useState<Place | undefined>(skiSession?.resort)
+    const [yesNo, setYesNo] = useState<'yes' | 'no' | undefined>()
     const [howAboutHere, setHowAboutHere] = useState<string | undefined>()
     const loader = useLoader()
     const actions = useActions()
@@ -64,7 +62,7 @@ export const LocationFinder = ({ route: { params } }: Props) => {
     const userLocation = useUserLocation()
     const dispatch = useDispatch()
 
-    const showSearchBar = yesNo1 === 'no' || initialPlace === undefined
+    const showSearchBar = yesNo === 'no' || initialPlace === undefined
 
     const mapWidth = Dimensions.get('window').width
     const mapHeight = Dimensions.get('window').height * (showSearchBar ? 0.3 : .65)
@@ -93,10 +91,10 @@ export const LocationFinder = ({ route: { params } }: Props) => {
         setSelectedPlace(places?.find(({ id }) => id === howAboutHere))
     }, [howAboutHere])
 
-    const onClickYesNo1 = useCallback((val?: 'yes' | 'no') => {
+    const onClickYesNo = useCallback((val?: 'yes' | 'no') => {
         if (val === undefined || val === 'no') setSelectedPlace(undefined)
         else setSelectedPlace(initialPlace)
-        setYesNo1(val)
+        setYesNo(val)
     }, [initialPlace])
 
     const onPressNext = () => {
@@ -110,7 +108,7 @@ export const LocationFinder = ({ route: { params } }: Props) => {
                 (session) => {
                     console.log({ session })
                     dispatch(createSkiSessionComplete(session))
-                    navigation.navigate('PeopleFeed', { firstLoad: true })
+                    navigation.navigate('PeopleFeed')
                 },
                 setError,
             )
@@ -154,7 +152,7 @@ export const LocationFinder = ({ route: { params } }: Props) => {
                             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                             {initialPlace ? <>
                                 <Text style={[subHeader, { paddingBottom: 10 }]}>Are you skiing at {initialPlace.name} today?</Text>
-                                <SingleSelector selected={yesNo1} set={onClickYesNo1} options={yesNoOptions} />
+                                <SingleSelector selected={yesNo} set={onClickYesNo} options={yesNoOptions} />
                             </> :
                                 <>
                                     <Text style={{ paddingTop: 10 }}>No resorts found nearby 😔</Text>

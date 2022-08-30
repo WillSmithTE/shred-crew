@@ -75,7 +75,7 @@ export const Navigation = () => {
 export type RootTabParamList = {
   Home: { showOptions?: boolean };
   Messages: undefined
-  PeopleFeed?: { firstLoad?: boolean }
+  PeopleFeed?: undefined
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<

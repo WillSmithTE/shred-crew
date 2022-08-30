@@ -20,6 +20,6 @@ function getConfig() {
     } else if (environment === 'dev') {
         return { apiBaseUrl: 'https://cfwjn30knb.execute-api.eu-central-1.amazonaws.com', }
     } else {
-        return { apiBaseUrl: 'http://192.168.1.100:8080', }
+        return { apiBaseUrl: 'http://192.168.1.103:8080', }
     }
 }
