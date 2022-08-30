@@ -8,6 +8,8 @@ export type UserDetails = {
     ski: SkiDetails,
     bio?: string,
     createdAt?: number,
+    otherImages?: string[],
+    matches?: { [userId: string]: boolean }
 }
 export type LoginState = {
     accessToken: string,
@@ -38,16 +40,6 @@ export type UserDisciplines = { [key in SkiDiscipline]?: boolean }
 export type SkiStyle = 'moguls' | 'piste' | 'off-piste' | 'backcountry'
 export type UserStyles = { [key in SkiStyle]?: boolean }
 
-
-export const dummyPlace: GooglePlace = {
-    geometry: {
-        location: { lat: 46.951211, lng: 11.38775 },
-        viewport: {
-            northeast: { lat: 46.95294958029151, lng: 11.3895851302915 },
-            southwest: { lat: 46.95025161970851, lng: 11.3868871697085 }
-        }
-    }
-}
 export type Place = {
     id: string,
     name: string,
@@ -73,7 +65,12 @@ export type ResortStore = {
     name: string,
 }
 
-export type CreateSessionRequest = Place
+export type CreateSessionRequest = {
+    userLocation: MyLocation,
+    resort: Place,
+}
+
+export type CreateSessionResponse = SkiSession
 
 export type SkiSession = {
     id: string,
@@ -81,6 +78,10 @@ export type SkiSession = {
     createdAt: number,
     userLocation: MyLocation,
     resort: Place,
+}
+export type GetPeopleFeedRequest = {
+    userId: string,
+    location: MyLocation,
 }
 export type GetPeopleFeedResponse = {
     people: PersonInFeed[],
@@ -92,6 +93,7 @@ export type PersonInFeed = {
     ski: SkiDetails,
     bio?: string,
     sessionResort: Place,
+    otherImages: string[],
 }
 
 export type RegisterRequest = { name: string, email: string, password: string }

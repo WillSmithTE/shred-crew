@@ -33,6 +33,9 @@ app.get("/resort/:resortId", async function (req, res) {
 app.post('/ski-session', async function (req, res) {
   skiSessionController.add(req, res)
 });
+app.post('/ski-session/people', async function (req, res) {
+  skiSessionController.findNearbyPeople(req, res)
+});
 
 app.post('/beta-registered-user', async function (req, res) {
   betaRegisteredUsersController.add(req, res)
