@@ -7,8 +7,21 @@ export default ({ config }: any) => {
             androidClientId: `${process.env.GOOGLE_ANDROID_APP_KEY}.apps.googleusercontent.com`,
             iosClientId: `${process.env.GOOGLE_IOS_APP_KEY}.apps.googleusercontent.com`,
             expoClientId: `${process.env.GOOGLE_EXPO_APP_KEY}.apps.googleusercontent.com`,
+            sentryDsn: process.env.SENTRY_DSN,
             ...getConfig()
         },
+        hooks: {
+            postPublish: [
+                {
+                    file: "sentry-expo/upload-sourcemaps",
+                    config: {
+                        organization: "willsmithte",
+                        project: "shred-crew",
+                        authToken: process.env.SENTRY_AUTH_TOKEN
+                    }
+                }
+            ]
+        }
     };
 };
 

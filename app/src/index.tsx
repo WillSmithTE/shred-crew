@@ -11,8 +11,15 @@ import { DefaultTheme as PaperDefaultTheme, DarkTheme as PaperDarkTheme, Provide
 import { colors } from './constants/colors';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font';
+import * as Sentry from 'sentry-expo';
+import Constants from 'expo-constants';
 
 SplashScreen.preventAutoHideAsync();
+Sentry.init({
+  dsn: Constants.manifest?.extra!!.sentryDsn,
+  enableInExpoDevelopment: true,
+  debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
+});
 
 export default function App() {
   return (
