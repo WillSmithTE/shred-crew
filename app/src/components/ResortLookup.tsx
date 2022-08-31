@@ -35,22 +35,19 @@ export const ResortLookup = ({ control, formState, fieldName = 'resort', setValu
     }, [fieldName, setValue])
     return <>
         <View style={{ zIndex: 100, elevation: 100, }}>
-            <KeyboardAvoidingView style={[{}, { marginTop: 15 }]}
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-                <MyTextInput {...{ fieldName, placeholder, control, formState, }} />
-                {searchQuery !== undefined && searchQuery.length > 0 && <IconButton onPress={onPressX} icon='close' size={20} style={{ position: 'absolute', right: 8, top: 8 }} />}
-                <View style={{ marginTop: 64, width: '100%' }}>
-                    {(resortResults?.length === 1 && resortResults[0].name === searchQuery ? [] : resortResults ?? [])
-                        .map(({ id, name: label }, index) =>
-                            <TouchableOpacity onPress={() => { setValue(fieldName, label); onSelectResort(id) }}
-                                style={styles.searchResult} key={id}>
-                                <Text style={{ fontSize: 16, }} key={label}>{label}</Text>
-                            </TouchableOpacity>
-                        )
-                    }
-                </View>
-                <View style={{ flex: 1 }} />
-            </KeyboardAvoidingView>
+            <MyTextInput {...{ fieldName, placeholder, control, formState, }} />
+            {searchQuery !== undefined && searchQuery.length > 0 && <IconButton onPress={onPressX} icon='close' size={20} style={{ position: 'absolute', right: 8, top: 8 }} />}
+            <View style={{ marginTop: 64, position: 'absolute', width: '100%' }}>
+                {(resortResults?.length === 1 && resortResults[0].name === searchQuery ? [] : resortResults ?? [])
+                    .map(({ id, name: label }, index) =>
+                        <TouchableOpacity onPress={() => { setValue(fieldName, label); onSelectResort(id) }}
+                            style={styles.searchResult} key={id}>
+                            <Text style={{ fontSize: 16, }} key={label}>{label}</Text>
+                        </TouchableOpacity>
+                    )
+                }
+            </View>
+            <View style={{ flex: 1 }} />
         </View>
     </>
 }

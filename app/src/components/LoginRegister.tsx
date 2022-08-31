@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { ImageBackground, Text, StyleSheet, View, Image, } from "react-native"
 import { Button } from 'react-native-paper'
 import { showError2 } from "../components/Error"
@@ -38,7 +38,7 @@ export const LoginRegister = ({ mode }: Props) => {
     const [loading, setLoading] = useState(false)
     const loader = useLoader()
 
-    const [request, _, promptAsync] = Google.useIdTokenAuthRequest({
+    const [googleAuthRequest, googleAuthResponse, promptGoogleLogin] = Google.useIdTokenAuthRequest({
         webClientId: Constants.manifest?.extra!!.webClientId,
         androidClientId: Constants.manifest?.extra!!.androidClientId,
         iosClientId: Constants.manifest?.extra!!.iosClientId,
@@ -46,21 +46,28 @@ export const LoginRegister = ({ mode }: Props) => {
     });
 
     async function onGooglePress() {
-        try {
-            setLoading(true)
-            const response = await promptAsync();
-            if (response.type === 'error') throw new Error(response.error?.message);
-            if (response.type !== 'success') return;
-            if (!!!response.params.id_token) throw new Error(`no id_token (response=${jsonString(response)})`)
-            const { user, auth } = await loader.googleLogin(response.params.id_token)
-            dispatch(loginUser({ user, loginState: auth }))
-        } catch (err) {
-            showError2({ message: `google login failed`, description: jsonString(err) });
-        }
+        setLoading(true)
+        promptGoogleLogin();
     }
     const onEmailPress = () => {
         navigate(mode === 'login' ? 'LoginEmail' : 'RegisterEmail')
     }
+
+    useMemo(async () => {
+        try {
+            if (googleAuthResponse !== null) {
+                if (googleAuthResponse.type === 'error') throw new Error(googleAuthResponse.error?.message);
+                if (googleAuthResponse.type !== 'success') throw new Error(`google auth type no success (response=${jsonString(googleAuthResponse)})`)
+                console.debug(`google sign in successful (response=${jsonString(googleAuthResponse)})`)
+                if (!!!googleAuthResponse.params.id_token) throw new Error(`no id_token (response=${jsonString(googleAuthResponse)})`)
+                const { user, auth } = await loader.googleLogin(googleAuthResponse.params.id_token)
+                dispatch(loginUser({ user, loginState: auth }))
+            }
+        } catch (err: any) {
+            console.debug(err)
+            showError2({ message: `google login failed`, description: err.toString() });
+        }
+    }, [googleAuthResponse])
 
     return <>
         <ImageBackground style={styles.background} source={require('../../assets/splash.png')}>

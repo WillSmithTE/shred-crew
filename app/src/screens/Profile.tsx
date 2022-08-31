@@ -68,7 +68,6 @@ export const Profile = ({ mode }: Props) => {
         tryCatchAsync(
             () => loader.findResort(id),
             setHomeMountainPlace,
-            (e) => showError2({ message: 'issue finding resort', description: e }),
         )
     }
     const onSubmit = async ({ name, bio, homeMountain, backcountryDetails, }: FormData) => {

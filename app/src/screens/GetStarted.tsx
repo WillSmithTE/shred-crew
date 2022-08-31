@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
   },
   header: {
     // color: 'white',
+    paddingHorizontal: '2%',
     fontSize: 40,
     fontWeight: 'bold',
     alignSelf: 'center',

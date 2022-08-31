@@ -13,7 +13,7 @@ export async function tryCatchAsync<T>(
         const jsonStringError = jsonString(e)
         console.log(`http error (e=${jsonStringError}})`)
         setError(jsonStringError)
-        showError2({ message: 'Something went wrong...', description: e as any })
+        showError2({ message: 'Something went wrong...', description: jsonString(e) })
     }
 
 }

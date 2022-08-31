@@ -11,7 +11,7 @@ import { MyTextInput } from "../components/MyTextInput"
 import { colors } from "../constants/colors"
 import { RootStackParams, RootTabParamList } from "../navigation/Navigation"
 import { subHeader } from "../services/styles"
-import { GetPeopleFeedRequest, getTagsFromSkiDetails, MyLocation, PersonInFeed, UserDetails } from "../types"
+import { GetPeopleFeedRequest, getTagsFromSkiDetails, MyLocation, PersonInFeed, SkiSession, UserDetails } from "../types"
 import { skiDisciplineOptions, skiStyleOptions } from "./Profile"
 import Swiper from 'react-native-swiper'
 import { showComingSoon } from "../components/Error"
@@ -44,33 +44,34 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
     const [filters, setFilters] = useState<{ [key: string]: boolean }>({})
     const { navigate, getState, push } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
     const [people, setPeople] = useState<PersonInFeed[]>()
+
+    const loader = useLoader()
+    useEffect(() => {
+        if (skiSession !== undefined) {
+            tryCatchAsync(
+                () => loader.findNearbyPeople({ userId: skiSession.userId, location: skiSession.resort.googlePlace.geometry.location }),
+                (response) => {
+                    setPeople(response.people)
+                },
+            )
+        }
+    }, [skiSession])
+
+    const onPressLocation = (session: SkiSession) => {
+        push('LocationFinder', { initialPlace: session.resort })
+    }
+
     if (skiSession === undefined) {
         push('LocationFinder')
         return <FullScreenLoader />
     }
-    console.log({ skiSession })
-
-    const loader = useLoader()
-    useEffect(() => {
-        tryCatchAsync(
-            () => loader.findNearbyPeople({ userId: skiSession.userId, location: skiSession.resort.googlePlace.geometry.location }),
-            (response) => {
-                setPeople(response.people)
-            },
-        )
-    }, [skiSession])
-
-    const onPressLocation = () => {
-        push('LocationFinder', { initialPlace: skiSession.resort })
-    }
-
     return <>
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <View style={styles.banner}>
                 <Avatar.Image size={56} source={require('../../assets/avatar.png')} style={{ marginRight: 13 }} />
                 <View style={{ flex: 1 }}>
                     <Text style={styles.bannerHeader}>Shred Crew Feed</Text>
-                    <TouchableOpacity onPress={onPressLocation}><Text>{skiSession.resort?.name ?? 'Verbier Mountain Resort'}</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => onPressLocation(skiSession)}><Text>{skiSession.resort?.name ?? 'Verbier Mountain Resort'}</Text></TouchableOpacity>
                 </View>
                 <TouchableOpacity onPress={() => setShowFilters(true)} style={{}}><Icon name='sliders-h' family='FontAwesome5' size={20} /></TouchableOpacity>
             </View>
