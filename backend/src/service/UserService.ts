@@ -1,5 +1,5 @@
 import { dynamoDbClient, USERS_TABLE } from "../database";
-import { UserDetails } from "../types";
+import { LoginType, UserDetails } from "../types";
 import { UserDetailsWithPassword } from "../backendTypes";
 
 export const userService = {
@@ -13,19 +13,21 @@ export const userService = {
         const { Item } = await dynamoDbClient.get(params).promise();
         return Item as UserDetailsWithPassword
     },
-    getByEmail: async function (email: string) {
+    getByEmail: async function (email: string, loginType: LoginType): Promise<UserDetailsWithPassword | undefined> {
         const { Items } = await dynamoDbClient.query({
             TableName: USERS_TABLE,
             IndexName: 'gsi1',
-            KeyConditionExpression: '#email = :email',
+            KeyConditionExpression: '#email = :email AND #loginType = :loginType',
             ExpressionAttributeNames: {
                 '#email': 'email',
+                '#loginType': 'loginType',
             },
             ExpressionAttributeValues: {
                 ':email': email,
+                ':loginType': loginType,
             },
         }).promise()
-        return (Items.length > 0 ? Items[0] : undefined) as UserDetailsWithPassword
+        return Items.length > 0 ? (Items[0] as UserDetailsWithPassword) : undefined
     },
     upsert: async function (user: UserDetailsWithPassword): Promise<UserDetails> {
         console.debug(`upserting user (id=${user.userId})`)

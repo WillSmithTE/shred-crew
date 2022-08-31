@@ -12,10 +12,14 @@ Resources:
           KeySchema:
             - AttributeName: email
               KeyType: HASH
+            - AttributeName: loginType
+              KeyType: RANGE
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
         - AttributeName: email
+          AttributeType: S
+        - AttributeName: loginType
           AttributeType: S
       BillingMode: PAY_PER_REQUEST
       TableName: ${self:custom.usersTableName}

@@ -12,24 +12,26 @@ export const authController = {
     login: async (req: Request<{}, LoginRequest>, res: Response<LoginRegisterResponse>) => {
         const body = req.body
         validateHttpBody(body, res, validateLoginRequest, async () => {
-            const preExistingUser = await userService.getByEmail(body.email)
-            if (preExistingUser === undefined) res.status(404).json({ error: `User not found (email=${body.email})` } as any)
+            const preExistingUser = await userService.getByEmail(body.email.toLowerCase(), LoginType.EMAIL)
+            if (preExistingUser === undefined) res.status(401).send()
             else {
                 const isValidPassword = await bcrypt.compare(body.password, preExistingUser.password);
-                if (!isValidPassword) res.status(401).send()
-                else {
+                if (isValidPassword) {
                     const loginState = authService.generateTokens(preExistingUser.userId, preExistingUser.email)
                     res.json({ user: withoutPassword(preExistingUser), auth: loginState });
+                } else {
+                    res.status(401).send()
                 }
             }
         })
 
     },
-    register: async (req: Request<{}, RegisterRequest>, res: Response<LoginRegisterResponse>) => {
+    register: async (req: Request<{}, {}, RegisterRequest>, res: Response<LoginRegisterResponse>) => {
         const body = req.body
         validateHttpBody(body, res, validateRegisterRequest, async () => {
-            console.debug(`registering (email=${body.email})`)
-            const preExistingUser = await userService.getByEmail(body.email)
+            const email = body.email.toLowerCase()
+            console.debug(`registering (email=${email})`)
+            const preExistingUser = await userService.getByEmail(email, LoginType.EMAIL)
             if (preExistingUser !== undefined) res.status(409).send()
             else {
                 const salt = await bcrypt.genSalt(10);
@@ -39,7 +41,7 @@ export const authController = {
                     name: body.name,
                     password: saltedPassword,
                     loginType: LoginType.EMAIL,
-                    email: body.email,
+                    email: email,
                     ski: defaultSkiDetails,
                 }
                 try {
@@ -74,10 +76,13 @@ export const authController = {
         const body = req.body
         validateHttpBody(body, res, validateGoogleSignInRequest, async () => {
             try {
-                const user = await authService.googleIdTokenToUserDetails(body.idToken)
-                const userResponse = await userService.upsertWithoutPassword(user)
+                const tokenDecoded = await authService.googleIdTokenToUserDetails(body.idToken)
+                const preExistingUser = await userService.getByEmail(tokenDecoded.email, LoginType.GOOGLE)
+                const user = preExistingUser ??
+                    await userService.upsertWithoutPassword(tokenDecoded)
+
                 const loginState = authService.generateTokens(user.userId, user.email)
-                res.json({ user: userResponse, auth: loginState });
+                res.json({ user, auth: loginState });
             } catch (error) {
                 console.log(error);
                 res.status(500).json({ error: `Could not sign in with google: ${error}` } as any);
