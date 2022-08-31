@@ -50,7 +50,7 @@ type Props = NativeStackScreenProps<RootStackParams, 'LocationFinder'> & {
 export const LocationFinder = ({ route: { params } }: Props) => {
     const skiSession = useSelector((state: RootState) => state.user.skiSession)
     const [places, setPlaces] = useState<Place[] | undefined>()
-    const [selectedPlace, setSelectedPlace] = useState<Place | undefined>(params?.initialPlace)
+    const [selectedPlace, setSelectedPlace] = useState<Place | undefined>(skiSession?.resort)
     const [initialPlace, setInitialPlace] = useState<Place | undefined>(skiSession?.resort)
     const [yesNo, setYesNo] = useState<'yes' | 'no' | undefined>()
     const [howAboutHere, setHowAboutHere] = useState<string | undefined>()
