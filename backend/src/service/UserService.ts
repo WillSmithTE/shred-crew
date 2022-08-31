@@ -16,7 +16,7 @@ export const userService = {
     getByEmail: async function (email: string, loginType: LoginType): Promise<UserDetailsWithPassword | undefined> {
         const { Items } = await dynamoDbClient.query({
             TableName: USERS_TABLE,
-            IndexName: 'gsi1',
+            IndexName: 'gsi2',
             KeyConditionExpression: '#email = :email AND #loginType = :loginType',
             ExpressionAttributeNames: {
                 '#email': 'email',

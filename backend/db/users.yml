@@ -6,7 +6,7 @@ Resources:
         - AttributeName: userId
           KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: gsi1
+        - IndexName: gsi2
           Projection:
             ProjectionType: ALL
           KeySchema:
