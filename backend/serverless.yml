@@ -5,7 +5,7 @@ frameworkVersion: '3'
 
 custom:
   usersTableName: 'shred-crew-users-2-${sls:stage}'
-  resortsTableName: 'shred-crew-resort-${sls:stage}'
+  resortsTableName: 'shred-crew-resort-2-${sls:stage}'
   skiSessionsTableName: 'shred-crew-sessions-${sls:stage}'
   betaRegisteredUsersTableName: 'shred-crew-beta-registered-users-2-${sls:stage}'
   dynamodb:
