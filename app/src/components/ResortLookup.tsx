@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react"
 import { FieldErrorsImpl, DeepRequired, UseFormWatch, UseFormSetValue, useWatch, FormState } from "react-hook-form"
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { IconButton } from "react-native-paper"
 import { colors } from "../constants/colors"
 import { useDebouncedSearch } from "../services/useDebouncedSearch"
@@ -35,18 +35,22 @@ export const ResortLookup = ({ control, formState, fieldName = 'resort', setValu
     }, [fieldName, setValue])
     return <>
         <View style={{ zIndex: 100, elevation: 100, }}>
-            <MyTextInput {...{ fieldName, placeholder, control, formState, }} />
-            {searchQuery !== undefined && searchQuery.length > 0 && <IconButton onPress={onPressX} icon='close' size={20} style={{ position: 'absolute', right: 8, top: 8 }} />}
-            <View style={{ position: 'absolute', marginTop: 64, width: '100%' }}>
-                {(resortResults?.length === 1 && resortResults[0].name === searchQuery ? [] : resortResults ?? [])
-                    .map(({ id, name: label }, index) =>
-                        <TouchableOpacity onPress={() => { setValue(fieldName, label); onSelectResort(id) }}
-                            style={styles.searchResult} key={id}>
-                            <Text style={{ fontSize: 16, }} key={label}>{label}</Text>
-                        </TouchableOpacity>
-                    )
-                }
-            </View>
+            <KeyboardAvoidingView style={[{}, { marginTop: 15 }]}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                <MyTextInput {...{ fieldName, placeholder, control, formState, }} />
+                {searchQuery !== undefined && searchQuery.length > 0 && <IconButton onPress={onPressX} icon='close' size={20} style={{ position: 'absolute', right: 8, top: 8 }} />}
+                <View style={{ marginTop: 64, width: '100%' }}>
+                    {(resortResults?.length === 1 && resortResults[0].name === searchQuery ? [] : resortResults ?? [])
+                        .map(({ id, name: label }, index) =>
+                            <TouchableOpacity onPress={() => { setValue(fieldName, label); onSelectResort(id) }}
+                                style={styles.searchResult} key={id}>
+                                <Text style={{ fontSize: 16, }} key={label}>{label}</Text>
+                            </TouchableOpacity>
+                        )
+                    }
+                </View>
+                <View style={{ flex: 1 }} />
+            </KeyboardAvoidingView>
         </View>
     </>
 }

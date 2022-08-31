@@ -65,15 +65,15 @@ export const LoginRegister = ({ mode }: Props) => {
     return <>
         <ImageBackground style={styles.background} source={require('../../assets/splash.png')}>
             <View style={styles.container}>
-                <View style={{ paddingVertical: 20 }}>
-                    <TouchableOpacity onPress={onGooglePress} style={[styles.button, { padding: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: 'white' }]}>
+                <View style={{ paddingVertical: 20, width: '80%', }}>
+                    <TouchableOpacity onPress={onGooglePress} style={[styles.button, { borderRadius: 5, padding: 10, justifyContent: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: 'white' }]}>
                         <Image style={{ height: 20, width: 20, marginRight: 10 }} resizeMode='contain' source={require('../../assets/Google_logo.png')} />
                         <Text style={{ color: colors.darkDarkGray, alignContent: 'center', fontWeight: 'bold' }}>{mode === 'login' ? 'Login' : 'Sign up'} with Google</Text>
                     </TouchableOpacity>
                     <Button style={styles.button} icon='email' mode='contained' onPress={onEmailPress}> {mode === 'login' ? 'Login' : 'Sign up'} with Email</Button>
                 </View>
                 <Text>{mode === 'login' ? `Don't` : 'Already'} have an account?&nbsp;
-                    <Text style={{ textDecorationLine: 'underline' }} onPress={() => navigate(mode === 'login' ? 'Register' : 'Login')}>{mode === 'login' ? 'Sign up' : 'Login'}</Text>
+                    <Text style={{ textDecorationLine: 'underline', color: 'black' }} onPress={() => navigate(mode === 'login' ? 'Register' : 'Login')}>{mode === 'login' ? 'Sign up' : 'Login'}</Text>
                 </Text>
             </View>
         </ImageBackground>

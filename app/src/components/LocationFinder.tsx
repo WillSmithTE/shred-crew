@@ -58,9 +58,12 @@ export const LocationFinder = ({ route: { params } }: Props) => {
     const actions = useActions()
     const [error, setError] = useState<string | undefined>()
     const [loading, setLoading] = useState(false)
+    console.debug({ loading })
+
     const [showConfirmation, setShowConfirmation] = useState(false)
     const userLocation = useUserLocation()
     const dispatch = useDispatch()
+
 
     const showSearchBar = yesNo === 'no' || initialPlace === undefined
 

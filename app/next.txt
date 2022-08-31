@@ -7,7 +7,7 @@ DONE- do a preloadResources thing. Check auth state. If empty, not logged in. If
 - feat: usernames
 - feat: check theme based on phone. set text  colors black/white depending somehow
 - bug: slider doesnt work. scrolls instead
-- bug: no background on login, only on register
+DONE - bug: no background on login, only on register. can't recreate bug
 DONE- store geo data like this https://jason.wadsworth.dev/working-with-geo-data-in-dynamodb/
    display like this https://github.com/react-native-maps/react-native-maps
 DONE- proper google logo
@@ -19,7 +19,7 @@ DONE- search by resort id doesn't work
 DONE- bug: resorts in berlin???
 DONE- bug: multiselect selects all not just 1
 DONE- feat: change location finder to popup
-- feat: bottom tab nav with messages
+DONE - feat: bottom tab nav with messages
 - feat: messages
     - frontend: basic messages ui like messenger or bumble
     - frontend: ui on click into message
@@ -34,16 +34,18 @@ DONE- feat: change location finder to popup
     - frontend: pull down to refresh, in ^ too
     - backend: endpoint get users with open sessions, plus session place name. separate table SkiSession? with geohash.
        needs to expire sometime so need a cleanup job? nah, let user do it for now
-- feat: backend store users
-- auth
-   - feat: backend verify logins/generate access tokens
-   - feat: frontend 401 refresh token then call again
-   - feat: backend offer refresh api 
+DONE - feat: backend store users
+DONE - auth
+   DONE - feat: backend verify logins/generate access tokens
+   DONE - feat: frontend 401 refresh token then call again
+   DONE - feat: backend offer refresh api 
 DONE- feat: location finder update to new UI (14.8.22)
 DONE- display multiple markers on map
 - messaging ui?: https://www.figma.com/community/file/881015895655545375
-- feat: updatte web to new design (centered, orange, orange button with font)
-- feat: flow when no resorts found nearby
-- feat: update web font
-- bug: lowercase emails on registter/login
-- feat: web dancing man -  fix height before loads, load earlier
+DONE - feat: update web to new design (centered, orange, orange button with font)
+DONE - feat: flow when no resorts found nearby
+DONE - feat: update web font
+DONE - bug: lowercase emails on register/login
+DONE - feat: web dancing man -  fix height before loads, load earlier
+DONE - feat: handle same email from google and email login
+DONE - feat: login with google. don't recreate profile

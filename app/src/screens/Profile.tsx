@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/reduxStore';
 import { Button } from 'react-native-paper';
@@ -49,11 +49,11 @@ export const Profile = ({ mode }: Props) => {
     if (user === undefined) return <FullScreenLoader />
     const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
     const [loading, setLoading] = useState(false)
-    const [imageUri, setImageUri] = useState(user!!.imageUri)
-    const [skillLevel, setSkillLevel] = useState<number>(user!!.ski.skillLevel ?? 3)
-    const [disciplines, setDisciplines] = useState<UserDisciplines>(user.ski.disciplines ?? {})
-    const [skiStyles, setSkiStyles] = useState<UserStyles>(user.ski.styles ?? {})
-    const [homeMountainPlace, setHomeMountainPlace] = useState<Place | undefined>(user.ski.homeMountain)
+    const [imageUri, setImageUri] = useState(user.imageUri)
+    const [skillLevel, setSkillLevel] = useState<number>(user.ski?.skillLevel ?? 3)
+    const [disciplines, setDisciplines] = useState<UserDisciplines>(user.ski?.disciplines ?? {})
+    const [skiStyles, setSkiStyles] = useState<UserStyles>(user.ski?.styles ?? {})
+    const [homeMountainPlace, setHomeMountainPlace] = useState<Place | undefined>(user.ski?.homeMountain)
     const isCreate = mode === 'create'
     const loader = useLoader()
     const { control, handleSubmit, formState, watch, setValue } = useForm<FormData>({
@@ -61,7 +61,7 @@ export const Profile = ({ mode }: Props) => {
             name: user?.name ?? '',
             bio: user?.bio ?? '',
             homeMountain: homeMountainPlace?.name ?? '',
-            backcountryDetails: user?.ski.backcountryDetails ?? ''
+            backcountryDetails: user?.ski?.backcountryDetails ?? ''
         }
     });
     const onClickResortSearchResult = (id: string) => {
@@ -114,11 +114,15 @@ export const Profile = ({ mode }: Props) => {
                 <SkiDisciplineSelector {...{ selected: disciplines, set: setDisciplines }} />
                 <Text style={styles.subHeader}>Style</Text>
                 <SkiStylesSelector {...{ selected: skiStyles, set: setSkiStyles }} />
-                {skiStyles.backcountry && <MyTextInput {...{
-                    multiline: true, fieldName: 'backcountryDetails', placeholder: 'Tell us more about your backcountry experience:\n\nExamples:\n  \u2022 What equipment do you have?\n  \u2022 How experienced are you?',
-                    rules: {},
-                    control, formState, style: { height: 200, marginTop: 20, paddingTop: 5 }
-                }} />}
+                {skiStyles.backcountry &&
+                    <KeyboardAvoidingView style={[{}, {}]}
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                        <MyTextInput {...{
+                            multiline: true, fieldName: 'backcountryDetails', placeholder: 'Tell us more about your backcountry experience:\n\nExamples:\n  \u2022 What equipment do you have?\n  \u2022 How experienced are you?',
+                            rules: {},
+                            control, formState, style: { height: 200, marginTop: 20, paddingTop: 5 }
+                        }} />
+                    </KeyboardAvoidingView>}
 
             </View>
             <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>

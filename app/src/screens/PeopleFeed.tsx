@@ -44,7 +44,6 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
     const [filters, setFilters] = useState<{ [key: string]: boolean }>({})
     const { navigate, getState, push } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
     const [people, setPeople] = useState<PersonInFeed[]>()
-    const [loading, setLoading] = useState(true)
     if (skiSession === undefined) {
         push('LocationFinder')
         return <FullScreenLoader />

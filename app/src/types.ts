@@ -8,7 +8,7 @@ export type UserDetails = {
     hasDoneInitialSetup?: boolean,
     imageUri?: string,
     loginType: LoginType,
-    ski: SkiDetails,
+    ski?: SkiDetails,
     bio?: string,
     createdAt?: number,
     otherImages?: string[],

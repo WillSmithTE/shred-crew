@@ -38,9 +38,8 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
     const { goBack } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
     const [loading, setLoading] = useState(false)
     const actions = useActions()
-    const [error, setError] = useState<string | undefined>()
 
-    const { control, handleSubmit, formState } = useForm({
+    const { control, handleSubmit, formState, setError } = useForm({
         defaultValues: {
             name: '',
             email: '',
@@ -54,7 +53,8 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
             setLoading(false)
             dispatch(loginUser({ user, loginState: auth }))
         } catch (e: any) {
-            if (e instanceof HttpError && e.code === 409) setError('Account already exists with that email')
+            if (e instanceof HttpError && e.code === 409) setError('email', { message: 'Account already exists with that email' })
+            else if (e instanceof HttpError && e.code === 401) setError('password', { message: 'Incorrect email or password' })
             else showError(jsonString(e))
             setLoading(false)
         }
@@ -84,7 +84,6 @@ export const LoginRegisterEmail = ({ mode }: Props) => {
                         rules: { required: requiredRule, maxLength: maxLenRule, minLength: minLenRule }, autoCapitalize: 'none'
                     }} />
                 </View>
-                {error && <ErrorText error={error} />}
             </View>
             <View style={{ marginLeft: 'auto', padding: 20, }}>
                 <Button onPress={handleSubmit(onSubmit)} style={{}} mode='contained'>Next</Button>
