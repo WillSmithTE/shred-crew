@@ -39,12 +39,12 @@ export const ResortLookup = ({ control, formState, fieldName = 'resort', setValu
             {searchQuery !== undefined && searchQuery.length > 0 && <IconButton onPress={onPressX} icon='close' size={20} style={{ position: 'absolute', right: 8, top: 8 }} />}
             <View style={{ position: 'absolute', marginTop: 64, width: '100%' }}>
                 {(resortResults?.length === 1 && resortResults[0].name === searchQuery ? [] : resortResults ?? [])
-                    .map(({ id, name: label }, index) => <>
+                    .map(({ id, name: label }, index) =>
                         <TouchableOpacity onPress={() => { setValue(fieldName, label); onSelectResort(id) }}
                             style={styles.searchResult} key={id}>
                             <Text style={{ fontSize: 16, }} key={label}>{label}</Text>
                         </TouchableOpacity>
-                    </>)
+                    )
                 }
             </View>
         </View>
