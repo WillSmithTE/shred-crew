@@ -7,6 +7,7 @@ const readFilePromise = promisify(readFile)
 const appResortStoreFilePath = '../app/assets/resortStore.json'
 readFilePromise(allResortsFile).then((data) => {
     const resorts: ResortStore[] = JSON.parse(data.toString())
+        .filter((resort: Place) => resort.googlePlace.geometry !== undefined)
         .map((resort: Place) => {
             return {
                 id: resort.id,
