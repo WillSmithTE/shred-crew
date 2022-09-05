@@ -121,7 +121,7 @@ function CookieRulesDialog(props) {
         </Typography>
         <Typography paragraph>
           However if you are still looking for more information then you can
-          contact us by sending an email to tim.v.kaenel@gmail.com.
+          contact us by sending an email to willsmithte@gmail.com.
         </Typography>
       </DialogContent>
       <DialogActions className={classes.dialogActions}>
