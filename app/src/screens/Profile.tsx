@@ -90,6 +90,10 @@ export const Profile = ({ mode }: Props) => {
         icon='arrow-right' contentStyle={{ flexDirection: 'row-reverse' }}>
         {isCreate ? 'Next' : 'Save'}
     </Button>
+    const SkipButton = ({ style = {} }) => <Button onPress={handleSubmit(onSubmit)} mode='outlined' style={[styles.nextButton, style]}
+    icon='arrow-right' contentStyle={{ flexDirection: 'row-reverse' }}>
+    {'Skip'}
+</Button>
 
     return (<ScrollView >
         <BackButton />
@@ -97,7 +101,7 @@ export const Profile = ({ mode }: Props) => {
         <View style={styles.container}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20, }}>
                 <Text style={styles.header}>{isCreate ? 'Create' : 'Edit'} your profile</Text>
-                <NextButton />
+                {isCreate ? <SkipButton /> : <NextButton />}
             </View>
             <View style={{ paddingHorizontal: 20 }}>
                 <ImagePicker {...{ imageUri, setImageUri }} />

@@ -3,16 +3,27 @@
     "version": ">= 0.55.1"
   },
   "build": {
-    "development": {
+    "selfInstall": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "ENVIRONMENT": "prod"
+      }
     },
-    "preview": {
-      "distribution": "internal"
+    "dev": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "ENVIRONMENT": "prod"
+      }
     },
     "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+    }
   }
 }
