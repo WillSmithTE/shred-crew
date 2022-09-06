@@ -1,7 +1,8 @@
+import { IMessage } from "react-native-gifted-chat"
 import { Region, LatLng } from "react-native-maps"
-import { myUuid } from "./services/myUuid"
+import { myUuid } from "../services/myUuid"
 
-export type UserDetails = {
+export type UserDetails = BaseUserProfile & {
     name: string,
     email: string,
     userId: string,
@@ -12,8 +13,14 @@ export type UserDetails = {
     bio?: string,
     createdAt?: number,
     otherImages?: string[],
-    matches?: { [userId: string]: boolean },
+    // matches?: { [userId: string]: boolean },
     poked?: { [userId: string]: boolean },
+    friends?: { [userId: string]: Friend },
+}
+export type BaseUserProfile = {
+    name: string,
+    userId: string,
+    imageUri?: string,
 }
 export type LoginState = {
     accessToken: string,
@@ -192,4 +199,10 @@ export type LoginRequest = { email: string, password: string }
 
 export type GoogleSignInRequest = {
     idToken: string
+}
+
+export type Friend = {
+    friendSince: number,
+    messages: IMessage[],
+    profile: BaseUserProfile,
 }

@@ -1,5 +1,7 @@
-import { PersonInFeed, Place } from "../types"
+import { Friend, PersonInFeed, Place } from "./types"
 
+export const photoWill = 'https://drive.google.com/uc?id=1IEB_sv_rUetHVT5GjVJWBRMy9uF1ivjp'
+export const photoPip = 'https://drive.google.com/uc?id=1ZP5iPXjXyYaiSWMwIIpvHByTERouw8CW'
 
 export const dummyPlace: Place = {
     id: 'thredbo',
@@ -38,7 +40,7 @@ export const dummyPeopleFeedPeople: PersonInFeed[] = [
     {
         userId: '2',
         name: 'Pippi Kramer',
-        imageUri: require('../../assets/peopleFeed3.png'),
+        imageUri: photoPip,
         ski: { disciplines: { ski: true, }, styles: {}, skillLevel: 5 },
         otherImages: [require('../../assets/peopleFeed3-2.png')],
         sessionResort: dummyPlace,
@@ -46,9 +48,57 @@ export const dummyPeopleFeedPeople: PersonInFeed[] = [
     {
         userId: '3',
         name: 'Willi Smith',
-        imageUri: require('../../assets/peopleFeed2.png'),
+        imageUri: photoWill,
         ski: { disciplines: { ski: true, snowboard: true }, styles: {}, skillLevel: 3 },
         otherImages: [require('../../assets/peopleFeed2-2.png')],
         sessionResort: dummyPlace,
     },
 ]
+
+
+export const dummyFriends: { [userId: string]: Friend } = {
+    lkjlakn: {
+        profile: {
+            userId: 'lkjlakn',
+            name: 'Will Smith',
+            imageUri: photoWill,
+        },
+        friendSince: twoDaysAgo().getDate(),
+        messages: [
+            {
+                _id: 'lkjlakn',
+                createdAt: twoHoursAgo().getDate(),
+                text: 'you at thredbo tomorrow?',
+                user: {
+                    _id: '3',
+                }
+            }
+        ]
+    },
+    4: {
+        profile: {
+            userId: '4',
+            name: 'Pip Kramer',
+            imageUri: photoPip,
+        },
+        friendSince: twoHoursAgo().getDate(),
+        messages: [{
+            _id: 'alksnga',
+            createdAt: twoDaysAgo().getDate(),
+            text: 'cool cya tthen',
+            user: { _id: '4', }
+        }],
+    },
+}
+export function twoDaysAgo() {
+    const date = new Date()
+    date.setDate(date.getDate() - 2)
+    return date
+}
+
+export function twoHoursAgo() {
+    const date = new Date()
+    date.setHours(date.getHours() - 2)
+    return date
+}
+

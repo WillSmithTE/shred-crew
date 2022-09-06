@@ -4,7 +4,7 @@ import { FullScreenLoader } from "./Loading"
 import { Text, View, StyleSheet, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { MultiSelectorOption, SelectorButtons, SingleSelector } from "./MultiSelector";
-import { placeToRegion as googlePlaceToRegion, locationToLatLng, latLngToRegion as myLocationToRegion, Place, CreateSessionRequest, MyLocation, latLngToLocation } from "../types";
+import { placeToRegion as googlePlaceToRegion, locationToLatLng, latLngToRegion as myLocationToRegion, Place, CreateSessionRequest, MyLocation, latLngToLocation } from "../model/types";
 import { useNavigation } from "@react-navigation/native";
 import { BackButton } from "./BackButton";
 import { useForm } from "react-hook-form";

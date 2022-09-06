@@ -1,11 +1,11 @@
 import React, { } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 
 import { colors } from '../constants/colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../redux/userReducer';
-import { RootTabParamList } from '../navigation/Navigation';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParams, RootTabParamList } from '../navigation/Navigation';
+import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootState } from '../redux/reduxStore';
 import { useNavigation } from '@react-navigation/native';
 import { Avatar, IconButton } from 'react-native-paper';
@@ -13,19 +13,22 @@ import { showComingSoon } from '../components/Error';
 import Icon from '../components/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import { header } from '../services/styles';
+import { BaseUserProfile } from '../model/types';
+import { photoPip, photoWill } from '../model/dummyData';
+import FastImage from 'react-native-fast-image'
+import { MyAvatar } from '../components/MyAvatar';
 
-const friends = [
+const friends: BaseUserProfile[] = [
   {
-    id: '3',
+    userId: '3',
     name: 'Will Smith',
-    imageUri: require('../../assets/peopleFeed2.png'),
+    imageUri: photoWill,
   },
   {
-    id: '4',
+    userId: '4',
     name: 'Pip Kramer',
-    imageUri: require('../../assets/peopleFeed3.png'),
+    imageUri: photoPip,
   },
-  { id: undefined, name: '', imageUri: '' }, { id: undefined, name: '', imageUri: '' }, { id: undefined, name: '', imageUri: '' }, { id: undefined, name: '', imageUri: '' }
 ]
 
 type Props = NativeStackScreenProps<RootTabParamList, 'Home'> & {
@@ -33,11 +36,13 @@ type Props = NativeStackScreenProps<RootTabParamList, 'Home'> & {
 export const Home = ({ route: { params } }: Props) => {
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user.user)
-  const { navigate } = useNavigation()
-  const logout = () => {
-    dispatch(logoutUser())
-  }
+  const { navigate, push } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const avatarSize = 75
+
+  const onPressUserAvatar = (user: BaseUserProfile) => {
+    push('MessagesToOnePerson', { otherUser: user })
+  }
+
   return (
     <>
       {/* <MyImageBackground /> */}
@@ -50,12 +55,23 @@ export const Home = ({ route: { params } }: Props) => {
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', }}>
             {friends.map((friend, i) =>
               <LinearGradient
-                colors={friend.id === undefined ? [colors.background, colors.background, colors.background] : ['#7ED6F2', '#EFF17F', '#FFAC3E', '#F4AB74', '#FFA768']}
+                colors={['#7ED6F2', '#EFF17F', '#FFAC3E', '#F4AB74', '#FFA768']}
                 style={[{ marginRight: 4, borderRadius: avatarSize, padding: 3, }]} key={i}
               >
-                <TouchableOpacity onPress={showComingSoon} activeOpacity={.2}>
+                <TouchableOpacity onPress={() => onPressUserAvatar(friend)} activeOpacity={.2}>
                   <View style={{ backgroundColor: colors.background, padding: 3, borderRadius: avatarSize }}>
-                    {friend.id ? <Avatar.Image size={avatarSize} source={friend.imageUri} /> : <Avatar.Text size={avatarSize} label='' style={{ backgroundColor: colors.lightGray }} />}
+                    <MyAvatar size={avatarSize} image={{ uri: friend.imageUri }} name={friend.name} />
+                  </View>
+                </TouchableOpacity>
+              </LinearGradient>)}
+            {Array(6 - friends.length).fill(0).map((_, i) =>
+              <LinearGradient
+                colors={[colors.background, colors.background, colors.background]}
+                style={[{ marginRight: 4, borderRadius: avatarSize, padding: 3, }]} key={i}
+              >
+                <TouchableOpacity activeOpacity={.2}>
+                  <View style={{ backgroundColor: colors.background, padding: 3, borderRadius: avatarSize }}>
+                    {<Avatar.Text size={avatarSize} label='' style={{ backgroundColor: colors.lightGray }} />}
                   </View>
                 </TouchableOpacity>
               </LinearGradient>)}

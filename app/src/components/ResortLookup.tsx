@@ -4,7 +4,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, Vie
 import { IconButton } from "react-native-paper"
 import { colors } from "../constants/colors"
 import { useDebouncedSearch } from "../services/useDebouncedSearch"
-import { ResortStore } from "../types"
+import { ResortStore } from "../model/types"
 import { MyTextInput } from "./MyTextInput"
 
 const resorts = getResorts()

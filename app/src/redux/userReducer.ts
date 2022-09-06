@@ -1,14 +1,15 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { State } from 'react-native-gesture-handler'
-import { CreateSessionResponse, LoginState, LoginType, SkiDetails, SkiDiscipline, SkiSession, UserDetails } from '../types'
+import { CreateSessionResponse, LoginState, LoginType, SkiDetails, SkiDiscipline, SkiSession, UserDetails } from '../model/types'
 import equal from 'fast-deep-equal'
+import { dummyFriends } from '../model/dummyData'
 
 type ActionType = 'createSkiSession'
 export interface UserState {
     user?: UserDetails,
     loginState?: LoginState,
     skiSession?: SkiSession,
-    loading?: { [actionType in ActionType]?: boolean }
+    loading?: { [actionType in ActionType]?: boolean },
 }
 const initialState: UserState = { loading: {} }
 
@@ -41,6 +42,8 @@ export const userSlice = createSlice({
         loginUser: (state, { payload: { user, loginState } }: PayloadAction<UserState>) => {
             state.loginState = loginState
             state.user = user
+            // TODO REMOVE DUMMY FRIENDS
+            if (state.user) state.user.friends = dummyFriends
         },
         createSkiSessionComplete: (state, { payload }: PayloadAction<SkiSession>) => {
             state.skiSession = payload

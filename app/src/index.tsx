@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DefaultTheme, DarkTheme, NavigationContainer } from '@react-navigation/native';
 import { Navigation } from './navigation/Navigation';
-import { Provider } from 'react-redux';
-import { store } from './redux/reduxStore';
+import { Provider, useSelector } from 'react-redux';
+import { RootState, store } from './redux/reduxStore';
 import FlashMessage from "react-native-flash-message";
 import * as SplashScreen from 'expo-splash-screen'
 import { useUserLoginCheck } from './services/useUserLoginCheck';
@@ -13,6 +13,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font';
 import * as Sentry from 'sentry-expo';
 import Constants from 'expo-constants';
+import { usePreloadUserAssets } from './services/usePreloadUserAssets';
 
 SplashScreen.preventAutoHideAsync();
 Sentry.init({
@@ -36,18 +37,26 @@ export default function App() {
 const AppInternals = () => {
   const [appIsReady, setAppIsReady] = useState(false);
   const isUserLoginCheckComplete = useUserLoginCheck()
+  const { done: isPreloadComplete, callPreload } = usePreloadUserAssets()
+  const user = useSelector((root: RootState) => root.user.user)
   const [fontsLoaded] = useFonts({
     'Baloo-Bhaijaan': require('../assets/BalooBhaijaan-Regular.ttf'),
   });
 
   useMemo(() => {
     (async () => {
-      if (isUserLoginCheckComplete && fontsLoaded) {
+      if (isUserLoginCheckComplete) {
         await new Promise(r => setTimeout(r, 100)) // wait for dispatches
-        setAppIsReady(true);
+        callPreload()
       }
     })()
-  }, [isUserLoginCheckComplete, fontsLoaded]);
+  }, [isUserLoginCheckComplete]);
+
+  useMemo(() => {
+    if (isUserLoginCheckComplete && isPreloadComplete && fontsLoaded) {
+      setAppIsReady(true);
+    }
+  }, [isUserLoginCheckComplete, isPreloadComplete, fontsLoaded])
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {

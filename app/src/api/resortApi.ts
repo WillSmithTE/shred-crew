@@ -1,4 +1,4 @@
-import { MyLocation, Place } from '../types';
+import { MyLocation, Place } from '../model/types';
 import { useBaseApi, baseApiRequest } from './api';
 
 export function useResortApi() {

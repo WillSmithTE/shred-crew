@@ -14,14 +14,15 @@ import { LocationFinder } from '../components/LocationFinder';
 import { Profile } from '../screens/Profile';
 import { EditProfile } from '../screens/EditProfile';
 import { PeopleFeed } from '../screens/PeopleFeed';
-import { Place } from '../types';
+import { BaseUserProfile, Place } from '../model/types';
 import Settings from '../screens/Settings';
 import { BottomTabScreenProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { colors } from '../constants/colors';
 import Icon, { IC } from '../components/Icon';
-import { Messages } from '../screens/Messages';
+import { MessagesList } from '../screens/MessagesList';
+import { MessagesToOnePerson } from '../screens/MessagesToOnePerson';
 
 export type RootStackParams = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined
@@ -34,6 +35,7 @@ export type RootStackParams = {
   LocationFinder?: { initialPlace?: Place }
   EditProfile: undefined
   Settings: undefined
+  MessagesToOnePerson: { otherUser: BaseUserProfile }
 };
 
 const Stack = createNativeStackNavigator<RootStackParams>();
@@ -54,6 +56,7 @@ export const Navigation = () => {
             <Stack.Screen name="LocationFinder" component={LocationFinder} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="MessagesToOnePerson" component={MessagesToOnePerson} />
           </> :
             <>
               <Stack.Screen name="GetStarted" component={GetStarted} />
@@ -74,7 +77,7 @@ export const Navigation = () => {
 
 export type RootTabParamList = {
   Home: { showOptions?: boolean };
-  Messages: undefined
+  MessagesList: undefined
   PeopleFeed?: undefined
 };
 
@@ -117,9 +120,9 @@ function BottomTabNavigator() {
           })}
         />
         <BottomTab.Screen
-          name="Messages"
-          component={Messages}
-          options={({ navigation }: RootTabScreenProps<'Messages'>) => ({
+          name="MessagesList"
+          component={MessagesList}
+          options={({ navigation }: RootTabScreenProps<'MessagesList'>) => ({
             tabBarIcon: ({ color }) => <TabBarIcon name="message" family='MaterialCommunityIcons' color={color} />,
           })}
         />

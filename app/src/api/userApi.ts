@@ -1,4 +1,4 @@
-import { UserDetails } from '../types';
+import { UserDetails } from '../model/types';
 import Constants from 'expo-constants';
 import { baseApiRequest, useBaseApi } from './api';
 

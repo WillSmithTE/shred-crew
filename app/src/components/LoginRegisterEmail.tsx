@@ -7,7 +7,7 @@ import { RootStackParams } from "../navigation/Navigation";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useForm } from "react-hook-form";
 import { loginUser } from "../redux/userReducer";
-import { LoginRequest, RegisterRequest } from "../types";
+import { LoginRequest, RegisterRequest } from "../model/types";
 import { Loading } from "./Loading";
 import { ErrorText, MyTextInput } from "./MyTextInput";
 import { useAuthApi } from "../api/authApi";

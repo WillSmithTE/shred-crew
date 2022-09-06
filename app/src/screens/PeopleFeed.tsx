@@ -11,7 +11,7 @@ import { MyTextInput } from "../components/MyTextInput"
 import { colors } from "../constants/colors"
 import { RootStackParams, RootTabParamList } from "../navigation/Navigation"
 import { subHeader } from "../services/styles"
-import { GetPeopleFeedRequest, getTagsFromSkiDetails, MyLocation, PersonInFeed, SkiSession, UserDetails } from "../types"
+import { GetPeopleFeedRequest, getTagsFromSkiDetails, MyLocation, PersonInFeed, SkiSession, UserDetails } from "../model/types"
 import { skiDisciplineOptions, skiStyleOptions } from "./Profile"
 import Swiper from 'react-native-swiper'
 import { showComingSoon } from "../components/Error"

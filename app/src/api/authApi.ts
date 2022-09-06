@@ -1,4 +1,4 @@
-import { LoginRegisterResponse, LoginRequest, LoginState, RegisterRequest } from '../types';
+import { LoginRegisterResponse, LoginRequest, LoginState, RegisterRequest } from '../model/types';
 import Constants from 'expo-constants';
 import { baseApiRequest, useBaseApi } from './api';
 

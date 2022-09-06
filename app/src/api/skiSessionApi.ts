@@ -1,4 +1,4 @@
-import { CreateSessionRequest, CreateSessionResponse, GetPeopleFeedRequest, GetPeopleFeedResponse, MyLocation, Place } from '../types';
+import { CreateSessionRequest, CreateSessionResponse, GetPeopleFeedRequest, GetPeopleFeedResponse, MyLocation, Place } from '../model/types';
 import { useBaseApi, baseApiRequest } from './api';
 
 export function useSkiSessionApi() {

@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { MyTextInput, requiredRule } from '../components/MyTextInput';
 import { Slider } from '@sharcoux/slider'
 import { colors } from '../constants/colors';
-import { formatSkiDiscipline, formatSkiStyle, Place, SkiDiscipline, skiDisciplines, SkiStyle, skiStyles, UserDetails, UserDisciplines, UserStyles } from '../types';
+import { formatSkiDiscipline, formatSkiStyle, Place, SkiDiscipline, skiDisciplines, SkiStyle, skiStyles, UserDetails, UserDisciplines, UserStyles } from '../model/types';
 import { FullScreenLoader } from '../components/Loading';
 import { logoutUser, setUserState, } from '../redux/userReducer';
 import { ImagePicker } from '../components/ImagePicker';

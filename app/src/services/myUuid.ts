@@ -1,5 +1,4 @@
-import uuid from 'react-native-uuid'
-
+const counter = 1
 export function myUuid() {
-    return uuid.v4().toString()
+    return `aosidna-aosdunafa-adonasd-${counter.toString()}`
 }

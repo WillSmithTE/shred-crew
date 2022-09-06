@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearAuth, loginUser } from "../redux/userReducer";
 import { RootState } from "../redux/reduxStore";
-import { LoginRegisterResponse, LoginState } from "../types";
+import { LoginRegisterResponse, LoginState } from "../model/types";
 import { useAuthApi } from "../api/authApi";
 import { showError } from "../components/Error";
 import { jsonString } from "../util/jsonString";

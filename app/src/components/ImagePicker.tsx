@@ -6,8 +6,6 @@ import { View } from 'react-native';
 import { colors } from '../constants/colors';
 import { Loading } from './Loading';
 
-const defaultAvatar = require('../../assets/dog-ski.png')
-
 type Props = { imageUri?: string, setImageUri: (uri?: string) => void }
 export const ImagePicker = ({ imageUri, setImageUri }: Props) => {
     const [loading, setLoading] = useState(false)
