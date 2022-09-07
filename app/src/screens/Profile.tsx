@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, ImageBackground, KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/reduxStore';
 import { Button } from 'react-native-paper';
@@ -44,6 +44,7 @@ type Props = {
 
 export const Profile = ({ mode }: Props) => {
     const dispatch = useDispatch()
+    // dispatch(logoutUser())
     const action = useAction()
     const user = useSelector((state: RootState) => state.user.user)
     if (user === undefined) return <FullScreenLoader />
@@ -87,53 +88,56 @@ export const Profile = ({ mode }: Props) => {
     }
 
     const NextButton = ({ style = {} }) => <Button onPress={handleSubmit(onSubmit)} mode='contained' style={[styles.nextButton, style]}
-        icon='arrow-right' contentStyle={{ flexDirection: 'row-reverse' }}>
+        icon={isCreate ? 'arrow-right' : undefined} contentStyle={{ flexDirection: 'row-reverse' }}>
         {isCreate ? 'Next' : 'Save'}
     </Button>
     const SkipButton = ({ style = {} }) => <Button onPress={handleSubmit(onSubmit)} mode='outlined' style={[styles.nextButton, style]}
-    icon='arrow-right' contentStyle={{ flexDirection: 'row-reverse' }}>
-    {'Skip'}
-</Button>
+        icon='arrow-right' contentStyle={{ flexDirection: 'row-reverse' }}>
+        {'Skip'}
+    </Button>
 
-    return (<ScrollView >
-        <BackButton />
-        {/* <ImageBackground style={styles.background} source={require('../../assets/splash.png')} /> */}
-        <View style={styles.container}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20, }}>
-                <Text style={styles.header}>{isCreate ? 'Create' : 'Edit'} your profile</Text>
-                {isCreate ? <SkipButton /> : <NextButton />}
-            </View>
-            <View style={{ paddingHorizontal: 20 }}>
-                <ImagePicker {...{ imageUri, setImageUri }} />
-                <MyTextInput {...{ fieldName: 'name', placeholder: 'Name', rules: { required: requiredRule }, control, formState, }} />
-                <MyTextInput {...{
-                    multiline: true, fieldName: 'bio', placeholder: 'Tell us about yourself...', rules: { maxLength: { value: 1000, message: 'Too long' } },
-                    control, formState, style: { height: 100, paddingTop: 5, }
-                }} />
-                <ResortLookup {...{ fieldName: 'homeMountain', control, formState, watch, setValue, placeholder: 'Home mountain', onSelectResort: onClickResortSearchResult }} />
-                <View style={{ paddingTop: 0 }}><Text style={[styles.subHeader, {}]}>Ability level</Text></View>
-                <SkillLevelSlider {...{ skillLevel, setSkillLevel }} />
-                <Text style={styles.subHeader}>Type of shredder</Text>
-                <SkiDisciplineSelector {...{ selected: disciplines, set: setDisciplines }} />
-                <Text style={styles.subHeader}>Style</Text>
-                <SkiStylesSelector {...{ selected: skiStyles, set: setSkiStyles }} />
-                {skiStyles.backcountry &&
-                    <KeyboardAvoidingView style={[{}, {}]}
-                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    return (
+        <SafeAreaView>
+            <ScrollView >
+                {/* <ImageBackground style={styles.background} source={require('../../assets/splash.png')} /> */}
+                <View style={styles.container}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, alignItems: 'center' }}>
+                        <BackButton absolute={false} />
+                        <Text style={styles.header}>{isCreate ? 'Create' : 'Edit'} your profile</Text>
+                        {isCreate ? <SkipButton /> : <NextButton />}
+                    </View>
+                    <View style={{ paddingHorizontal: 20 }}>
+                        <ImagePicker {...{ imageUri, setImageUri }} />
+                        <MyTextInput {...{ fieldName: 'name', placeholder: 'Name', rules: { required: requiredRule }, control, formState, }} />
                         <MyTextInput {...{
-                            multiline: true, fieldName: 'backcountryDetails', placeholder: 'Tell us more about your backcountry experience:\n\nExamples:\n  \u2022 What equipment do you have?\n  \u2022 How experienced are you?',
-                            rules: {},
-                            control, formState, style: { height: 200, marginTop: 20, paddingTop: 5 }
+                            multiline: true, fieldName: 'bio', placeholder: 'Tell us about yourself...', rules: { maxLength: { value: 1000, message: 'Too long' } },
+                            control, formState, style: { height: 100, paddingTop: 5, }
                         }} />
-                    </KeyboardAvoidingView>}
+                        <ResortLookup {...{ fieldName: 'homeMountain', control, formState, watch, setValue, placeholder: 'Home mountain', onSelectResort: onClickResortSearchResult }} />
+                        <View style={{ paddingTop: 0 }}><Text style={[styles.subHeader, {}]}>Ability level</Text></View>
+                        <SkillLevelSlider {...{ skillLevel, setSkillLevel }} />
+                        <Text style={styles.subHeader}>Type of shredder</Text>
+                        <SkiDisciplineSelector {...{ selected: disciplines, set: setDisciplines }} />
+                        <Text style={styles.subHeader}>Style</Text>
+                        <SkiStylesSelector {...{ selected: skiStyles, set: setSkiStyles }} />
+                        {skiStyles.backcountry &&
+                            <KeyboardAvoidingView style={[{}, {}]}
+                                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                                <MyTextInput {...{
+                                    multiline: true, fieldName: 'backcountryDetails', placeholder: 'Tell us more about your backcountry experience:\n\nExamples:\n  \u2022 What equipment do you have?\n  \u2022 How experienced are you?',
+                                    rules: {},
+                                    control, formState, style: { height: 200, marginTop: 20, paddingTop: 5 }
+                                }} />
+                            </KeyboardAvoidingView>}
 
-            </View>
-            <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
-                <Button onPress={() => dispatch(logoutUser())} style={{ opacity: .01 }}>logout</Button>
-                <NextButton style={{ alignSelf: 'flex-end' }} />
-            </View>
-        </View>
-    </ScrollView>
+                    </View>
+                    <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
+                        <Button onPress={() => dispatch(logoutUser())} style={{ opacity: .01 }}>logout</Button>
+                        <NextButton style={{ alignSelf: 'flex-end' }} />
+                    </View>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 
@@ -142,8 +146,8 @@ export const Profile = ({ mode }: Props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
-        paddingVertical: 70,
+        paddingHorizontal: 20,
+        paddingBottom: 20,
     },
     header: {
         // color: 'white',

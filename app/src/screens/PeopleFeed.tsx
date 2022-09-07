@@ -71,7 +71,7 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
                 <Avatar.Image size={56} source={require('../../assets/avatar.png')} style={{ marginRight: 13 }} />
                 <View style={{ flex: 1 }}>
                     <Text style={styles.bannerHeader}>Shred Crew Feed</Text>
-                    <TouchableOpacity onPress={() => onPressLocation(skiSession)}><Text>{skiSession.resort?.name ?? 'Verbier Mountain Resort'}</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => onPressLocation(skiSession)}><Text style={{textDecorationLine: 'underline'}}>{skiSession.resort?.name ?? 'Verbier Mountain Resort'}</Text></TouchableOpacity>
                 </View>
                 <TouchableOpacity onPress={() => setShowFilters(true)} style={{}}><Icon name='sliders-h' family='FontAwesome5' size={20} /></TouchableOpacity>
             </View>
@@ -229,11 +229,11 @@ const Filters = ({ filters, setFilters, next }: FiltersProps) => {
         <Text style={{ paddingBottom: 10 }}>What are you looking for today?</Text>
         <View>
             <MultiSelector {...{ options: [...skiDisciplineOptions, ...skiStyleOptions], selected: filters, set: setFilters }} />
-            <TouchableOpacity style={{ position: 'absolute', right: 0, bottom: -5 }} onPress={() => setFilters({})}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', marginTop:  5 }} onPress={() => setFilters({})}>
                 <Text style={{ textDecorationLine: 'underline' }}>Clear all</Text>
             </TouchableOpacity>
         </View>
-        <MyTextInput {...{ ...form, fieldName: 'dayMission', multiline: true, style: { marginTop: 30, }, placeholder: 'This description will be shown to others in their feed...' }} />
-        <MyButton text='View Shredders' icon='arrow-down' onPress={next} style={{ width: 154, alignSelf: 'center', }} />
+        <MyTextInput {...{ ...form, fieldName: 'dayMission', multiline: true, style: { marginTop: 15, }, placeholder: 'This description will be shown to others in their feed...' }} />
+        <MyButton text='View Shredders' icon='arrow-down' onPress={next} style={{ alignSelf: 'center', }} />
     </View>
 }

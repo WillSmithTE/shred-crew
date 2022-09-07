@@ -49,7 +49,7 @@ export const Home = ({ route: { params } }: Props) => {
       < View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 40 }}>
         < View style={{ width: '100%', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}>
           <Text style={header}>Welcome</Text>
-          <IconButton icon='cog-outline' color='black' onPress={() => navigate('Settings')} />
+          <IconButton icon='cog' color='black' onPress={() => navigate('Settings')} />
         </View>
         <ScrollView showsHorizontalScrollIndicator={false} horizontal style={{ flexGrow: 0, paddingTop: 5, marginBottom: 25 }}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', }}>
@@ -79,7 +79,7 @@ export const Home = ({ route: { params } }: Props) => {
         </ScrollView>
         <WideButton text='Find a Shred Crew' onPress={() => navigate('PeopleFeed')} icon={{ family: 'FontAwesome5', name: 'user-friends' }} />
         <WideButton text='Group Events' onPress={showComingSoon} icon={{ family: 'FontAwesome5', name: 'calendar' }} />
-        <WideButton text='Search for mountain info' onPress={showComingSoon} icon={{ family: 'FontAwesome5', name: 'mountain' }} />
+        <WideButton text='Search for mountain info' onPress={() => navigate('ResortInfoSearch')} icon={{ family: 'FontAwesome5', name: 'mountain' }} />
         <TouchableOpacity style={[styles.button, {
           alignSelf: 'flex-start',
           backgroundColor: colors.grayBackground, justifyContent: 'flex-end', alignItems: 'flex-start',

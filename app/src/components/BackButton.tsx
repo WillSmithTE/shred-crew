@@ -9,7 +9,7 @@ type Props = {
 }
 export const BackButton = ({ customStyles = {}, absolute = true }: Props) => {
     const { goBack } = useNavigation()
-    return <IconButton onPress={goBack} icon='arrow-left' size={40}
+    return <IconButton onPress={goBack} icon='long-arrow-alt-left' size={40}
         style={[absolute ? styles.backButton : {}, customStyles]} />
 }
 

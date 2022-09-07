@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react"
 import { FieldErrorsImpl, DeepRequired, UseFormWatch, UseFormSetValue, useWatch, FormState } from "react-hook-form"
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import { IconButton } from "react-native-paper"
+import { IconButton, TextInput } from "react-native-paper"
 import { colors } from "../constants/colors"
 import { useDebouncedSearch } from "../services/useDebouncedSearch"
 import { ResortStore } from "../model/types"
@@ -35,8 +35,10 @@ export const ResortLookup = ({ control, formState, fieldName = 'resort', setValu
     }, [fieldName, setValue])
     return <>
         <View style={{ zIndex: 100, elevation: 100, }}>
-            <MyTextInput {...{ fieldName, placeholder, control, formState, }} />
-            {searchQuery !== undefined && searchQuery.length > 0 && <IconButton onPress={onPressX} icon='close' size={20} style={{ position: 'absolute', right: 8, top: 8 }} />}
+            <MyTextInput {...{ fieldName, placeholder, control, formState, }}
+                left={<TextInput.Icon icon='search' size={20} />}
+                right={searchQuery !== undefined && searchQuery.length > 0 && <TextInput.Icon onPress={onPressX} icon='times' size={20} />}
+            />
             <View style={{ marginTop: 64, position: 'absolute', width: '100%' }}>
                 {(resortResults?.length === 1 && resortResults[0].name === searchQuery ? [] : resortResults ?? [])
                     .map(({ id, name: label }, index) =>

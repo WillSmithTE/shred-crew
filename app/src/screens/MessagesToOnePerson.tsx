@@ -43,10 +43,12 @@ export const MessagesToOnePerson = ({ route: { params: { otherUser } } }: Props)
   const [messages, setMessages] = useState<IMessage[]>([])
   const [loadEarlier, setLoadEarlier] = useState(true)
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
     // init with only system messages
     setMessages(messagesData) // messagesData.filter(message => message.system),
+    setIsLoaded(true)
   }, [])
 
   const onLoadEarlier = () => {
@@ -56,50 +58,18 @@ export const MessagesToOnePerson = ({ route: { params: { otherUser } } }: Props)
       setMessages(messages.concat(earlierMessages()))
       setLoadEarlier(true)
       setIsLoadingEarlier(false)
-      // if (this._isMounted === true) {
-      // }
-    }, 1500) // simulating network
+    }, 1500)
   }
 
   const onSend = (newMessages: IMessage[] = []) => {
     setMessages([newMessages[0], ...messages])
-    // const sentMessages = [{ ...(messages[0]), sent: true, received: true }]
-    // setMessages(sentMessages.concat(messages))
-    // for demo purpose
-    // setTimeout(() => botSend(step), Math.round(Math.random() * 1000))
   }
-
-  const parsePatterns = (_linkStyle: any) => {
-    return [
-      {
-        pattern: /#(\w+)/,
-        style: { textDecorationLine: 'underline', color: 'darkorange' },
-        onPress: () => Linking.openURL('http://gifted.chat'),
-      },
-    ]
-  }
-
-  const renderSystemMessage = (props: any) => {
-    return (
-      <SystemMessage
-        {...props}
-        containerStyle={{
-          marginBottom: 15,
-        }}
-        textStyle={{
-          fontSize: 14,
-        }}
-      />
-    )
-  }
-
 
   const renderSend = (props: SendProps<IMessage>) => (
     <Send {...props} containerStyle={{ justifyContent: 'center' }}>
-      <Icon name='send' size={30} color={colors.orange} family='MaterialCommunityIcons' />
+      <Icon name='send' size={30} color={colors.orange} family='MaterialCommunityIcons' style={{ paddingRight: 10 }} />
     </Send>
   )
-  console.debug({ messages })
   return <>
     < SafeAreaView style={[styles.container]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.orange }}>
@@ -107,34 +77,28 @@ export const MessagesToOnePerson = ({ route: { params: { otherUser } } }: Props)
         <MyAvatar image={{ uri: otherUser.imageUri }} name={otherUser.name} style={{ marginRight: 13 }} />
         <Text style={[subHeader, { paddingTop: 0, }]}>{otherUser.name}</Text>
       </View>
-      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-        <View style={{ flex: 1 }}>
-          <GiftedChat
-            wrapInSafeArea={false}
-            messages={messages.filter((it) => !it.system)}
-            onSend={onSend}
-            loadEarlier={loadEarlier}
-            onLoadEarlier={onLoadEarlier}
-            isLoadingEarlier={isLoadingEarlier}
-            // parsePatterns={parsePatterns}
-            user={user}
-            scrollToBottom
-            onLongPressAvatar={user => alert(JSON.stringify(user))}
-            keyboardShouldPersistTaps='never'
-            renderSystemMessage={renderSystemMessage}
-            renderSend={renderSend}
-            timeTextStyle={{ left: { color: 'red' }, right: { color: 'yellow' } }}
-            isTyping={false}
-            infiniteScroll
-            renderBubble={(props) => <Bubble
-              {...props} wrapperStyle={{ right: { backgroundColor: colors.primary } }} />}
-          // minInputToolbarHeight={0}
-          />
-        </View>
-        {
-          Platform.OS === 'android' && <KeyboardAvoidingView behavior="padding" />
-        }
-      </View>
+      {isLoaded && <GiftedChat
+        wrapInSafeArea={true}
+        messages={messages}
+        onSend={onSend}
+        loadEarlier={loadEarlier}
+        onLoadEarlier={onLoadEarlier}
+        isLoadingEarlier={isLoadingEarlier}
+        user={user}
+        scrollToBottom
+        onLongPressAvatar={user => alert(JSON.stringify(user))}
+        keyboardShouldPersistTaps='never'
+        renderSend={renderSend}
+        isTyping={false}
+        infiniteScroll
+        renderBubble={(props) => <Bubble
+          {...props} wrapperStyle={{ right: { backgroundColor: colors.primary } }} />}
+
+      // minInputToolbarHeight={0}
+      />}
+      {
+        Platform.OS === 'android' && <KeyboardAvoidingView behavior="padding" />
+      }
     </SafeAreaView>
 
   </>
@@ -144,8 +108,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    justifyContent: 'flex-end',
-    alignItems: 'stretch',
+    // justifyContent: 'flex-end',
+    // alignItems: 'stretch',
   },
 });
 

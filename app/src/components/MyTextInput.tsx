@@ -1,5 +1,5 @@
 import React from "react"
-import { Text, StyleSheet, StyleProp, TextStyle, TextInput as NativeTextInput } from "react-native"
+import { Text, StyleSheet, StyleProp, TextStyle, TextInput as NativeTextInput, TextInputProps } from "react-native"
 import { TextInput } from 'react-native-paper'
 import {
     Controller, DeepRequired, FieldErrorsImpl,
@@ -17,9 +17,10 @@ type Props<T> = {
     multiline?: boolean,
     style?: StyleProp<TextStyle>,
     secureTextEntry?: boolean,
-    autoCapitalize?: 'none' | 'characters' | 'words' | 'sentences'
-}
-export const MyTextInput = <T,>({ control, rules = {}, fieldName, label, placeholder, multiline, style, secureTextEntry, formState, autoCapitalize = 'sentences' }: Props<T>) => {
+    autoCapitalize?: 'none' | 'characters' | 'words' | 'sentences',
+} & React.ComponentProps<typeof TextInput>
+
+export const MyTextInput = <T,>({ control, rules = {}, fieldName, label, placeholder, multiline, style, secureTextEntry, formState, autoCapitalize = 'sentences', ...otherProps }: Props<T>) => {
     const theme = useTheme()
 
     return <>
@@ -52,6 +53,7 @@ export const MyTextInput = <T,>({ control, rules = {}, fieldName, label, placeho
                             />
                         )}
                         autoCapitalize={autoCapitalize}
+                        {...otherProps}
                     />
                 )}
                 name={fieldName}

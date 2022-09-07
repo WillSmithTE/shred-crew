@@ -28,9 +28,9 @@ export const ImagePicker = ({ imageUri, setImageUri }: Props) => {
     const showDefaultIcon = imageUri === undefined || loading
     return <>
         <TouchableOpacity onPress={pickImage} style={{ alignSelf: 'center', paddingBottom: 20, }}>
-            <Avatar.Icon style={[{ backgroundColor: 'gray' }, !showDefaultIcon && { display: 'none' }]} icon='account' color={colors.gray300} size={120} />
+            <Avatar.Icon style={[{ backgroundColor: 'gray' }, !showDefaultIcon && { display: 'none' }]} icon='user-alt' color={colors.gray300} size={120} />
             <Avatar.Image style={showDefaultIcon && { display: 'none' }} size={120} source={{ uri: imageUri }} onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} />
-            <IconButton icon='pencil-circle' size={40} color={colors.secondary} style={{ position: 'absolute', left: 70, top: 70 }} />
+            <IconButton icon='edit' size={30} style={{ position: 'absolute', left: 80, top: 80 }} />
             {loading && <Loading backgroundColor='transparent' />}
         </TouchableOpacity>
     </>

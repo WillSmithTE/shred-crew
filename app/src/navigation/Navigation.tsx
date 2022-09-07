@@ -23,6 +23,7 @@ import { colors } from '../constants/colors';
 import Icon, { IC } from '../components/Icon';
 import { MessagesList } from '../screens/MessagesList';
 import { MessagesToOnePerson } from '../screens/MessagesToOnePerson';
+import ResortInfoSearch from '../screens/ResortInfoSearch';
 
 export type RootStackParams = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined
@@ -36,6 +37,7 @@ export type RootStackParams = {
   EditProfile: undefined
   Settings: undefined
   MessagesToOnePerson: { otherUser: BaseUserProfile }
+  ResortInfoSearch: undefined
 };
 
 const Stack = createNativeStackNavigator<RootStackParams>();
@@ -79,6 +81,7 @@ export type RootTabParamList = {
   Home: { showOptions?: boolean };
   MessagesList: undefined
   PeopleFeed?: undefined
+  ResortInfoSearch: undefined
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
@@ -120,12 +123,20 @@ function BottomTabNavigator() {
           })}
         />
         <BottomTab.Screen
+          name="ResortInfoSearch"
+          component={ResortInfoSearch}
+          options={({ navigation }: RootTabScreenProps<'ResortInfoSearch'>) => ({
+            tabBarIcon: ({ color }) => <TabBarIcon name="mountain" family='FontAwesome5' color={color} />,
+          })}
+        />
+        <BottomTab.Screen
           name="MessagesList"
           component={MessagesList}
           options={({ navigation }: RootTabScreenProps<'MessagesList'>) => ({
             tabBarIcon: ({ color }) => <TabBarIcon name="message" family='MaterialCommunityIcons' color={color} />,
           })}
         />
+
       </BottomTab.Navigator>
     </SafeAreaProvider>
   );

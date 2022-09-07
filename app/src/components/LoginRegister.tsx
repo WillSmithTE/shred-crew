@@ -77,11 +77,14 @@ export const LoginRegister = ({ mode }: Props) => {
                         <Image style={{ height: 20, width: 20, marginRight: 10 }} resizeMode='contain' source={require('../../assets/Google_logo.png')} />
                         <Text style={{ color: colors.darkDarkGray, alignContent: 'center', fontWeight: 'bold' }}>{mode === 'login' ? 'Login' : 'Sign up'} with Google</Text>
                     </TouchableOpacity>
-                    <Button style={styles.button} icon='email' mode='contained' onPress={onEmailPress}> {mode === 'login' ? 'Login' : 'Sign up'} with Email</Button>
+                    <Button style={styles.button} icon='envelope' mode='contained' onPress={onEmailPress}> {mode === 'login' ? 'Login' : 'Sign up'} with Email</Button>
                 </View>
-                <Text>{mode === 'login' ? `Don't` : 'Already'} have an account?&nbsp;
-                    <Text style={{ textDecorationLine: 'underline', color: 'black' }} onPress={() => navigate(mode === 'login' ? 'Register' : 'Login')}>{mode === 'login' ? 'Sign up' : 'Login'}</Text>
-                </Text>
+                <Text>{mode === 'login' ? `Don't` : 'Already'} have an account?&nbsp;</Text>
+                <TouchableOpacity onPress={() => navigate(mode === 'login' ? 'Register' : 'Login')} style={{ padding: 10 }}>
+                    <Text style={{ textDecorationLine: 'underline', color: 'black' }}>
+                        {mode === 'login' ? 'Sign up' : 'Login'}
+                    </Text>
+                </TouchableOpacity>
             </View>
         </ImageBackground>
         {loading && <FullScreenLoader />}

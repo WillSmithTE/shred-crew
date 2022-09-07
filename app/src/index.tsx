@@ -14,6 +14,7 @@ import { useFonts } from 'expo-font';
 import * as Sentry from 'sentry-expo';
 import Constants from 'expo-constants';
 import { usePreloadUserAssets } from './services/usePreloadUserAssets';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 SplashScreen.preventAutoHideAsync();
 Sentry.init({
@@ -26,7 +27,11 @@ export default function App() {
   return (
     <>
       <Provider store={store}>
-        <PaperProvider theme={theme}>
+        <PaperProvider theme={theme}
+          settings={{
+            icon: props => <FontAwesome5 {...props} />,
+          }}
+        >
           <AppInternals />
         </PaperProvider>
       </Provider>

@@ -22,7 +22,7 @@ export function usePreloadUserAssets() {
                 ...(user.otherImages ?? []),
                 ...Object.values(user.friends ?? {}).map((friend) => friend.profile.imageUri),
             ]
-            FastImage.preload(imageUris.map((uri) => ({uri})))
+            // FastImage.preload(imageUris.map((uri) => ({uri})))
             
             console.debug('returning, in preloadUserAssets')
             // await Promise.all(preFetchTasks)
