@@ -37,7 +37,12 @@ export const LoginRegister = ({ mode }: Props) => {
     const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
     const [loading, setLoading] = useState(false)
     const loader = useLoader()
-
+    console.debug({
+        webClientId: Constants.manifest?.extra!!.webClientId,
+        androidClientId: Constants.manifest?.extra!!.androidClientId,
+        iosClientId: Constants.manifest?.extra!!.iosClientId,
+        expoClientId: Constants.manifest?.extra!!.expoClientId,
+    })
     const [googleAuthRequest, googleAuthResponse, promptGoogleLogin] = Google.useIdTokenAuthRequest({
         webClientId: Constants.manifest?.extra!!.webClientId,
         androidClientId: Constants.manifest?.extra!!.androidClientId,

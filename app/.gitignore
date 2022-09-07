@@ -75,3 +75,6 @@ dist/
 # @end expo-cli
 
 google-services.json
+
+ios/
+android/
