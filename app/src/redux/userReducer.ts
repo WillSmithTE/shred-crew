@@ -20,6 +20,8 @@ export const userSlice = createSlice({
         setUserState: (state, action: PayloadAction<UserDetails>) => {
             console.log({ user: action.payload })
             state.user = action.payload
+            // TODO REMOVE DUMMY FRIENDS
+            if (state.user) state.user.friends = dummyFriends
             console.log('setting user state')
         },
         clearUser: (state, _: PayloadAction<void>) => {
