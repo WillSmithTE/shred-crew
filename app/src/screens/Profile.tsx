@@ -22,6 +22,7 @@ import { ResortLookup } from '../components/ResortLookup';
 import { useUserApi } from '../api/userApi';
 import { useResortApi } from '../api/resortApi';
 import { tryCatchAsync } from '../util/tryCatchAsync';
+import { showMessage } from 'react-native-flash-message';
 
 function useLoader() {
     const { findResort } = useResortApi()
@@ -48,7 +49,7 @@ export const Profile = ({ mode }: Props) => {
     const action = useAction()
     const user = useSelector((state: RootState) => state.user.user)
     if (user === undefined) return <FullScreenLoader />
-    const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
+    const { navigate, goBack } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
     const [loading, setLoading] = useState(false)
     const [imageUri, setImageUri] = useState(user.imageUri)
     const [skillLevel, setSkillLevel] = useState<number>(user.ski?.skillLevel ?? 3)
@@ -79,8 +80,9 @@ export const Profile = ({ mode }: Props) => {
                 ski: { disciplines, skillLevel, styles: skiStyles, backcountryDetails, homeMountain: homeMountainPlace }
             })
             dispatch(setUserState(response))
-            // setLoading(false)
-            // showComingSoon()
+            if (!isCreate) {
+                goBack()
+            } 
         } catch (e: any) {
             setLoading(false)
             showError2({ message: `Something went wrong saving your profile...`, description: jsonString(e) })
