@@ -78,9 +78,9 @@ export const Navigation = () => {
 }
 
 export type RootTabParamList = {
-  Home: { showOptions?: boolean };
+  Home?: { showOptions?: boolean };
   MessagesList: undefined
-  PeopleFeed?: undefined
+  PeopleFeed?: { showFilters?: boolean }
   ResortInfoSearch: undefined
 };
 

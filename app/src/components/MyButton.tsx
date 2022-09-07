@@ -9,7 +9,7 @@ type Props = {
     style?: {},
 }
 export const MyButton = ({ text, onPress, icon, style }: Props) => {
-    return <Button color='black' mode='text' onPress={onPress} style={[styles.button, style]} uppercase={false}
+    return <Button compact color='black' mode='text' onPress={onPress} style={[styles.button, style]} uppercase={false}
         icon={icon} contentStyle={{ flexDirection: 'row-reverse' }}>
         {text}
     </Button>
@@ -24,5 +24,7 @@ const styles = StyleSheet.create({
         shadowColor: '#00000040',
         shadowRadius: 4,
         backgroundColor: 'white',
+        alignSelf: 'center',
+        padding: 5,
     }
 })

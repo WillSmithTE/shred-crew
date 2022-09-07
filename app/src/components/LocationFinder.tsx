@@ -111,7 +111,7 @@ export const LocationFinder = ({ route: { params } }: Props) => {
                 (session) => {
                     console.log({ session })
                     dispatch(createSkiSessionComplete(session))
-                    navigation.navigate('PeopleFeed')
+                    navigation.navigate('PeopleFeed', { showFilters: true })
                 },
                 setError,
             )
@@ -169,9 +169,9 @@ export const LocationFinder = ({ route: { params } }: Props) => {
                                 <SingleSelector selected={selectedPlace} set={onClickSugggestedPlace} idResolver={(place) => place.id}
                                     options={[...places.slice(1, 5).map((it) => ({ value: it, label: it.name }))]} />
                             </>}
+                            {selectedPlace && <MyButton icon='arrow-right' text='Next' onPress={onPressNext} style={styles.nextButton} />}
                             <View style={{ flex: 1 }} />
                         </KeyboardAvoidingView>
-                        {selectedPlace && <MyButton text='Next' onPress={onPressNext} style={styles.nextButton} />}
                         {/* <ConfirmationDrawer {...{ placeName: selectedPlace?.name, confirmNext: goNextScreen, show: showConfirmation, setShow: setShowConfirmation }} /> */}
                     </>
 
@@ -200,9 +200,7 @@ const createStyles = (mapWidth: number, mapHeight: number) => StyleSheet.create(
         justifyContent: 'flex-end',
     },
     nextButton: {
-        position: 'absolute',
-        right: 32,
-        bottom: 22,
+        alignSelf: 'flex-end'
     },
 })
 

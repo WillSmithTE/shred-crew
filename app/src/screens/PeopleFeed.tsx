@@ -2,7 +2,7 @@ import BottomSheet from "@gorhom/bottom-sheet"
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from "react-native"
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Dimensions, SafeAreaView } from "react-native"
 import { Avatar, IconButton, Portal, Modal } from "react-native-paper"
 import Icon from "../components/Icon"
 import { MultiSelector, SingleSelector } from "../components/MultiSelector"
@@ -33,15 +33,15 @@ function useLoader() {
     }
 }
 
-const bannerHeight = 110
+const bannerHeight = 80
 type Props = NativeStackScreenProps<RootTabParamList, 'PeopleFeed'> & {
 };
 export const PeopleFeed = ({ route: { params } }: Props) => {
     const dispatch = useDispatch()
     const skiSession = useSelector((root: RootState) => root.user.skiSession)
     const [poked, setPoked] = useState<{ [id: string]: boolean | undefined }>({})
-    const [showFilters, setShowFilters] = useState(skiSession === undefined)
-    const [filters, setFilters] = useState<{ [key: string]: boolean }>({})
+    const [filters, setFilters] = useState<{ [key: string]: boolean } | undefined>(undefined)
+    const [showFilters, setShowFilters] = useState(params?.showFilters === true)
     const { navigate, getState, push } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
     const [people, setPeople] = useState<PersonInFeed[]>()
 
@@ -57,58 +57,56 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
         }
     }, [skiSession])
 
-    const onPressLocation = (session: SkiSession) => {
-        push('LocationFinder', { initialPlace: session.resort })
+    const onPressLocation = (session?: SkiSession) => {
+        push('LocationFinder', { initialPlace: session?.resort })
     }
 
-    if (skiSession === undefined) {
-        push('LocationFinder')
-        return <FullScreenLoader />
-    }
     return <>
-        <View style={{ flex: 1, backgroundColor: 'white' }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
             <View style={styles.banner}>
                 <Avatar.Image size={56} source={require('../../assets/avatar.png')} style={{ marginRight: 13 }} />
                 <View style={{ flex: 1 }}>
                     <Text style={styles.bannerHeader}>Shred Crew Feed</Text>
-                    <TouchableOpacity onPress={() => onPressLocation(skiSession)}><Text style={{textDecorationLine: 'underline'}}>{skiSession.resort?.name ?? 'Verbier Mountain Resort'}</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => onPressLocation(skiSession)}><Text style={{ textDecorationLine: 'underline' }}>{skiSession?.resort?.name ?? 'No resort'}</Text></TouchableOpacity>
                 </View>
                 <TouchableOpacity onPress={() => setShowFilters(true)} style={{}}><Icon name='sliders-h' family='FontAwesome5' size={20} /></TouchableOpacity>
             </View>
-            {people === undefined ? <View style={{ flex: 1 }}>
-                <FullScreenLoader background={false} />
-            </View> :
+            {skiSession === undefined ?
+                <TouchableOpacity onPress={() => onPressLocation(skiSession)} style={{ marginTop: 20, backgroundColor: colors.primary, alignItems: 'center', width: '40%', borderRadius: 10, alignSelf: 'center' }}>
+                    <Text style={[subHeader, { color: 'white', textAlign: 'center', alignSelf: 'center', flexWrap: 'wrap', flexShrink: 1, padding: 20 }]}>Pick a resort</Text>
+                </TouchableOpacity> :
                 <ScrollView style={{ flex: 1 }}>
-                    {people.map((person) => {
-                        const { userId, name } = person
-                        const isPoked = poked && poked[userId] === true
-                        const onPressSeeMore = showComingSoon
-                        const onPoke = (userId: string, newVal: boolean) => setPoked({ ...poked, [userId]: isPoked ? undefined : true })
+                    {people === undefined ?
+                        <FullScreenLoader background={false} /> :
+                        people.map((person) => {
+                            const { userId, name } = person
+                            const isPoked = poked && poked[userId] === true
+                            const onPressSeeMore = showComingSoon
+                            const onPoke = (userId: string, newVal: boolean) => setPoked({ ...poked, [userId]: isPoked ? undefined : true })
 
-                        return <View key={userId} style={{ flex: 1, minHeight: 360 }}>
-                            <ImageSwiper person={person} />
-                            <View style={{ flexDirection: 'row', paddingTop: 15, minHeight: 70, }}>
-                                <View style={{ backgroundColor: '#2FCE5C', width: 10, height: 10, borderRadius: 5, marginHorizontal: 10, marginTop: 5, }}></View>
-                                <View>
-                                    <Text style={{ fontWeight: '700' }}>{name}</Text>
-                                    <TouchableOpacity onPress={onPressSeeMore}>
-                                        <Text style={{ textDecorationLine: 'underline' }}>See more</Text>
+                            return <View key={userId} style={{ flex: 1, minHeight: 360 }}>
+                                <ImageSwiper person={person} />
+                                <View style={{ flexDirection: 'row', paddingTop: 15, minHeight: 70, }}>
+                                    <View style={{ backgroundColor: '#2FCE5C', width: 10, height: 10, borderRadius: 5, marginHorizontal: 10, marginTop: 5, }}></View>
+                                    <View>
+                                        <Text style={{ fontWeight: '700' }}>{name}</Text>
+                                        <TouchableOpacity onPress={onPressSeeMore}>
+                                            <Text style={{ textDecorationLine: 'underline' }}>See more</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <TouchableOpacity onPress={() => onPoke(userId, !isPoked)} style={{
+                                        width: 44, height: 44, backgroundColor: isPoked ? colors.secondary : colors.lightGray,
+                                        flex: 0, marginLeft: 'auto', justifyContent: 'center', alignItems: 'center', marginRight: 12,
+                                        borderRadius: 7,
+                                    }}>
+                                        <Image style={{ width: 24, height: 24 }} source={require('../../assets/horns.png')} resizeMode='contain' />
                                     </TouchableOpacity>
                                 </View>
-                                <TouchableOpacity onPress={() => onPoke(userId, !isPoked)} style={{
-                                    width: 44, height: 44, backgroundColor: isPoked ? colors.secondary : colors.lightGray,
-                                    flex: 0, marginLeft: 'auto', justifyContent: 'center', alignItems: 'center', marginRight: 12,
-                                    borderRadius: 7,
-                                }}>
-                                    <Image style={{ width: 24, height: 24 }} source={require('../../assets/horns.png')} resizeMode='contain' />
-                                </TouchableOpacity>
                             </View>
-                        </View>
-                    })}
-                </ScrollView>
-            }
+                        })}
+                </ScrollView>}
             <FilterDrawer {...{ filters, setFilters, show: showFilters, setShow: setShowFilters, confirmNext: () => { setShowFilters(false) } }} />
-        </View>
+        </SafeAreaView>
     </>
 }
 const styles = StyleSheet.create({
@@ -117,7 +115,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: bannerHeight,
-        paddingTop: 20,
         paddingHorizontal: 20,
     },
     bannerHeader: {
@@ -142,7 +139,7 @@ const styles = StyleSheet.create({
 
 type FilterDrawerProps = {
     show: boolean, setShow: (val: boolean) => void, confirmNext: () => void,
-    filters: { [key: string]: boolean }, setFilters: (it: { [key: string]: boolean }) => void,
+    filters?: { [key: string]: boolean }, setFilters: (it: { [key: string]: boolean }) => void,
 }
 const FilterDrawer = ({ show, setShow, confirmNext, filters, setFilters }: FilterDrawerProps) => {
     const bottomSheetRef = useRef<BottomSheet>(null);
@@ -213,10 +210,10 @@ const ImageSwiper = ({ person: { imageUri, ski, otherImages } }: ImageSwiperProp
 
 type FiltersProps = {
     next: () => void,
-    filters: { [key: string]: boolean },
+    filters?: { [key: string]: boolean },
     setFilters: (it: { [key: string]: boolean }) => void,
 }
-const Filters = ({ filters, setFilters, next }: FiltersProps) => {
+const Filters = ({ filters = {}, setFilters, next }: FiltersProps) => {
 
     const form = useForm({
         defaultValues: {
@@ -229,7 +226,7 @@ const Filters = ({ filters, setFilters, next }: FiltersProps) => {
         <Text style={{ paddingBottom: 10 }}>What are you looking for today?</Text>
         <View>
             <MultiSelector {...{ options: [...skiDisciplineOptions, ...skiStyleOptions], selected: filters, set: setFilters }} />
-            <TouchableOpacity style={{ alignSelf: 'flex-end', marginTop:  5 }} onPress={() => setFilters({})}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', marginTop: 5 }} onPress={() => setFilters({})}>
                 <Text style={{ textDecorationLine: 'underline' }}>Clear all</Text>
             </TouchableOpacity>
         </View>
