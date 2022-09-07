@@ -54,3 +54,4 @@ DONE - feat: login with google. don't recreate profile
 - bug: press back on locationfinder without  choosinig location for first time
 - feat: dont autonav to location finder. Show something like "choose a locaion to find people"
 - bug: signup/login button hard to press
+- feat: make return key on login click button

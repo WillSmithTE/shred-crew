@@ -11,6 +11,11 @@
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
+    "extra": {
+      "eas": {
+        "projectId": "426bab2b-a6a7-4dd3-98e1-e2aaacbc4ecd"
+      }
+    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -45,7 +50,8 @@
         "googleMaps": {
           "apiKey": "AIzaSyAv94QdN6lF3b0wZx7m6NXRQzJsPpxjMMM"
         }
-      }
+      },
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -203,6 +203,19 @@ export type GoogleSignInRequest = {
 
 export type Friend = {
     friendSince: number,
-    messages: IMessage[],
+    messages: Message[],
     profile: BaseUserProfile,
+}
+export type Message = {
+    _id: string;
+    text: string;
+    createdAt: number;
+    user: BaseUserProfile;
+    image?: string;
+    video?: string;
+    audio?: string;
+    system?: boolean;
+    sent?: boolean;
+    received?: boolean;
+    pending?: boolean;
 }
