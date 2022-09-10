@@ -3,15 +3,15 @@ import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-naviga
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Dimensions, SafeAreaView } from "react-native"
-import { Avatar, IconButton, Portal, Modal } from "react-native-paper"
+import { Avatar, IconButton, Portal, Modal, Button } from "react-native-paper"
 import Icon from "../components/Icon"
 import { MultiSelector, SingleSelector } from "../components/MultiSelector"
 import { MyButton } from "../components/MyButton"
 import { MyTextInput } from "../components/MyTextInput"
 import { colors } from "../constants/colors"
 import { RootStackParams, RootTabParamList } from "../navigation/Navigation"
-import { subHeader } from "../services/styles"
-import { GetPeopleFeedRequest, getTagsFromSkiDetails, MyLocation, PersonInFeed, SkiSession, UserDetails } from "../model/types"
+import { header, subHeader } from "../services/styles"
+import { GetPeopleFeedRequest, getTagsFromSkiDetails, MyLocation, PersonInFeed, SetPokeRequest, SkiSession, UserDetails, Conversation } from "../model/types"
 import { skiDisciplineOptions, skiStyleOptions } from "./Profile"
 import Swiper from 'react-native-swiper'
 import { showComingSoon } from "../components/Error"
@@ -19,10 +19,12 @@ import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../redux/reduxStore"
 import { FullScreenLoader } from "../components/Loading"
 import { useNavigation } from "@react-navigation/native"
-import { dummyPeopleFeedPeople } from "../model/dummyData"
+import { dummyConversation, dummyPeopleFeedPeople } from "../model/dummyData"
 import { useSkiSessionApi } from "../api/skiSessionApi"
 import { tryCatchAsync } from "../util/tryCatchAsync"
-import { logoutUser } from "../redux/userReducer"
+import { addConversation, logoutUser, setPoked } from "../redux/userReducer"
+import { useUserApi } from "../api/userApi"
+import { MyAvatar } from "../components/MyAvatar"
 
 function useLoader() {
     const skiSessionApi = useSkiSessionApi()
@@ -32,33 +34,57 @@ function useLoader() {
         }
     }
 }
-
+function useActions() {
+    const userApi = useUserApi()
+    return {
+        setPoke: async (request: SetPokeRequest) => {
+            return await userApi.setPoke(request)
+        }
+    }
+}
 const bannerHeight = 80
 type Props = NativeStackScreenProps<RootTabParamList, 'PeopleFeed'> & {
 };
 export const PeopleFeed = ({ route: { params } }: Props) => {
     const dispatch = useDispatch()
     const skiSession = useSelector((root: RootState) => root.user.skiSession)
-    const [poked, setPoked] = useState<{ [id: string]: boolean | undefined }>({})
+    const poked = useSelector((root: RootState) => root.user.user)?.poked ?? {}
     const [filters, setFilters] = useState<{ [key: string]: boolean } | undefined>(undefined)
     const [showFilters, setShowFilters] = useState(params?.showFilters === true)
     const { navigate, getState, push } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
     const [people, setPeople] = useState<PersonInFeed[]>()
+    const [loadingPokes, setLoadingPokes] = useState<{ [key: string]: boolean }>({})
+    const [newMatch, setNewMatch] = useState<Conversation>()
 
     const loader = useLoader()
+    const actions = useActions()
     useEffect(() => {
         if (skiSession !== undefined) {
-            tryCatchAsync(
-                () => loader.findNearbyPeople({ userId: skiSession.userId, location: skiSession.resort.googlePlace.geometry.location }),
-                (response) => {
+            tryCatchAsync({
+                getter: () => loader.findNearbyPeople({ userId: skiSession.userId, location: skiSession.resort.googlePlace.geometry.location }),
+                onSuccess: (response) => {
                     setPeople(response.people)
                 },
-            )
+            })
         }
     }, [skiSession])
 
     const onPressLocation = (session?: SkiSession) => {
         push('LocationFinder', { initialPlace: session?.resort })
+    }
+    const onPoke = async (userId: string, newVal: boolean) => {
+        setLoadingPokes({ ...loadingPokes, userId: true })
+        tryCatchAsync({
+            getter: () => actions.setPoke({ userId, isPoked: newVal }),
+            onSuccess: (response) => {
+                if (response.newConvo !== undefined) {
+                    dispatch(addConversation(response.newConvo))
+                    setNewMatch(response.newConvo)
+                }
+                dispatch(setPoked(response.poked))
+            },
+            lastly: () => setLoadingPokes({ ...loadingPokes, userId: false })
+        })
     }
 
     return <>
@@ -82,7 +108,6 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
                             const { userId, name } = person
                             const isPoked = poked && poked[userId] === true
                             const onPressSeeMore = showComingSoon
-                            const onPoke = (userId: string, newVal: boolean) => setPoked({ ...poked, [userId]: isPoked ? undefined : true })
 
                             return <View key={userId} style={{ flex: 1, minHeight: 360 }}>
                                 <ImageSwiper person={person} />
@@ -105,6 +130,7 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
                             </View>
                         })}
                 </ScrollView>}
+            {newMatch && <NewMatchModal newMatch={newMatch} onClose={() => setNewMatch(undefined)} />}
             <FilterDrawer {...{ filters, setFilters, show: showFilters, setShow: setShowFilters, confirmNext: () => { setShowFilters(false) } }} />
         </SafeAreaView>
     </>
@@ -234,3 +260,35 @@ const Filters = ({ filters = {}, setFilters, next }: FiltersProps) => {
         <MyButton text='View Shredders' icon='arrow-down' onPress={next} style={{ alignSelf: 'center', }} />
     </View>
 }
+
+type NewMatchModalProps = {
+    newMatch: Conversation,
+    onClose: () => void,
+}
+const NewMatchModal = ({ newMatch, onClose }: NewMatchModalProps) => {
+    return <Modal visible={true} onDismiss={onClose} contentContainerStyle={newMatchModalStyles.container}>
+        <Text style={[header, { color: 'black', textAlign: 'center' }]}>Ooooohhh yeaaaaah</Text>
+        <Text style={[subHeader, { fontSize: 20, textAlign: 'center' }]}>Time to Shred</Text>
+        <MyAvatar name={newMatch!!.name} image={{ uri: newMatch?.img }} size={80} style={{ marginTop: 20 }} />
+        <Button onPress={showComingSoon} style={[newMatchModalStyles.button, { backgroundColor: colors.orange }]} mode='contained'>Send a message</Button>
+        <Button mode='outlined' style={[newMatchModalStyles.button,]} onPress={onClose}>Back to Feed</Button>
+    </Modal>
+}
+
+const newMatchModalStyles = StyleSheet.create({
+    container: {
+        backgroundColor: colors.background,
+        width: '80%',
+        alignSelf: 'center',
+        padding: 20,
+        alignItems: 'center',
+        display: 'flex',
+        opacity: .9,
+        borderRadius: 40,
+    },
+    button: {
+        marginTop: 20,
+        width: 200
+        // width: '60%'
+    }
+})

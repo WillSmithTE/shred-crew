@@ -1,4 +1,4 @@
-import { Friend, PersonInFeed, Place } from "./types"
+import { Conversation, Friend, PersonInFeed, Place } from "./types"
 
 export const photoWill = 'https://drive.google.com/uc?id=1IEB_sv_rUetHVT5GjVJWBRMy9uF1ivjp'
 export const photoPip = 'https://drive.google.com/uc?id=1ZP5iPXjXyYaiSWMwIIpvHByTERouw8CW'
@@ -70,7 +70,7 @@ export const dummyFriends: { [userId: string]: Friend } = {
                 createdAt: twoHoursAgo().getDate(),
                 text: 'you at thredbo tomorrow?',
                 user: {
-                    _id: '3',
+                    userId: '3', name: ''
                 }
             }
         ]
@@ -86,7 +86,7 @@ export const dummyFriends: { [userId: string]: Friend } = {
             _id: 'alksnga',
             createdAt: twoDaysAgo().getDate(),
             text: 'cool cya tthen',
-            user: { _id: '4', }
+            user: { userId: '4', name: '' }
         }],
     },
 }
@@ -102,3 +102,16 @@ export function twoHoursAgo() {
     return date
 }
 
+export const dummyConversationWithMessage: Conversation = {
+    id: '123asd',
+    message: { user: 'user1', time: twoHoursAgo().getTime(), data: { text: 'hey whatup' } },
+    name: 'Johnny Schimdt',
+    img: photoWill,
+    created: twoDaysAgo().getTime(),
+}
+export const dummyConversation: Conversation = {
+    id: '123asd',
+    name: 'Johnny Schimdt',
+    img: photoWill,
+    created: twoHoursAgo().getTime(),
+}

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { StyleSheet, View, Text, Platform, Alert, Linking, KeyboardAvoidingView } from 'react-native';
 
 import { colors } from '../constants/colors';
@@ -27,16 +27,29 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Avatar } from 'react-native-paper';
 import { BackButton } from '../components/BackButton';
 import { MyAvatar } from '../components/MyAvatar';
+import { tryCatchAsync } from '../util/tryCatchAsync';
+import { useConversationApi } from '../api/conversationApi';
 
 const user = {
   _id: 1,
   name: 'Developer',
 }
 
+const useLoader = () => {
+  const conversationApi = useConversationApi()
+  return {
+    getMessages: async function (conversationId: string, aftertime?: number): Promise<IMessage[]> {
+      return await conversationApi.getMessages(conversationId, aftertime)
+    },
+    sendMessage: async function (message: IMessage): Promise<IMessage> {
+      return await conversationApi.sendMessage(message)
+    },
+  }
+}
 type Props = NativeStackScreenProps<RootStackParams, 'MessagesToOnePerson'> & {
 
 };
-export const MessagesToOnePerson = ({ route: { params: { otherUser } } }: Props) => {
+export const MessagesToOnePerson = ({ route: { params: { conversation } } }: Props) => {
   const dispatch = useDispatch()
   // const user = useSelector((state: RootState) => state.user.user)
   const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
@@ -44,25 +57,35 @@ export const MessagesToOnePerson = ({ route: { params: { otherUser } } }: Props)
   const [loadEarlier, setLoadEarlier] = useState(true)
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
+  const loader = useLoader()
+
+  const getMoreMessages = useCallback((afterTime?: number, lastly?: () => void) => {
+    tryCatchAsync({
+      getter: () => loader.getMessages(conversation.id, afterTime),
+      onSuccess: (newMessages) => {
+        setMessages([...newMessages, ...messages])
+      },
+      lastly: () => {
+        setIsLoaded(true)
+        lastly && lastly()
+      }
+    })
+  }, [messages, setIsLoaded, loader])
 
   useEffect(() => {
-    // init with only system messages
-    setMessages(messagesData) // messagesData.filter(message => message.system),
-    setIsLoaded(true)
+    getMoreMessages()
   }, [])
 
   const onLoadEarlier = () => {
     setIsLoadingEarlier(true)
-
-    setTimeout(() => {
-      setMessages(messages.concat(earlierMessages()))
-      setLoadEarlier(true)
-      setIsLoadingEarlier(false)
-    }, 1500)
+    getMoreMessages(messages[messages.length - 1].createdAt.valueOf(), () => { setLoadEarlier(true); setLoadEarlier(false) })
   }
 
   const onSend = (newMessages: IMessage[] = []) => {
-    setMessages([newMessages[0], ...messages])
+    tryCatchAsync({
+      getter: () => loader.sendMessage(newMessages[0]),
+      onSuccess: (message) => setMessages([message, ...messages]),
+    })
   }
 
   const renderSend = (props: SendProps<IMessage>) => (
@@ -74,8 +97,8 @@ export const MessagesToOnePerson = ({ route: { params: { otherUser } } }: Props)
     < SafeAreaView style={[styles.container]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.orange }}>
         <BackButton absolute={false} />
-        <MyAvatar image={{ uri: otherUser.imageUri }} name={otherUser.name} style={{ marginRight: 13 }} />
-        <Text style={[subHeader, { paddingTop: 0, }]}>{otherUser.name}</Text>
+        <MyAvatar image={{ uri: conversation.img }} name={conversation.name} style={{ marginRight: 13 }} />
+        <Text style={[subHeader, { paddingTop: 0, }]}>{conversation.name}</Text>
       </View>
       {isLoaded && <GiftedChat
         wrapInSafeArea={true}

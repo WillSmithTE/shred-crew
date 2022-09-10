@@ -75,11 +75,11 @@ export const LocationFinder = ({ route: { params } }: Props) => {
     useEffect(() => {
         (async () => {
             if (userLocation !== undefined) {
-                tryCatchAsync(
-                    () => loader.findNearbyResorts(latLngToLocation(userLocation)),
-                    setPlaces,
-                    setError,
-                )
+                tryCatchAsync({
+                    getter: () => loader.findNearbyResorts(latLngToLocation(userLocation)),
+                    onSuccess: setPlaces,
+                    onError: setError,
+                })
             }
         })()
     }, [userLocation])
@@ -106,15 +106,15 @@ export const LocationFinder = ({ route: { params } }: Props) => {
 
     const goNextScreen = useCallback(async () => {
         if (selectedPlace && userLocation) {
-            tryCatchAsync(
-                () => actions.createSkiSession({ userLocation: latLngToLocation(userLocation), resort: selectedPlace }),
-                (session) => {
+            tryCatchAsync({
+                getter: () => actions.createSkiSession({ userLocation: latLngToLocation(userLocation), resort: selectedPlace }),
+                onSuccess: (session) => {
                     console.log({ session })
                     dispatch(createSkiSessionComplete(session))
                     navigation.navigate('PeopleFeed', { showFilters: true })
                 },
-                setError,
-            )
+                onError: setError,
+            })
         } else {
             showError(`shouldn't be here, need userLocation and selectedPlace`)
         }
@@ -127,11 +127,11 @@ export const LocationFinder = ({ route: { params } }: Props) => {
     const { control, handleSubmit, formState, setValue } = useForm<{ resort: string }>();
 
     const onClickResortSearchResult = (id: string) => {
-        tryCatchAsync(
-            () => loader.findResort(id),
-            setSelectedPlace,
-            setError,
-        )
+        tryCatchAsync({
+            getter: () => loader.findResort(id),
+            onSuccess: setSelectedPlace,
+            onError: setError,
+        })
     }
     const resortLookupFieldName = 'resort'
 

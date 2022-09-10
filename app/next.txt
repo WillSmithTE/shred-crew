@@ -51,7 +51,15 @@ DONE - feat: handle same email from google and email login
 DONE - feat: login with google. don't recreate profile
 - feat: keyboard  avoiding views everywhere
 - feat: safe area  views everywhere
-- bug: press back on locationfinder without  choosinig location for first time
-- feat: dont autonav to location finder. Show something like "choose a locaion to find people"
-- bug: signup/login button hard to press
+DONE - bug: press back on locationfinder without  choosinig location for first time
+DONE - feat: dont autonav to location finder. Show something like "choose a locaion to find people"
+DONE - bug: signup/login button hard to press
 - feat: make return key on login click button
+- feat: save  profile pictures in s3
+- bug: no loading on click next from profile (on initial create)
+- feat: resortlookup: close keyboard on select or clear (e.g. on resort info page)
+- feat: what to do with skip button. kill it? have FAB instead?
+- feat: text on user location loader. Finding resorts near you...
+- feat: use https://github.com/ai/nanoid for user ids cause shorter, save db storage
+- chore: eventually consistent reads prob
+- feat: only google OR email login? if google fails, take to home with an error on screen

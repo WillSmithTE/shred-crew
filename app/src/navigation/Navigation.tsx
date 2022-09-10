@@ -14,7 +14,7 @@ import { LocationFinder } from '../components/LocationFinder';
 import { Profile } from '../screens/Profile';
 import { EditProfile } from '../screens/EditProfile';
 import { PeopleFeed } from '../screens/PeopleFeed';
-import { BaseUserProfile, Place } from '../model/types';
+import { BaseUserProfile, Conversation, Place } from '../model/types';
 import Settings from '../screens/Settings';
 import { BottomTabScreenProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
@@ -36,7 +36,7 @@ export type RootStackParams = {
   LocationFinder?: { initialPlace?: Place }
   EditProfile: undefined
   Settings: undefined
-  MessagesToOnePerson: { otherUser: BaseUserProfile }
+  MessagesToOnePerson: { conversation: Conversation }
   ResortInfoSearch: undefined
 };
 

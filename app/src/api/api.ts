@@ -70,7 +70,7 @@ const useBaseApiBuilder = ({ baseUrl = '', fetchWith = fetch, }) => {
     return { get, post, put, patch, request, deleteX, };
 };
 
-export const baseApiRequest = async <T, U = T>(callback: () => Promise<MyResponse<U>>, errorMessage: string, mapper: ((a: U) => T) = (a) => (a as unknown as T)) => {
+export async function baseApiRequest<T, U = T>(callback: () => Promise<MyResponse<U>>, errorMessage: string, mapper: ((a: U) => T) = (a) => (a as unknown as T)): Promise<T> {
     try {
         const response = await callback()
         console.debug(`response received: ${jsonString(response)}`)

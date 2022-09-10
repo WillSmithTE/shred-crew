@@ -67,10 +67,10 @@ export const Profile = ({ mode }: Props) => {
         }
     });
     const onClickResortSearchResult = (id: string) => {
-        tryCatchAsync(
-            () => loader.findResort(id),
-            setHomeMountainPlace,
-        )
+        tryCatchAsync({
+            getter: () => loader.findResort(id),
+            onSuccess: setHomeMountainPlace,
+        })
     }
     const onSubmit = async ({ name, bio, homeMountain, backcountryDetails, }: FormData) => {
         setLoading(true)
@@ -82,7 +82,7 @@ export const Profile = ({ mode }: Props) => {
             dispatch(setUserState(response))
             if (!isCreate) {
                 goBack()
-            } 
+            }
         } catch (e: any) {
             setLoading(false)
             showError2({ message: `Something went wrong saving your profile...`, description: jsonString(e) })

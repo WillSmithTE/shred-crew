@@ -15,7 +15,7 @@ export type UserDetails = BaseUserProfile & {
     otherImages?: string[],
     // matches?: { [userId: string]: boolean },
     poked?: { [userId: string]: boolean },
-    friends?: { [userId: string]: Friend },
+    pushToken?: string,
 }
 export type BaseUserProfile = {
     name: string,
@@ -34,7 +34,8 @@ export enum LoginType {
 
 export type LoginRegisterResponse = {
     user: UserDetails,
-    auth: LoginState
+    auth: LoginState,
+    conversations?: Conversation[],
 }
 
 export const dummyLoginRegisterResponse: (userDetails: Partial<UserDetails>) => LoginRegisterResponse =
@@ -201,11 +202,6 @@ export type GoogleSignInRequest = {
     idToken: string
 }
 
-export type Friend = {
-    friendSince: number,
-    messages: Message[],
-    profile: BaseUserProfile,
-}
 export type Message = {
     _id: string;
     text: string;
@@ -218,4 +214,38 @@ export type Message = {
     sent?: boolean;
     received?: boolean;
     pending?: boolean;
+}
+
+export type SetPokeRequest = {
+    userId: string,
+    isPoked: boolean,
+}
+export type SetPokeResponse = {
+    poked: UserDetails['poked'],
+    newConvo?: Conversation,
+}
+
+export type Conversation = {
+    id: string,
+    message?: { time: number, user: string, data: { text: string } },
+    name: string,
+    img?: string,
+    created: number,
+}
+
+export function sortConversations(conversations: Conversation[]): Conversation[] {
+    return conversations.sort(({ message: aMessage }, { message: bMessage }) => {
+        if (aMessage === undefined) return -1
+        else if (bMessage === undefined) return 1
+        else return bMessage.time - aMessage.time
+    })
+}
+
+export type GetMessagesRequest = {
+    conversationId: string,
+    beforeTime?: number,
+}
+
+export type SendMessageRequest = {
+
 }

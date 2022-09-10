@@ -8,15 +8,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootState } from '../redux/reduxStore';
 import { useNavigation } from '@react-navigation/native';
 import { header } from '../services/styles';
-import {
-  IMessage,
-} from 'react-native-gifted-chat'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ListSeparator } from '../components/List';
 import { MyAvatar } from '../components/MyAvatar';
-import { fromMessageUser } from '../model/frontendTypes';
-import { photoPip, photoWill } from '../model/dummyData';
-import { Friend } from '../model/types';
 
 type Props = {
 
@@ -24,6 +18,7 @@ type Props = {
 export const MessagesList = ({ }: Props) => {
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user.user)
+  const conversations = useSelector((state: RootState) => state.user.conversations)
   const { navigate, push } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -32,30 +27,22 @@ export const MessagesList = ({ }: Props) => {
     await new Promise((resolve) => setTimeout(resolve, 1500))
     setIsRefreshing(false)
   }
-  const friendsList = useMemo(() => {
-    return Object.values(user?.friends ?? {})
-      .sort((a, b) => {
-        if (a.messages === undefined || a.messages.length === 0) return 1
-        else if (b.messages === undefined || b.messages.length === 0) return -1
-        else return b.messages[0].createdAt.valueOf() - a.messages[0].createdAt.valueOf()
-      })
-  }, [user?.friends])
 
   return <>
     < SafeAreaView style={[styles.container]}>
       <View style={{}}><Text style={[header, { marginBottom: 20, }]}>Messages</Text></View>
       <FlatList
         style={{}}
-        data={friendsList}
-        keyExtractor={item => item.profile.userId}
+        data={conversations}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => push('MessagesToOnePerson', { otherUser: item.profile })} style={styles.row}>
-            <MyAvatar image={{ uri: item.profile.imageUri }} name={item.profile.name} />
+          <TouchableOpacity onPress={() => push('MessagesToOnePerson', { conversation: item })} style={styles.row}>
+            <MyAvatar image={{ uri: item.img }} name={item.name} />
             <View style={{ paddingHorizontal: 10 }}>
-              <Text style={[styles.rowTitleText]}>{item.profile.name}</Text>
-              {item.messages.length > 0 &&
-                <Text>{item.profile.userId === user?.userId ? 'You' : item.profile.name?.split(' ')[0]}:&nbsp;
-                  {item.messages[0].text}</Text>
+              <Text style={[styles.rowTitleText]}>{item.name}</Text>
+              {item.message &&
+                <Text>{item.message.user === user?.userId ? 'You' : item.name?.split(' ')[0]}:&nbsp;
+                  {item.message.data.text}</Text>
               }
             </View>
           </TouchableOpacity>

@@ -1,4 +1,4 @@
-const counter = 1
+var counter = 1
 export function myUuid() {
-    return `aosidna-aosdunafa-adonasd-${counter.toString()}`
+    return `aosidna-aosdunafa-adonasd-${(counter++).toString()}`
 }
