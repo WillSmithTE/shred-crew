@@ -62,7 +62,7 @@ export const SkiFriendsBlog24822 = {
             Get a crew. If you’re looking to meet new people, finding a crew is the best way to do it. A “crew” can be any group of people who are connected by something they enjoy doing together: family members, friends, coworkers or neighbors. Being part of a crew means that you always have someone to go with when making plans and activities. Some crews might be organized around one specific activity (e.g., hiking), while others are more casual and loosely organized around multiple activities (e.g., going out for dinner).
             <br /><br />
 
-            Soon you'll be able to find a group on the Shred Crew app. If you haven't already, sign up now for upcoming the beta release to get a sneak peek.
+            Soon you'll be able to find a group on the Shred Crew app. If you haven't already, sign up now to be an early tester and get a sneak peek.
         </Typography>
 
         <Typography variant="h6">

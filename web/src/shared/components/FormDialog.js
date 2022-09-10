@@ -56,6 +56,7 @@ function FormDialog(props) {
         title={headline}
         onClose={onClose}
         disabled={loading}
+        paddingBottom={0}
       />
       <DialogContent className={classes.dialogContent}>
         <form onSubmit={onFormSubmit}>

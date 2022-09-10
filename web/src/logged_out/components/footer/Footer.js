@@ -183,12 +183,8 @@ function Footer(props) {
               About us
             </Typography>
             <Typography style={{ color: "#8f9296" }} paragraph>
-              What if you could get connected with your Shred Crew as soon as you hit the mountain?
-              Shred Crew is a platform that connects skiers and snowboarders together. A Shred Crew is defined as 2 or more people who get
-              together to ski or snowboard, enjoy the après-ski, and party! We're not just a platform for finding people to spend a pow day with,
-              we want to help skiers and snowboarders explore, plan and make friends.
-              We are a couple from Australia who think it should be easier to build a Shred Crew
-              on the mountain, for ski and après-ski.
+            We're an Australian couple who think it should be easier to build a Shred Crew, for both skiing 
+            and après. Shred Crew is a platform that connects skiers and snowboarders right on the mountain.
             </Typography>
             <Box display="flex">
               {socialIcons.map((socialIcon, index) => (
@@ -209,7 +205,7 @@ function Footer(props) {
           <Grid item xs={12} md={6} lg={4}>
             <Box display="flex" flexDirection="column">
               <Box mb={1}>
-                <img src={`${process.env.PUBLIC_URL}/images/icon.png`} alt='icon' style={{ width: '100%' }} />
+                <img src={`${process.env.PUBLIC_URL}/images/icon.webp`} alt='icon' style={{ width: '100%' }} />
               </Box>
             </Box>
           </Grid>

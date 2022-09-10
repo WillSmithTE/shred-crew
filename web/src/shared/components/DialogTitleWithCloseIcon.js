@@ -16,8 +16,8 @@ function DialogTitleWithCloseIcon(props) {
   return (
     <DialogTitle
       style={{
-        paddingBottom: paddingBottom
-          ? paddingBottom && disablePadding
+        paddingBottom: paddingBottom !== undefined
+          ? paddingBottom !== undefined && disablePadding
             ? 0
             : paddingBottom
           : theme.spacing(3),

@@ -62,7 +62,7 @@ function RegisterDialog(props: Props) {
       loading={isLoading}
       onClose={onClose}
       open
-      headline="Register"
+      headline="Join the Crew"
       onFormSubmit={(e: any) => {
         e.preventDefault();
         register();

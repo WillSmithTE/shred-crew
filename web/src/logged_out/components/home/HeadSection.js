@@ -138,7 +138,7 @@ function HeadSection(props) {
                           align='center'
 
                         >
-                          The Shred Crew app is your path to finding like-minded skiers and snowboarders.
+                          The Shred Crew app finds like-minded skiers and snowboarders for you.
                         </Typography>
                         <Grid>
                           <video loop autoPlay muted className={classes.image} style={{ boxShadow: 'none' }}>
@@ -152,7 +152,8 @@ function HeadSection(props) {
                           align='center'
 
                         >
-                          <b>Break the ice</b> and join our exclusive beta now
+                          <b>Break the ice!</b><br/>
+                           Join as an early tester now
                         </Typography>
 
                       </Box>
@@ -175,9 +176,9 @@ function HeadSection(props) {
                   color="textSecondary"
                   style={{ textAlign: 'center' }}
                   align='center'
-                  style={{ fontFamily: 'Baloo Bhaijaan', color: 'white', paddingRight: '50px', paddingLeft: '50px' }}
+                  style={{ fontFamily: 'Baloo Bhaijaan', color: 'white', paddingRight: '20px', paddingLeft: '20px' }}
                 >
-                  Get Invited
+                  Join the Crew
                 </Typography>
               </Button>
             </Box>
