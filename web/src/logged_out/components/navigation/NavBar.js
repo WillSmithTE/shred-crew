@@ -8,6 +8,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import BookIcon from "@mui/icons-material/Book";
 import NavigationDrawer from "../../../shared/components/NavigationDrawer";
+import { GA } from "../../../util/GA";
 
 const styles = theme => ({
   appBar: {
@@ -40,6 +41,10 @@ function NavBar(props) {
     mobileDrawerOpen,
     selectedTab
   } = props;
+  const onClickRegister = () => {
+    GA.sendEvent('click_button_register')
+    openRegisterDialog()
+  }
   const menuItems = [
     {
       link: "/",
@@ -53,7 +58,7 @@ function NavBar(props) {
     },
     {
       name: "Register",
-      onClick: openRegisterDialog,
+      onClick: onClickRegister,
       icon: <HowToRegIcon className="text-white" />
     },
     // {
@@ -102,7 +107,10 @@ function NavBar(props) {
                       key={element.name}
                       to={element.link}
                       className={classes.noDecoration}
-                      onClick={handleMobileDrawerClose}
+                      onClick={() => {
+                        GA.sendEvent(`click_link_${element.link}`)
+                        handleMobileDrawerClose()
+                      }}
                     >
                       <Button
                         color="secondary"

@@ -5,6 +5,7 @@ import { Grid, Typography, Card, Button, Box, Hidden, } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import WaveBorder from "../../../shared/components/WaveBorder";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { GA } from "../../../util/GA";
 
 const styles = (theme) => ({
   extraLargeButtonLabel: {
@@ -98,11 +99,14 @@ const styles = (theme) => ({
 function HeadSection(props) {
   const { classes, theme, openRegisterDialog } = props;
   const isWidthUpLg = useMediaQuery(theme.breakpoints.up("lg"));
-
+  const onClickGetInvited = () => {
+    GA.sendEvent('button_get_invited')
+    openRegisterDialog()
+  }
   return (
     <Fragment>
       <div className={classNames("sm-p-top", classes.wrapper)} style={{ height: '100vh', display: 'flex' }}>
-        <div className={classNames("container-fluid", classes.container)} style={{maxWidth: '750px'}}>
+        <div className={classNames("container-fluid", classes.container)} style={{ maxWidth: '750px' }}>
           <Box display="flex" justifyContent="center" className="column">
             <Card
               className={classes.card}
@@ -164,7 +168,7 @@ function HeadSection(props) {
                 color="primary"
                 // fullWidth
                 style={{ borderRadius: '11px', }}
-                onClick={openRegisterDialog}
+                onClick={onClickGetInvited}
               >
                 <Typography
                   variant={isWidthUpLg ? "h2" : "h3"}

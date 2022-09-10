@@ -5,6 +5,7 @@ import FormDialog from "../../../shared/components/FormDialog";
 import HighlightedInformation from "../../../shared/components/HighlightedInformation";
 import { useUserApi } from "../../../api/userApi";
 import { HttpError } from "../../../api/api";
+import { GA } from "../../../util/GA";
 
 const styles = (theme: any) => ({
   link: {
@@ -47,7 +48,7 @@ function RegisterDialog(props: Props) {
     setIsLoading(true);
     try {
       await userApi.add(registerEmail.current!!.value)
-      if (typeof (window as any).gtag !== 'undefined') (window as any).gtag("event", "beta_register")
+      GA.sendEvent("beta_register")
       setStatus('accountCreated')
     } catch (e: any) { setFormSubmitError(e); console.error(e) }
     setIsLoading(false);
