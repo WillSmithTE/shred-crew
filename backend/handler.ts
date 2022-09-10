@@ -6,6 +6,7 @@ import { skiSessionController } from "./src/controller/SkiSessionController";
 import { userController } from "./src/controller/UserController";
 import cors from 'cors'
 import { authController } from "./src/controller/AuthController";
+import { conversationController } from "./src/controller/ConversationController";
 
 const app = express();
 
@@ -18,6 +19,9 @@ app.get("/user/:userId", async function (req, res) {
 
 app.put("/user", async function (req, res) {
   userController.update(req, res)
+});
+app.post("/user/poke", async function (req, res) {
+  userController.setPoke(req, res)
 });
 
 // app.get("/resort", async function (req, res) {
@@ -52,6 +56,10 @@ app.post('/auth/refresh-auth', async function (req, res) {
 });
 app.post('/auth/google-sign-in', async function (req, res) {
   authController.googleSignIn(req, res)
+});
+
+app.get('/conversation', async function (req, res) {
+  conversationController.getAllForUser(req, res)
 });
 
 app.get('/bonjour', async function (req, res) {

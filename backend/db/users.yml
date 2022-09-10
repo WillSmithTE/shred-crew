@@ -5,6 +5,8 @@ Resources:
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
       GlobalSecondaryIndexes:
         - IndexName: gsi1
           Projection:
@@ -16,6 +18,8 @@ Resources:
               KeyType: RANGE
       AttributeDefinitions:
         - AttributeName: userId
+          AttributeType: S
+        - AttributeName: sk
           AttributeType: S
         - AttributeName: email
           AttributeType: S

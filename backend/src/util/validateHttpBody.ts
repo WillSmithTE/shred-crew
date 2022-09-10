@@ -22,4 +22,8 @@ export function verifyString(a: any, fieldName: string): a is string {
     if (typeof a === 'string') return true
     throw new Error(`${fieldName} must be a string`)
 }
+export function verifyBool(a: any, fieldName: string): a is boolean {
+    if (typeof a === 'boolean') return true
+    throw new Error(`${fieldName} must be a boolean`)
+}
 

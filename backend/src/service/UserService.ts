@@ -1,6 +1,6 @@
 import { dynamoDbClient, USERS_TABLE } from "../database";
 import { LoginType, UserDetails } from "../types";
-import { UserDetailsWithPassword } from "../backendTypes";
+import { markers, UserDetailsWithPassword } from "../backendTypes";
 
 export const userService = {
     get: async (userId: string) => {
@@ -8,6 +8,7 @@ export const userService = {
             TableName: USERS_TABLE,
             Key: {
                 userId,
+                sk: markers.user,
             },
         };
         const { Item } = await dynamoDbClient.get(params).promise();
@@ -33,19 +34,38 @@ export const userService = {
         console.debug(`upserting user (id=${user.userId})`)
         const params = {
             TableName: USERS_TABLE,
-            Item: user,
+            Item: {
+                ...user,
+                sk: markers.user,
+            },
         };
         await dynamoDbClient.put(params).promise()
-        return withoutPassword(user as UserDetailsWithPassword)
+        return withoutPassword(user)
     },
     upsertWithoutPassword: async function (user: UserDetails): Promise<UserDetails> {
         console.debug(`upserting user without password (id=${user.userId})`)
         const params = {
             TableName: USERS_TABLE,
-            Item: user,
+            Item: {
+                ...user,
+                sk: 'u',
+            },
         };
         await dynamoDbClient.put(params).promise()
         return user
+    },
+    setPoked: async function (userA: UserDetailsWithPassword, userB: UserDetailsWithPassword, isPoked: boolean): Promise<void> {
+        console.debug(`setting poked (userA=${userA.userId}, userB=${userB.userId}, poked=${isPoked})`)
+        const poked = { ...userA.poked }
+        if (isPoked) poked[userB.userId] = true
+        else delete poked[userB.userId]
+        await dynamoDbClient.put({
+            TableName: USERS_TABLE,
+            Item: {
+                ...userA,
+                poked,
+            },
+        }).promise()
     },
 }
 

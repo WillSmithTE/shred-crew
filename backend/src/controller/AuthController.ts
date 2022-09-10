@@ -7,6 +7,7 @@ import { userService, withoutPassword } from "../service/UserService";
 import { v4 as uuidv4 } from 'uuid';
 import { authService } from "../service/AuthService";
 import { myConfig } from "../myConfig";
+import { myId } from "../service/myId";
 
 export const authController = {
     login: async (req: Request<{}, LoginRequest>, res: Response<LoginRegisterResponse>) => {
@@ -37,7 +38,7 @@ export const authController = {
                 const salt = await bcrypt.genSalt(10);
                 const saltedPassword = await bcrypt.hash(body.password, salt);
                 const user = {
-                    userId: uuidv4(),
+                    userId: myId(),
                     name: body.name,
                     password: saltedPassword,
                     loginType: LoginType.EMAIL,

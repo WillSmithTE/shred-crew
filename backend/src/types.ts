@@ -1,15 +1,23 @@
-export type UserDetails = {
+export type UserDetails = BaseUserProfile & {
     name: string,
     email: string,
     userId: string,
     hasDoneInitialSetup?: boolean,
     imageUri?: string,
     loginType: LoginType,
-    ski: SkiDetails,
+    ski?: SkiDetails,
     bio?: string,
     createdAt?: number,
     otherImages?: string[],
-    matches?: { [userId: string]: boolean }
+    // matches?: { [userId: string]: boolean },
+    poked?: { [userId: string]: boolean },
+    friends?: { [userId: string]: Friend },
+    pushToken?: string,
+}
+export type BaseUserProfile = {
+    name: string,
+    userId: string,
+    imageUri?: string,
 }
 export type LoginState = {
     accessToken: string,
@@ -104,4 +112,42 @@ export type MyResponse<T> =
 
 export type GoogleSignInRequest = {
     idToken: string
+}
+
+
+export type Friend = {
+    friendSince: number,
+    messages: Message[],
+    profile: BaseUserProfile,
+}
+export type Message = {
+    _id: string;
+    text: string;
+    createdAt: number;
+    user: BaseUserProfile;
+    image?: string;
+    video?: string;
+    audio?: string;
+    system?: boolean;
+    sent?: boolean;
+    received?: boolean;
+    pending?: boolean;
+}
+
+
+export type SetPokeRequest = {
+    userId: string,
+    isPoked: boolean,
+}
+export type SetPokeResponse = {
+    isMatch: boolean,
+    newConvo?: Conversation,
+}
+
+export type Conversation = {
+    id: string,
+    message?: { time: number, user: string, data: { text: string } },
+    name: string,
+    img?: string,
+    created: number,
 }
