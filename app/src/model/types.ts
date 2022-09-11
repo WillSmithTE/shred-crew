@@ -76,7 +76,6 @@ export function skillLevelDescription(level: number) {
             return ''
     }
 }
-const thing = [...[], '']
 export function getTagsFromSkiDetails(skiDetails?: SkiDetails): string[] {
     if (skiDetails === undefined) return []
     return [
@@ -164,7 +163,7 @@ export type ResortStore = {
 }
 
 export type CreateSessionRequest = {
-    userLocation: MyLocation,
+    userLocation?: MyLocation,
     resort: Place,
 }
 
@@ -225,19 +224,21 @@ export type SetPokeResponse = {
     newConvo?: Conversation,
 }
 
+export type MessageData = { text: string }
 export type Conversation = {
     id: string,
-    message?: { time: number, user: string, data: { text: string } },
+    message?: { time: number, user: string, data: MessageData },
     name: string,
     img?: string,
     created: number,
 }
 
 export function sortConversations(conversations: Conversation[]): Conversation[] {
-    return conversations.sort(({ message: aMessage }, { message: bMessage }) => {
-        if (aMessage === undefined) return -1
-        else if (bMessage === undefined) return 1
-        else return bMessage.time - aMessage.time
+    return conversations.sort((a, b) => {
+        if (a.message === undefined && b.message === undefined) return b.created - a.created
+        if (a.message === undefined) return -1
+        else if (b.message === undefined) return 1
+        else return b.message.time - a.message.time
     })
 }
 
@@ -247,5 +248,10 @@ export type GetMessagesRequest = {
 }
 
 export type SendMessageRequest = {
-
+    conversationId: string,
+    data: MessageData,
 }
+
+type thing = { derp: { test: string } }
+
+type one = thing['derp']['test']

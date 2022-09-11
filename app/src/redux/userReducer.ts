@@ -1,8 +1,7 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { State } from 'react-native-gesture-handler'
-import { Conversation, CreateSessionResponse, LoginState, LoginType, SkiDetails, SkiDiscipline, SkiSession, sortConversations, UserDetails } from '../model/types'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { Conversation, LoginState, SkiSession, sortConversations, UserDetails } from '../model/types'
 import equal from 'fast-deep-equal'
-import { dummyConversation, dummyFriends } from '../model/dummyData'
+import { dummyConversation } from '../model/dummyData'
 
 type ActionType = 'createSkiSession'
 export interface UserState {

@@ -21,7 +21,7 @@ import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/n
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { colors } from '../constants/colors';
 import Icon, { IC } from '../components/Icon';
-import { MessagesList } from '../screens/MessagesList';
+import { ConversationsList } from '../screens/ConversationsList';
 import { MessagesToOnePerson } from '../screens/MessagesToOnePerson';
 import ResortInfoSearch from '../screens/ResortInfoSearch';
 
@@ -79,7 +79,7 @@ export const Navigation = () => {
 
 export type RootTabParamList = {
   Home?: { showOptions?: boolean };
-  MessagesList: undefined
+  ConversationsList: undefined
   PeopleFeed?: { showFilters?: boolean }
   ResortInfoSearch: undefined
 };
@@ -130,9 +130,9 @@ function BottomTabNavigator() {
           })}
         />
         <BottomTab.Screen
-          name="MessagesList"
-          component={MessagesList}
-          options={({ navigation }: RootTabScreenProps<'MessagesList'>) => ({
+          name="ConversationsList"
+          component={ConversationsList}
+          options={({ navigation }: RootTabScreenProps<'ConversationsList'>) => ({
             tabBarIcon: ({ color }) => <TabBarIcon name="message" family='MaterialCommunityIcons' color={color} />,
           })}
         />

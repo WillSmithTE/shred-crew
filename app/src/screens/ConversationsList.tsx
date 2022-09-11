@@ -11,21 +11,36 @@ import { header } from '../services/styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ListSeparator } from '../components/List';
 import { MyAvatar } from '../components/MyAvatar';
+import { useConversationApi } from '../api/conversationApi';
+import { tryCatchAsync } from '../util/tryCatchAsync';
+import { setConversations } from '../redux/userReducer';
 
+function useLoader() {
+  const conversationApi = useConversationApi()
+  return {
+    getConversations: async () => {
+      return await conversationApi.getConversations()
+    }
+  }
+}
 type Props = {
 
 };
-export const MessagesList = ({ }: Props) => {
+export const ConversationsList = ({ }: Props) => {
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user.user)
   const conversations = useSelector((state: RootState) => state.user.conversations)
   const { navigate, push } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const loader = useLoader()
 
   const onRefresh = async () => {
     setIsRefreshing(true)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setIsRefreshing(false)
+    tryCatchAsync({
+      getter: loader.getConversations,
+      onSuccess: (result) => dispatch(setConversations(result)),
+      lastly: () => setIsRefreshing(false),
+    })
   }
 
   return <>

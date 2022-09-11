@@ -3,7 +3,12 @@ import { Conversation, sortConversations } from "./types";
 
 describe.only('sortConversations', () => {
     it('sorts good', () => {
-        const conversationNew: Conversation = {
+        const conversationNewest: Conversation = {
+            created: twoHoursAgo().getTime(),
+            id: '0',
+            name: 'con0',
+        }
+        const conversationNewIsh: Conversation = {
             created: twoDaysAgo().getTime(),
             id: '1',
             name: 'con1',
@@ -20,10 +25,11 @@ describe.only('sortConversations', () => {
             name: 'con3',
             message: { data: { text: '' }, time: twoDaysAgo().getTime(), user: 'abcde' }
         }
-        const sorted = sortConversations([conversationMediumOld, conversationOld, conversationNew])
+        const sorted = sortConversations([conversationMediumOld, conversationOld, conversationNewest, conversationNewIsh])
 
-        expect(sorted[0]).toEqual(conversationNew)
-        expect(sorted[1]).toEqual(conversationMediumOld)
-        expect(sorted[2]).toEqual(conversationOld)
+        expect(sorted[0]).toEqual(conversationNewest)
+        expect(sorted[1]).toEqual(conversationNewIsh)
+        expect(sorted[2]).toEqual(conversationMediumOld)
+        expect(sorted[3]).toEqual(conversationOld)
     })
 });

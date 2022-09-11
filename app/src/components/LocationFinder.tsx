@@ -38,10 +38,10 @@ function useLoader() {
     }
 }
 function useActions() {
-    const { create } = useSkiSessionApi()
+    const skiSessionApi = useSkiSessionApi()
     return {
         createSkiSession: async (request: CreateSessionRequest) => {
-            return await create(request)
+            return await skiSessionApi.create(request)
         }
     }
 }
@@ -105,9 +105,9 @@ export const LocationFinder = ({ route: { params } }: Props) => {
     }
 
     const goNextScreen = useCallback(async () => {
-        if (selectedPlace && userLocation) {
+        if (selectedPlace) {
             tryCatchAsync({
-                getter: () => actions.createSkiSession({ userLocation: latLngToLocation(userLocation), resort: selectedPlace }),
+                getter: () => actions.createSkiSession({ userLocation: userLocation && latLngToLocation(userLocation), resort: selectedPlace }),
                 onSuccess: (session) => {
                     console.log({ session })
                     dispatch(createSkiSessionComplete(session))

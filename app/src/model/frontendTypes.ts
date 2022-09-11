@@ -1,5 +1,5 @@
-import { User as MessageUser } from "react-native-gifted-chat";
-import { BaseUserProfile, } from "./types";
+import { IMessage, User as MessageUser } from "react-native-gifted-chat";
+import { BaseUserProfile, Message, } from "./types";
 
 export function toMessageUser(user: BaseUserProfile): MessageUser {
     return {
@@ -23,4 +23,20 @@ export function fromMessageUser(user: MessageUser): BaseUserProfile {
             user.avatar.call('', '').toString() : user.avatar),
         name: user.name ?? '',
     }
+}
+
+export function messageToIMessage(message: Message): IMessage {
+    return {
+        ...message,
+        user: { _id: message.user.userId }
+    }
+}
+export function iMessageToMessage(message: IMessage): Message {
+    return {
+        ...message,
+        _id: message._id.toString(),
+        user: { userId: message.user._id.toString(), name: '' },
+        createdAt: typeof message.createdAt === 'number' ? message.createdAt : message.createdAt.valueOf(),
+    }
+
 }

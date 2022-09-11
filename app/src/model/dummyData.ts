@@ -1,4 +1,4 @@
-import { Conversation, Friend, PersonInFeed, Place } from "./types"
+import { Conversation, Message, PersonInFeed, Place } from "./types"
 
 export const photoWill = 'https://drive.google.com/uc?id=1IEB_sv_rUetHVT5GjVJWBRMy9uF1ivjp'
 export const photoPip = 'https://drive.google.com/uc?id=1ZP5iPXjXyYaiSWMwIIpvHByTERouw8CW'
@@ -56,40 +56,22 @@ export const dummyPeopleFeedPeople: PersonInFeed[] = [
 ]
 
 
-export const dummyFriends: { [userId: string]: Friend } = {
-    lkjlakn: {
-        profile: {
-            userId: 'lkjlakn',
-            name: 'Will Smith',
-            imageUri: photoWill,
-        },
-        friendSince: twoDaysAgo().getDate(),
-        messages: [
-            {
-                _id: 'lkjlakn',
-                createdAt: twoHoursAgo().getDate(),
-                text: 'you at thredbo tomorrow?',
-                user: {
-                    userId: '3', name: ''
-                }
-            }
-        ]
+export const dummyMessages: Message[] = [
+    {
+        _id: 'lkjlakn',
+        createdAt: twoHoursAgo().getDate(),
+        text: 'you at thredbo tomorrow?',
+        user: {
+            userId: '3', name: ''
+        }
     },
-    4: {
-        profile: {
-            userId: '4',
-            name: 'Pip Kramer',
-            imageUri: photoPip,
-        },
-        friendSince: twoHoursAgo().getDate(),
-        messages: [{
-            _id: 'alksnga',
-            createdAt: twoDaysAgo().getDate(),
-            text: 'cool cya tthen',
-            user: { userId: '4', name: '' }
-        }],
+    {
+        _id: 'alksnga',
+        createdAt: twoDaysAgo().getDate(),
+        text: 'cool cya tthen',
+        user: { userId: '4', name: '' }
     },
-}
+]
 export function twoDaysAgo() {
     const date = new Date()
     date.setDate(date.getDate() - 2)

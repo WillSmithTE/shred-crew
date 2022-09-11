@@ -29,6 +29,8 @@ import { BackButton } from '../components/BackButton';
 import { MyAvatar } from '../components/MyAvatar';
 import { tryCatchAsync } from '../util/tryCatchAsync';
 import { useConversationApi } from '../api/conversationApi';
+import { iMessageToMessage, messageToIMessage } from '../model/frontendTypes';
+import { SendMessageRequest } from '../model/types';
 
 const user = {
   _id: 1,
@@ -38,11 +40,14 @@ const user = {
 const useLoader = () => {
   const conversationApi = useConversationApi()
   return {
-    getMessages: async function (conversationId: string, aftertime?: number): Promise<IMessage[]> {
-      return await conversationApi.getMessages(conversationId, aftertime)
+    getMessages: async function (conversationId: string, beforeTime?: number): Promise<IMessage[]> {
+      return (await conversationApi.getMessages({ conversationId, beforeTime }))
+        .map(messageToIMessage)
     },
-    sendMessage: async function (message: IMessage): Promise<IMessage> {
-      return await conversationApi.sendMessage(message)
+    sendMessage: async function (request: SendMessageRequest): Promise<IMessage> {
+      return messageToIMessage(
+        await conversationApi.sendMessage(request)
+      )
     },
   }
 }
@@ -59,31 +64,33 @@ export const MessagesToOnePerson = ({ route: { params: { conversation } } }: Pro
   const [isLoaded, setIsLoaded] = useState(false)
   const loader = useLoader()
 
-  const getMoreMessages = useCallback((afterTime?: number, lastly?: () => void) => {
+  const getMoreMessages = useCallback((beforeTime?: number, lastly?: () => void) => {
     tryCatchAsync({
-      getter: () => loader.getMessages(conversation.id, afterTime),
+      getter: () => loader.getMessages(conversation.id, beforeTime),
       onSuccess: (newMessages) => {
         setMessages([...newMessages, ...messages])
       },
       lastly: () => {
-        setIsLoaded(true)
         lastly && lastly()
       }
     })
   }, [messages, setIsLoaded, loader])
 
   useEffect(() => {
-    getMoreMessages()
+    getMoreMessages(undefined, () => setIsLoaded(true))
   }, [])
 
   const onLoadEarlier = () => {
     setIsLoadingEarlier(true)
-    getMoreMessages(messages[messages.length - 1].createdAt.valueOf(), () => { setLoadEarlier(true); setLoadEarlier(false) })
+    getMoreMessages(
+      messages[messages.length - 1].createdAt.valueOf(),
+      () => { setLoadEarlier(true); setLoadEarlier(false) }
+    )
   }
 
   const onSend = (newMessages: IMessage[] = []) => {
     tryCatchAsync({
-      getter: () => loader.sendMessage(newMessages[0]),
+      getter: () => loader.sendMessage({ conversationId: conversation.id, data: { text: newMessages[0].text } }),
       onSuccess: (message) => setMessages([message, ...messages]),
     })
   }
