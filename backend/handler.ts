@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request } from "express";
 import serverless from "serverless-http";
 import { betaRegisteredUsersController } from "./src/controller/BetaRegisteredUsersController";
 import { resortController } from "./src/controller/ResortController";
@@ -7,6 +7,7 @@ import { userController } from "./src/controller/UserController";
 import cors from 'cors'
 import { authController } from "./src/controller/AuthController";
 import { conversationController } from "./src/controller/ConversationController";
+import { GetMessagesRequest } from "./src/types";
 
 const app = express();
 
@@ -60,6 +61,12 @@ app.post('/auth/google-sign-in', async function (req, res) {
 
 app.get('/conversation', async function (req, res) {
   conversationController.getAllForUser(req, res)
+});
+app.get('/conversation/message', async function (req: Request<{}, {}, {}, GetMessagesRequest>, res) {
+  conversationController.getAllMessagesForConversation(req, res)
+});
+app.post('/conversation/message', async function (req, res) {
+  conversationController.addMessage(req, res)
 });
 
 app.get('/bonjour', async function (req, res) {

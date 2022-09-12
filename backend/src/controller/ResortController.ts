@@ -1,11 +1,11 @@
 import { dynamoDbClient, RESORTS_TABLE } from "../database";
 import { Request, Response } from 'express';
-import geohash from 'ngeohash';
 import { removeDuplicates } from "../util/removeDuplicates";
 import { MyLocation, Place, ViewPort } from "../types";
-import { verifyDefined, verifyNumber } from "../util/validateHttpBody";
+import { verifyDefined, verifyMyLocation, verifyNumber } from "../util/validateHttpBody";
+import { resortService } from "../service/ResortService";
+import { locationService } from "../service/LocationService";
 
-const coordinateSearchMargin = 0.05
 export const resortController = {
     search: async (req: Request, res: Response) => {
         const params = {
@@ -22,10 +22,8 @@ export const resortController = {
         const location: MyLocation = req.body;
         console.debug(`received coordinates (coordinates=${JSON.stringify(req.body, null, 2)}`)
         try {
-            verifyCoordinates(location, res)
-            const [southwestLat, southwestLng] = [location.lat - coordinateSearchMargin, location.lng - coordinateSearchMargin]
-            const [northeastLat, northeastLng] = [location.lat + coordinateSearchMargin, location.lng + coordinateSearchMargin]
-            const hashes = geohash.bboxes(southwestLat, southwestLng, northeastLat, northeastLng, 4);
+            verifyMyLocation(location, res)
+            const hashes = resortService.getHashesNearLocation(location)
             const places = await Promise.all(hashes.map((hash) =>
                 dynamoDbClient.query({
                     TableName: RESORTS_TABLE,
@@ -46,7 +44,7 @@ export const resortController = {
             )).then((it) => it.flat())
 
             const placesWithoutDuplicates = removeDuplicates(places, 'id')
-            const sorted = sortByClosest(location, placesWithoutDuplicates)
+            const sorted = locationService.sortByClosest(location, placesWithoutDuplicates, (place) => place.googlePlace.geometry.location)
             res.json(sorted)
         } catch (e) {
             res.status(400).json({ error: e.toString() })
@@ -75,29 +73,4 @@ export const resortController = {
             res.status(500).json({ error: "Could not retreive resort" });
         }
     },
-}
-
-function verifyCoordinates(location: MyLocation, res: Response) {
-    verifyDefined(location, 'location')
-    verifyNumber(location.lat, 'location.lat')
-    verifyNumber(location.lng, 'location.lng')
-}
-
-function sortByClosest(location: MyLocation, resorts: Place[]): Place[] {
-    const resortsWithDistances = resorts.map((resort) => ({
-        ...resort,
-        distance: getDistanceBetweenPoints(location, resort.googlePlace.geometry.location)
-    }))
-    return resortsWithDistances.sort((a, b) => a.distance - b.distance)
-}
-
-function getDistanceBetweenPoints(a: MyLocation, b: MyLocation) {
-    // from https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
-    const p = 0.017453292519943295;    // Math.PI / 180
-    const c = Math.cos;
-    const something = 0.5 - c((b.lat - a.lat) * p) / 2 +
-        c(a.lat * p) * c(b.lat * p) *
-        (1 - c((b.lng - a.lng) * p)) / 2;
-
-    return 12742 * Math.asin(Math.sqrt(something)); // 2 * R; R = 6371 km
 }

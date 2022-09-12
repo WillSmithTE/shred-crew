@@ -1,6 +1,6 @@
 import { dynamoDbClient, USERS_TABLE } from "../database";
 import { LoginType, UserDetails } from "../types";
-import { markers, UserDetailsWithPassword } from "../backendTypes";
+import { markers, BackendUser } from "../backendTypes";
 
 export const userService = {
     get: async (userId: string) => {
@@ -12,9 +12,9 @@ export const userService = {
             },
         };
         const { Item } = await dynamoDbClient.get(params).promise();
-        return Item as UserDetailsWithPassword
+        return Item as BackendUser
     },
-    getByEmail: async function (email: string, loginType: LoginType): Promise<UserDetailsWithPassword | undefined> {
+    getByEmail: async function (email: string, loginType: LoginType): Promise<BackendUser | undefined> {
         const { Items } = await dynamoDbClient.query({
             TableName: USERS_TABLE,
             IndexName: 'gsi1',
@@ -28,9 +28,9 @@ export const userService = {
                 ':loginType': loginType,
             },
         }).promise()
-        return Items.length > 0 ? (Items[0] as UserDetailsWithPassword) : undefined
+        return Items.length > 0 ? (Items[0] as BackendUser) : undefined
     },
-    upsert: async function (user: UserDetailsWithPassword): Promise<UserDetails> {
+    upsert: async function (user: BackendUser): Promise<UserDetails> {
         console.debug(`upserting user (id=${user.userId})`)
         const params = {
             TableName: USERS_TABLE,
@@ -40,7 +40,7 @@ export const userService = {
             },
         };
         await dynamoDbClient.put(params).promise()
-        return withoutPassword(user)
+        return backendUserToFrontend(user)
     },
     upsertWithoutPassword: async function (user: UserDetails): Promise<UserDetails> {
         console.debug(`upserting user without password (id=${user.userId})`)
@@ -54,7 +54,7 @@ export const userService = {
         await dynamoDbClient.put(params).promise()
         return user
     },
-    setPoked: async function (userA: UserDetailsWithPassword, userB: UserDetailsWithPassword, isPoked: boolean): Promise<void> {
+    setPoked: async function (userA: BackendUser, userB: BackendUser, isPoked: boolean): Promise<UserDetails['poked']> {
         console.debug(`setting poked (userA=${userA.userId}, userB=${userB.userId}, poked=${isPoked})`)
         const poked = { ...userA.poked }
         if (isPoked) poked[userB.userId] = true
@@ -66,11 +66,14 @@ export const userService = {
                 poked,
             },
         }).promise()
+        return poked
     },
 }
 
-export function withoutPassword(withPassword: UserDetailsWithPassword): UserDetails {
-    const user = { ...withPassword }
+export function backendUserToFrontend(backend: BackendUser): UserDetails {
+    const user = { ...backend }
     delete user.password
-    return user
+    return {
+        ...user,
+    }
 }

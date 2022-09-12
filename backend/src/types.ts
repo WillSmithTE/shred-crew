@@ -11,8 +11,8 @@ export type UserDetails = BaseUserProfile & {
     otherImages?: string[],
     // matches?: { [userId: string]: boolean },
     poked?: { [userId: string]: boolean },
-    friends?: { [userId: string]: Friend },
     pushToken?: string,
+    sesh?: SkiSession,
 }
 export type BaseUserProfile = {
     name: string,
@@ -31,7 +31,8 @@ export enum LoginType {
 
 export type LoginRegisterResponse = {
     user: UserDetails,
-    auth: LoginState
+    auth: LoginState,
+    conversations?: Conversation[],
 }
 
 export type SkiDetails = {
@@ -58,7 +59,7 @@ export type Place = {
 }
 export type MyLocation = { lat: number, lng: number }
 export type GooglePlace = {
-    geometry?: {
+    geometry: {
         location: MyLocation,
         viewport: ViewPort
     }
@@ -74,34 +75,36 @@ export type ResortStore = {
 }
 
 export type CreateSessionRequest = {
-    userLocation: MyLocation,
-    resort: Place,
+    userLocation?: MyLocation,
+    resort: PlaceSummary,
 }
 
 export type CreateSessionResponse = SkiSession
 
 export type SkiSession = {
-    id: string,
     userId: string,
-    createdAt: number,
-    userLocation: MyLocation,
-    resort: Place,
+    time: number,
+    userLocation?: MyLocation,
+    resort: PlaceSummary,
+}
+export type PlaceSummary = {
+    id: string,
+    location: MyLocation,
+    name: string,
+}
+export function placeToPlaceSummary(place: Place): PlaceSummary {
+    return {
+        id: place.id,
+        name: place.name,
+        location: place.googlePlace.geometry.location,
+    }
 }
 export type GetPeopleFeedRequest = {
     userId: string,
     location: MyLocation,
 }
 export type GetPeopleFeedResponse = {
-    people: PersonInFeed[],
-}
-export type PersonInFeed = {
-    name: string,
-    userId: string,
-    imageUri?: string,
-    ski: SkiDetails,
-    bio?: string,
-    sessionResort: Place,
-    otherImages: string[],
+    people: UserDetails[],
 }
 
 export type RegisterRequest = { name: string, email: string, password: string }
@@ -114,12 +117,6 @@ export type GoogleSignInRequest = {
     idToken: string
 }
 
-
-export type Friend = {
-    friendSince: number,
-    messages: Message[],
-    profile: BaseUserProfile,
-}
 export type Message = {
     _id: string;
     text: string;
@@ -140,14 +137,25 @@ export type SetPokeRequest = {
     isPoked: boolean,
 }
 export type SetPokeResponse = {
-    isMatch: boolean,
+    poked: UserDetails['poked'],
     newConvo?: Conversation,
 }
 
+export type MessageData = { text: string }
 export type Conversation = {
     id: string,
-    message?: { time: number, user: string, data: { text: string } },
+    message?: { time: number, user: string, data: MessageData },
     name: string,
     img?: string,
     created: number,
+}
+
+export type GetMessagesRequest = {
+    conversationId: string,
+    beforeTime?: string,
+}
+
+export type SendMessageRequest = {
+    conversationId: string,
+    data: MessageData,
 }

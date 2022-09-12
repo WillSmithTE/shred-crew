@@ -3,6 +3,7 @@ import { promisify } from 'util';
 import geohash from 'ngeohash';
 import { Place } from '../types';
 import { allResortsFile } from '../constants';
+import { resortService } from '../service/ResortService';
 
 const readFilePromise = promisify(readFile)
 const allResorts: {}[] = []
@@ -16,7 +17,7 @@ Promise.all(Array.from(Array(32).keys()).map((i) =>
                     console.log(`no coordinates (id=${resort.id}, name=${resort.name}))`)
                     return resort
                 }
-                const hash = geohash.encode(geometry.location.lat, geometry.location.lng)
+                const hash = resortService.getHash(geometry.location)
 
                 return {
                     ...resort,

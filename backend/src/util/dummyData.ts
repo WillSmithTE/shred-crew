@@ -1,5 +1,5 @@
 
-import { PersonInFeed, Place } from "../types"
+import { LoginType, Place, PlaceSummary, UserDetails } from "../types"
 
 
 export const dummyPlace: Place = {
@@ -27,16 +27,26 @@ export const dummyPlace: Place = {
     gsi1pk: 'Geohash',
     gsi1sk: 'haosdha',
 }
+export const dummyPlaceSummary: PlaceSummary = {
+    id: 'thredbo',
+    name: 'Thredbo',
+    location: {
+        lat: 37.4224428,
+        lng: -122.0842467
+    },
+}
 
 
-export const dummyPeopleFeedPeople: PersonInFeed[] = [
+export const dummyPeopleFeedPeople: UserDetails[] = [
     {
         userId: '1',
-        name: 'Joos Hartmann',
+        name: 'Joos Schwarzmann',
         imageUri: 'https://images.unsplash.com/photo-1600356604219-84058a7b2bce?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80',
         ski: { disciplines: { ski: true, snowboard: true }, styles: {}, skillLevel: 5 },
         otherImages: [],
-        sessionResort: dummyPlace,
+        sesh: { resort: dummyPlaceSummary, time: new Date().getTime(), userId: '1', },
+        email: 'joosschwarz@gmail.com',
+        loginType: LoginType.GOOGLE,
     },
     {
         userId: '2',
@@ -44,7 +54,9 @@ export const dummyPeopleFeedPeople: PersonInFeed[] = [
         imageUri: 'https://images.unsplash.com/photo-1614358571391-7c8d63674c15?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=688&q=80',
         ski: { disciplines: { ski: true, }, styles: {}, skillLevel: 5 },
         otherImages: [],
-        sessionResort: dummyPlace,
+        sesh: { resort: dummyPlaceSummary, time: new Date().getTime(), userId: '2', },
+        email: 'pipk@gmail.com',
+        loginType: LoginType.GOOGLE,
     },
     {
         userId: '3',
@@ -52,6 +64,8 @@ export const dummyPeopleFeedPeople: PersonInFeed[] = [
         imageUri: 'https://images.unsplash.com/photo-1488580923008-6f98dfbd7a25?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
         ski: { disciplines: { ski: true, snowboard: true }, styles: {}, skillLevel: 3 },
         otherImages: [],
-        sessionResort: dummyPlace,
+        sesh: { resort: dummyPlaceSummary, time: new Date().getTime(), userId: '3', },
+        email: 'willsmith@gmail.com',
+        loginType: LoginType.EMAIL,
     },
 ]

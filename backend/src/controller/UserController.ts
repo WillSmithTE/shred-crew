@@ -12,7 +12,7 @@ import { HttpError } from "../util/HttpError";
 export const userController = {
     get: async (req: Request, res: Response) => {
         try {
-            const user = userService.get(req.params.userId)
+            const user = await userService.get(req.params.userId)
             if (user) {
                 res.json(user);
             } else {
@@ -57,15 +57,15 @@ export const userController = {
                         if (req.body.isPoked && otherUser.poked && otherUser.poked[jwtInfo.userId] === true) { // it's a match!
                             console.debug(`match found (users=${thisUser.userId}, ${otherUserId})`)
                             // delete from other user poked
-                            await userService.setPoked(thisUser, otherUser, false)
+                            const poked = await userService.setPoked(thisUser, otherUser, false)
                             const thisUserNewConvo = await conversationService.create(thisUser, otherUser)
 
                             await notificationService.notify(otherUser.pushToken, { title: `New match!` })
-                            res.json({ newConvo: thisUserNewConvo, isMatch: true })
+                            res.json({ newConvo: thisUserNewConvo, poked })
                         } else {
-                            await userService.setPoked(thisUser, otherUser, req.body.isPoked)
+                            const poked = await userService.setPoked(thisUser, otherUser, req.body.isPoked)
                             // TODO notify others at resort?
-                            res.json({ isMatch: false })
+                            res.json({ poked })
                         }
                     }
                 }, res)

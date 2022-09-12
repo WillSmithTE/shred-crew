@@ -1,6 +1,6 @@
 import { dynamoDbClient, USERS_TABLE } from "../database";
 import { Conversation, LoginType, UserDetails } from "../types";
-import { BackendConversation, markers, UserDetailsWithPassword } from "../backendTypes";
+import { BackendConversation, markers, BackendUser } from "../backendTypes";
 import { myId } from "./myId";
 
 export const conversationService = {

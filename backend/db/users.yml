@@ -16,6 +16,22 @@ Resources:
               KeyType: HASH
             - AttributeName: loginType
               KeyType: RANGE
+        - IndexName: conv
+          Projection:
+            ProjectionType: ALL
+          KeySchema:
+            - AttributeName: cId
+              KeyType: HASH
+            - AttributeName: sk
+              KeyType: RANGE
+        - IndexName: sesh
+          Projection:
+            ProjectionType: ALL
+          KeySchema:
+            - AttributeName: sk
+              KeyType: HASH
+            - AttributeName: seshLoc
+              KeyType: RANGE
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
@@ -24,6 +40,10 @@ Resources:
         - AttributeName: email
           AttributeType: S
         - AttributeName: loginType
+          AttributeType: S
+        - AttributeName: cId
+          AttributeType: S
+        - AttributeName: seshLoc
           AttributeType: S
       BillingMode: PAY_PER_REQUEST
       TableName: ${self:custom.usersTableName}

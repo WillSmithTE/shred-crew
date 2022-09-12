@@ -3,8 +3,7 @@ import { Request, Response } from 'express';
 import { defaultSkiDetails, GoogleSignInRequest, LoginRegisterResponse, LoginRequest, LoginState, LoginType, RegisterRequest, UserDetails } from "../types";
 import bcrypt from "bcryptjs";
 import { validateHttpBody, verifyDefined as validateDefined, verifyString as validateString } from "../util/validateHttpBody";
-import { userService, withoutPassword } from "../service/UserService";
-import { v4 as uuidv4 } from 'uuid';
+import { userService, backendUserToFrontend } from "../service/UserService";
 import { authService } from "../service/AuthService";
 import { myConfig } from "../myConfig";
 import { myId } from "../service/myId";
@@ -19,7 +18,7 @@ export const authController = {
                 const isValidPassword = await bcrypt.compare(body.password, preExistingUser.password);
                 if (isValidPassword) {
                     const loginState = authService.generateTokens(preExistingUser.userId, preExistingUser.email)
-                    res.json({ user: withoutPassword(preExistingUser), auth: loginState });
+                    res.json({ user: backendUserToFrontend(preExistingUser), auth: loginState });
                 } else {
                     res.status(401).send()
                 }
@@ -61,14 +60,16 @@ export const authController = {
         validateHttpBody(body, res, validateLoginState, async () => {
             const accessToken = authService.verifyJwt(body.accessToken, myConfig.accessTokenSecret)
             const refreshToken = authService.verifyJwt(body.refreshToken, myConfig.refreshTokenSecret)
-            if (accessToken === undefined && refreshToken === undefined) {
+            const user = await userService.get(accessToken.userId)
+            console.debug({user})
+            if (user === undefined || (accessToken === undefined && refreshToken === undefined)) {
                 res.status(401).send()
             } else {
                 let accessTokenToReturn = body.accessToken
                 if (!accessToken) {
                     accessTokenToReturn = authService.generateToken(refreshToken, myConfig.accessTokenSecret, myConfig.accessTokenLife)
                 }
-                const user = withoutPassword(await userService.get(refreshToken.userId))
+                const user = backendUserToFrontend(await userService.get(refreshToken.userId))
                 return res.json({ user, auth: { accessToken: accessTokenToReturn, refreshToken: body.refreshToken } })
             }
         })
