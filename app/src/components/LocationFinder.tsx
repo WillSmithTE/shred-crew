@@ -4,7 +4,7 @@ import { FullScreenLoader } from "./Loading"
 import { Text, View, StyleSheet, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { MultiSelectorOption, SelectorButtons, SingleSelector } from "./MultiSelector";
-import { placeToRegion as googlePlaceToRegion, locationToLatLng, latLngToRegion as myLocationToRegion, Place, CreateSessionRequest, MyLocation, latLngToLocation } from "../model/types";
+import { placeToRegion as googlePlaceToRegion, locationToLatLng, myLocationToRegion as myLocationToRegion, Place, CreateSessionRequest, MyLocation, latLngToLocation, SkiSession, PlaceSummary, placeToPlaceSummary } from "../model/types";
 import { useNavigation } from "@react-navigation/native";
 import { BackButton } from "./BackButton";
 import { useForm } from "react-hook-form";
@@ -30,35 +30,35 @@ function useLoader() {
     const { findNearbyResorts, findResort } = useResortApi()
     return {
         findNearbyResorts: async (location: MyLocation) => {
-            return await findNearbyResorts(location);
+            return (await findNearbyResorts(location))
+                .map(placeToPlaceSummary)
         },
-        findResort: async (id: string) => {
-            return await findResort(id)
+        findResort: async function (id: string): Promise<PlaceSummary> {
+            return placeToPlaceSummary(await findResort(id))
         }
     }
 }
 function useActions() {
     const skiSessionApi = useSkiSessionApi()
     return {
-        createSkiSession: async (request: CreateSessionRequest) => {
+        createSkiSession: async function (request: CreateSessionRequest): Promise<SkiSession> {
             return await skiSessionApi.create(request)
         }
     }
 }
 type Props = NativeStackScreenProps<RootStackParams, 'LocationFinder'> & {
 };
-export const LocationFinder = ({ route: { params } }: Props) => {
-    const skiSession = useSelector((state: RootState) => state.user.skiSession)
-    const [places, setPlaces] = useState<Place[] | undefined>()
-    const [selectedPlace, setSelectedPlace] = useState<Place | undefined>(skiSession?.resort)
-    const [initialPlace, setInitialPlace] = useState<Place | undefined>(skiSession?.resort)
+export const LocationFinder = ({ }: Props) => {
+    const skiSession = useSelector((state: RootState) => state.user.user?.sesh)
+    const [places, setPlaces] = useState<PlaceSummary[] | undefined>()
+    const [selectedPlace, setSelectedPlace] = useState<PlaceSummary | undefined>(skiSession?.resort)
+    const [initialPlace, setInitialPlace] = useState<PlaceSummary | undefined>(skiSession?.resort)
     const [yesNo, setYesNo] = useState<'yes' | 'no' | undefined>()
     const [howAboutHere, setHowAboutHere] = useState<string | undefined>()
     const loader = useLoader()
     const actions = useActions()
     const [error, setError] = useState<string | undefined>()
     const [loading, setLoading] = useState(false)
-    console.debug({ loading })
 
     const [showConfirmation, setShowConfirmation] = useState(false)
     const userLocation = useUserLocation()
@@ -106,14 +106,15 @@ export const LocationFinder = ({ route: { params } }: Props) => {
 
     const goNextScreen = useCallback(async () => {
         if (selectedPlace) {
+            setLoading(true)
             tryCatchAsync({
                 getter: () => actions.createSkiSession({ userLocation: userLocation && latLngToLocation(userLocation), resort: selectedPlace }),
                 onSuccess: (session) => {
-                    console.log({ session })
+                    setLoading(false)
                     dispatch(createSkiSessionComplete(session))
                     navigation.navigate('PeopleFeed', { showFilters: true })
                 },
-                onError: setError,
+                onError: () => setLoading(false),
             })
         } else {
             showError(`shouldn't be here, need userLocation and selectedPlace`)
@@ -139,17 +140,15 @@ export const LocationFinder = ({ route: { params } }: Props) => {
         <BackButton />
         <View style={[{ flex: 1, }]}>
             {(() => {
-                if (error) {
-                    return <Text>oops</Text>
-                } else if (loading) {
+                if (loading) {
                     return <FullScreenLoader />
                 } else if (userLocation && (places !== undefined)) {
                     const place = selectedPlace || initialPlace
-                    const region = place ? googlePlaceToRegion(place.googlePlace, mapWidth, mapHeight) : myLocationToRegion(userLocation)
+                    const region = myLocationToRegion(place ? place.location : latLngToLocation(userLocation))
                     const markerPlaces = selectedPlace && !places.map((it) => it.id).includes(selectedPlace.id) ? [selectedPlace, ...places] : places
                     return <>
                         {<MapView provider={Device.isDevice ? PROVIDER_GOOGLE : undefined} style={[styles.map,]} region={region} showsUserLocation={true}>
-                            {markerPlaces.map((it) => <Marker coordinate={locationToLatLng(it.googlePlace.geometry.location)} key={it.id} />)}
+                            {markerPlaces.map((it) => <Marker coordinate={locationToLatLng(it.location)} key={it.id} />)}
                         </MapView>}
                         <KeyboardAvoidingView style={[styles.form, { marginTop: 15 }]}
                             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>

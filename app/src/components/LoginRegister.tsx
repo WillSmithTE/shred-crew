@@ -60,11 +60,12 @@ export const LoginRegister = ({ mode }: Props) => {
 
     useMemo(async () => {
         try {
+            console.debug(jsonString(googleAuthResponse))
             if (googleAuthResponse !== null) {
                 if (googleAuthResponse.type === 'error') throw new Error(googleAuthResponse.error?.message);
                 if (googleAuthResponse.type !== 'success') throw new Error(`google auth type no success (response=${jsonString(googleAuthResponse)})`)
-                console.debug(`google sign in successful (response=${jsonString(googleAuthResponse)})`)
                 if (!!!googleAuthResponse.params.id_token) throw new Error(`no id_token (response=${jsonString(googleAuthResponse)})`)
+                console.debug(`google sign in successful (response=${jsonString(googleAuthResponse)})`)
                 const { user, auth } = await loader.googleLogin(googleAuthResponse.params.id_token)
                 dispatch(loginUser({ user, loginState: auth }))
             }

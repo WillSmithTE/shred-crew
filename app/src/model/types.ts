@@ -16,6 +16,7 @@ export type UserDetails = BaseUserProfile & {
     // matches?: { [userId: string]: boolean },
     poked?: { [userId: string]: boolean },
     pushToken?: string,
+    sesh?: SkiSession,
 }
 export type BaseUserProfile = {
     name: string,
@@ -127,11 +128,12 @@ export type MyLocation = { lat: number, lng: number }
 export type GooglePlace = {
     geometry: {
         location: MyLocation,
-        viewport: {
-            northeast: MyLocation,
-            southwest: MyLocation
-        }
+        viewport: ViewPort
     }
+}
+export type ViewPort = {
+    northeast: MyLocation,
+    southwest: MyLocation
 }
 export function placeToRegion(place: GooglePlace, mapWidth: number, mapHeight: number): Region {
     const latDelta = place.geometry.viewport.northeast.lat - place.geometry.viewport.southwest.lat
@@ -148,10 +150,10 @@ export function locationToLatLng({ lat, lng }: MyLocation): LatLng {
 export function latLngToLocation({ latitude, longitude }: LatLng): MyLocation {
     return { lat: latitude, lng: longitude, }
 }
-export function latLngToRegion({ latitude, longitude }: LatLng): Region {
+export function myLocationToRegion({ lat, lng }: MyLocation): Region {
     return {
-        latitude,
-        longitude,
+        latitude: lat,
+        longitude: lng,
         latitudeDelta: .02,
         longitudeDelta: .02,
     }
@@ -164,17 +166,28 @@ export type ResortStore = {
 
 export type CreateSessionRequest = {
     userLocation?: MyLocation,
-    resort: Place,
+    resort: PlaceSummary,
 }
 
 export type CreateSessionResponse = SkiSession
 
 export type SkiSession = {
-    id: string,
     userId: string,
-    createdAt: number,
-    userLocation: MyLocation,
-    resort: Place,
+    time: number,
+    userLocation?: MyLocation,
+    resort: PlaceSummary,
+}
+export type PlaceSummary = {
+    id: string,
+    location: MyLocation,
+    name: string,
+}
+export function placeToPlaceSummary(place: Place): PlaceSummary {
+    return {
+        id: place.id,
+        name: place.name,
+        location: place.googlePlace.geometry.location,
+    }
 }
 
 export type GetPeopleFeedRequest = {
@@ -182,16 +195,7 @@ export type GetPeopleFeedRequest = {
     location: MyLocation,
 }
 export type GetPeopleFeedResponse = {
-    people: PersonInFeed[],
-}
-export type PersonInFeed = {
-    name: string,
-    userId: string,
-    imageUri?: string,
-    ski: SkiDetails,
-    bio?: string,
-    sessionResort: Place,
-    otherImages: string[],
+    people: UserDetails[],
 }
 
 export type RegisterRequest = { name: string, email: string, password: string }

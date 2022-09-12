@@ -7,7 +7,6 @@ type ActionType = 'createSkiSession'
 export interface UserState {
     user?: UserDetails,
     loginState?: LoginState,
-    skiSession?: SkiSession,
     loading?: { [actionType in ActionType]?: boolean },
     conversations?: Conversation[],
 }
@@ -20,8 +19,6 @@ export const userSlice = createSlice({
         setUserState: (state, action: PayloadAction<UserDetails>) => {
             console.log({ user: action.payload })
             state.user = action.payload
-            // TODO REMOVE DUMMY 
-            state.conversations = [dummyConversation]
             console.log('setting user state')
         },
         clearUser: (state, _: PayloadAction<void>) => {
@@ -39,16 +36,16 @@ export const userSlice = createSlice({
             state.loginState = undefined
             state.user = undefined
             state.loading = undefined
-            state.skiSession = undefined
+            state.conversations = undefined
         },
         loginUser: (state, { payload }: PayloadAction<UserState>) => {
-            state = payload
-            state.conversations = payload.conversations ? sortConversations(payload.conversations) : []
-            // TODO REMOVE DUMMY 
-            state.conversations = [dummyConversation]
+            state.conversations = payload.conversations ? sortConversations(payload.conversations) : undefined
+            state.loginState = payload.loginState
+            state.user = payload.user
+            state.loading = payload.loading
         },
         createSkiSessionComplete: (state, { payload }: PayloadAction<SkiSession>) => {
-            state.skiSession = payload
+            if (state.user) state.user.sesh = payload
         },
         setPoked: (state, { payload }: PayloadAction<UserDetails['poked']>) => {
             if (state.user) state.user.poked = payload

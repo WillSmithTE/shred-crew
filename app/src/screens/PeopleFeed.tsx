@@ -2,7 +2,7 @@ import BottomSheet from "@gorhom/bottom-sheet"
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Dimensions, SafeAreaView } from "react-native"
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Dimensions, SafeAreaView, FlatList } from "react-native"
 import { Avatar, IconButton, Portal, Modal, Button } from "react-native-paper"
 import Icon from "../components/Icon"
 import { MultiSelector, SingleSelector } from "../components/MultiSelector"
@@ -11,7 +11,7 @@ import { MyTextInput } from "../components/MyTextInput"
 import { colors } from "../constants/colors"
 import { RootStackParams, RootTabParamList } from "../navigation/Navigation"
 import { header, subHeader } from "../services/styles"
-import { GetPeopleFeedRequest, getTagsFromSkiDetails, PersonInFeed, SetPokeRequest, SkiSession, UserDetails, Conversation } from "../model/types"
+import { GetPeopleFeedRequest, getTagsFromSkiDetails, SetPokeRequest, SkiSession, UserDetails, Conversation } from "../model/types"
 import { skiDisciplineOptions, skiStyleOptions } from "./Profile"
 import Swiper from 'react-native-swiper'
 import { showComingSoon } from "../components/Error"
@@ -25,6 +25,7 @@ import { tryCatchAsync } from "../util/tryCatchAsync"
 import { addConversation, logoutUser, setPoked } from "../redux/userReducer"
 import { useUserApi } from "../api/userApi"
 import { MyAvatar } from "../components/MyAvatar"
+import { ListSeparator } from "../components/List"
 
 function useLoader() {
     const skiSessionApi = useSkiSessionApi()
@@ -47,30 +48,38 @@ type Props = NativeStackScreenProps<RootTabParamList, 'PeopleFeed'> & {
 };
 export const PeopleFeed = ({ route: { params } }: Props) => {
     const dispatch = useDispatch()
-    const skiSession = useSelector((root: RootState) => root.user.skiSession)
+    const user = useSelector((root: RootState) => root.user.user)
+    const skiSession = user?.sesh
     const poked = useSelector((root: RootState) => root.user.user)?.poked ?? {}
     const [filters, setFilters] = useState<{ [key: string]: boolean } | undefined>(undefined)
     const [showFilters, setShowFilters] = useState(params?.showFilters === true)
     const { navigate, getState, push } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
-    const [people, setPeople] = useState<PersonInFeed[]>()
+    const [people, setPeople] = useState<UserDetails[]>()
     const [loadingPokes, setLoadingPokes] = useState<{ [key: string]: boolean }>({})
     const [newMatch, setNewMatch] = useState<Conversation>()
+    const [isRefreshing, setIsRefreshing] = useState(false)
 
     const loader = useLoader()
     const actions = useActions()
-    useEffect(() => {
+
+    const refreshPeople = (lastly?: () => void) => {
         if (skiSession !== undefined) {
             tryCatchAsync({
-                getter: () => loader.findNearbyPeople({ userId: skiSession.userId, location: skiSession.resort.googlePlace.geometry.location }),
+                getter: () => loader.findNearbyPeople({ userId: skiSession.userId, location: skiSession.resort.location }),
                 onSuccess: (response) => {
                     setPeople(response.people)
                 },
+                lastly: lastly && lastly
             })
         }
+    }
+
+    useEffect(() => {
+        refreshPeople()
     }, [skiSession])
 
     const onPressLocation = (session?: SkiSession) => {
-        push('LocationFinder', { initialPlace: session?.resort })
+        push('LocationFinder')
     }
     const onPoke = async (userId: string, newVal: boolean) => {
         setLoadingPokes({ ...loadingPokes, userId: true })
@@ -87,11 +96,16 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
         })
     }
 
+    const onRefresh = async () => {
+        setIsRefreshing(true)
+        refreshPeople(() => setIsRefreshing(false),)
+    }
+
     return <>
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
             <View style={styles.banner}>
-                <Avatar.Image size={56} source={require('../../assets/avatar.png')} style={{ marginRight: 13 }} />
-                <View style={{ flex: 1 }}>
+                <MyAvatar image={{ uri: user?.imageUri }} name={user!!.name} size={56} />
+                <View style={{ flex: 1, paddingRight: 10, paddingLeft: 13 }}>
                     <Text style={styles.bannerHeader}>Shred Crew Feed</Text>
                     <TouchableOpacity onPress={() => onPressLocation(skiSession)}><Text style={{ textDecorationLine: 'underline' }}>{skiSession?.resort?.name ?? 'No resort'}</Text></TouchableOpacity>
                 </View>
@@ -101,10 +115,13 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
                 <TouchableOpacity onPress={() => onPressLocation(skiSession)} style={{ marginTop: 20, backgroundColor: colors.primary, alignItems: 'center', width: '40%', borderRadius: 10, alignSelf: 'center' }}>
                     <Text style={[subHeader, { color: 'white', textAlign: 'center', alignSelf: 'center', flexWrap: 'wrap', flexShrink: 1, padding: 20 }]}>Pick a resort</Text>
                 </TouchableOpacity> :
-                <ScrollView style={{ flex: 1 }}>
-                    {people === undefined ?
-                        <FullScreenLoader background={false} /> :
-                        people.map((person) => {
+                people === undefined ?
+                    <FullScreenLoader background={false} /> :
+                    <FlatList
+                        style={{}}
+                        data={people}
+                        keyExtractor={item => item.userId}
+                        renderItem={({ item: person }) => {
                             const { userId, name } = person
                             const isPoked = poked && poked[userId] === true
                             const onPressSeeMore = showComingSoon
@@ -128,8 +145,13 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                        })}
-                </ScrollView>}
+                        }}
+                        ItemSeparatorComponent={ListSeparator}
+                        ListHeaderComponent={ListSeparator}
+                        ListFooterComponent={ListSeparator}
+                        refreshing={isRefreshing}
+                        onRefresh={onRefresh}
+                    />}
             {newMatch && <NewMatchModal newMatch={newMatch} onClose={() => setNewMatch(undefined)} />}
             <FilterDrawer {...{ filters, setFilters, show: showFilters, setShow: setShowFilters, confirmNext: () => { setShowFilters(false) } }} />
         </SafeAreaView>

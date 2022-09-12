@@ -33,7 +33,7 @@ export type RootStackParams = {
   LoginEmail: undefined;
   CreateProfile: undefined
   GetStarted: undefined
-  LocationFinder?: { initialPlace?: Place }
+  LocationFinder: undefined
   EditProfile: undefined
   Settings: undefined
   MessagesToOnePerson: { conversation: Conversation }
@@ -45,6 +45,8 @@ const Stack = createNativeStackNavigator<RootStackParams>();
 export const Navigation = () => {
   const isLoggedIn = useSelector((state: RootState) => !!state.user.loginState)
   const hasDoneInitialSetup = useSelector((state: RootState) => !!state.user.user?.hasDoneInitialSetup)
+  const user = useSelector((state: RootState) => state.user)
+  console.debug({ loginState: user.loginState })
   return (
     <Stack.Navigator
       screenOptions={{
