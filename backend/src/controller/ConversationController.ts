@@ -6,7 +6,7 @@ import { tryCatch } from "../util/tryCatch";
 import { validateHttpBody, verifyBool, verifyDefined, verifyNumber, verifyString } from "../util/validateHttpBody";
 import { BackendMessage, markers } from "../backendTypes";
 import { myId } from "../service/myId";
-import { backendConversationToFrontend, conversationService } from "../service/ConversationService";
+import { backendConversationToFrontend, backendMessageToFrontend, conversationService } from "../service/ConversationService";
 
 export const conversationController = {
     getAllForUser: async (req: Request, res: Response<MyResponse<Conversation[]>>) => {
@@ -64,11 +64,7 @@ export const conversationController = {
             validateHttpBody(req.body, res, validateSendMessageRequest, async () => {
                 console.debug(`adding message`)
                 tryCatch(async () => {
-                    const backendMessage = createBackendMessage(req.body, userId)
-                    await dynamoDbClient.put({
-                        TableName: USERS_TABLE,
-                        Item: backendMessage,
-                    }).promise()
+                    const backendMessage = await conversationService.addMessage(req.body, userId)
                     res.json(backendMessageToFrontend(backendMessage))
                 }, res)
             })
@@ -102,25 +98,6 @@ function validateGetMessagesRequest(a: GetMessagesRequest): a is GetMessagesRequ
         verifyNumber(parseInt(a.beforeTime), 'afterTime')
     }
     return true
-}
-
-function backendMessageToFrontend(backend: BackendMessage): Message {
-    return {
-        _id: backend.sk.split('#')[2],
-        createdAt: backend.time,
-        text: backend.data.text,
-        user: { userId: backend.userId, name: '' },
-    }
-}
-function createBackendMessage(sendMessageRequest: SendMessageRequest, userId: string): BackendMessage {
-    const now = new Date().getTime()
-    return {
-        sk: `${markers.message}${now}#${myId()}`,
-        cId: sendMessageRequest.conversationId,
-        data: sendMessageRequest.data,
-        userId,
-        time: now,
-    }
 }
 
 function validateGetDetailsRequest(a: GetConversationDetailsRequest): a is GetConversationDetailsRequest {

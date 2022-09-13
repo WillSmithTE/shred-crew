@@ -144,7 +144,12 @@ export type SetPokeResponse = {
 export type MessageData = { text: string }
 export type Conversation = {
     id: string,
-    message?: { time: number, user: string, data: MessageData },
+    message?: {
+        time: number,
+        user: string,
+        data: MessageData,
+        read: { [userId: string]: boolean }
+    },
     name: string,
     img?: string,
     created: number,

@@ -18,7 +18,12 @@ export type MyJwtPayload = JwtPayload & {
 export type BackendConversation = {
     userId: string,
     sk: string,
-    message?: { time: number, user: string, data: BackendMessage['data'] },
+    message?: {
+        time: number,
+        user: string,
+        data: BackendMessage['data'],
+        read: { [userId: string]: boolean }
+    },
     name: string,
     img?: string,
     created: number,
