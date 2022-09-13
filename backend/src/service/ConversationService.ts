@@ -23,6 +23,17 @@ export const conversationService = {
         }).promise();
         return backendConversationToFrontend(userAConversation)
     },
+    get: async (userId: string, conversationId: string) => {
+        const params = {
+            TableName: USERS_TABLE,
+            Key: {
+                userId,
+                sk: `${markers.conversation}${conversationId}`,
+            },
+        };
+        const { Item } = await dynamoDbClient.get(params).promise();
+        return backendConversationToFrontend(Item as BackendConversation)
+    },
 }
 
 function createConversation(id: string, a: UserDetails, b: UserDetails): BackendConversation {
@@ -34,9 +45,9 @@ function createConversation(id: string, a: UserDetails, b: UserDetails): Backend
         created: new Date().getTime(),
     }
 }
-function backendConversationToFrontend(conversation: BackendConversation): Conversation {
+export function backendConversationToFrontend(conversation: BackendConversation): Conversation {
     return {
-        id: conversation.sk,
+        id: conversation.sk.replace(markers.conversation, ''),
         name: conversation.name,
         img: conversation.img,
         message: conversation.message,

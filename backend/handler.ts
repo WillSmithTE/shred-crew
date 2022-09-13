@@ -17,7 +17,6 @@ app.use(express.json());
 app.get("/user/:userId", async function (req, res) {
   userController.get(req, res)
 });
-
 app.put("/user", async function (req, res) {
   userController.update(req, res)
 });
@@ -61,6 +60,9 @@ app.post('/auth/google-sign-in', async function (req, res) {
 
 app.get('/conversation', async function (req, res) {
   conversationController.getAllForUser(req, res)
+});
+app.get("/conversation/details/:conversationId", async function (req, res) {
+  conversationController.getDetails(req, res)
 });
 app.get('/conversation/message', async function (req: Request<{}, {}, {}, GetMessagesRequest>, res) {
   conversationController.getAllMessagesForConversation(req, res)

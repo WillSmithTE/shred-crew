@@ -1,11 +1,12 @@
 import { dynamoDbClient, USERS_TABLE } from "../database";
 import { Request, Response } from 'express';
 import { withJwtFromHeader } from "../service/AuthService";
-import { Conversation, GetMessagesRequest, Message, MyResponse, SendMessageRequest } from "../types";
+import { Conversation, GetConversationDetailsRequest, GetMessagesRequest, Message, MyResponse, SendMessageRequest } from "../types";
 import { tryCatch } from "../util/tryCatch";
 import { validateHttpBody, verifyBool, verifyDefined, verifyNumber, verifyString } from "../util/validateHttpBody";
 import { BackendMessage, markers } from "../backendTypes";
 import { myId } from "../service/myId";
+import { backendConversationToFrontend, conversationService } from "../service/ConversationService";
 
 export const conversationController = {
     getAllForUser: async (req: Request, res: Response<MyResponse<Conversation[]>>) => {
@@ -21,11 +22,12 @@ export const conversationController = {
                     },
                     ExpressionAttributeValues: {
                         ':userId': userId,
-                        ':sk': 'c#',
+                        ':sk': markers.conversation,
                     },
                     ScanIndexForward: false,
                 }).promise()
-                res.json(Items as Conversation[])
+                const conversations = Items.map(backendConversationToFrontend)
+                res.json(conversations)
             } catch (e) {
                 res.status(500).json({ error: e.toString() })
             }
@@ -39,15 +41,15 @@ export const conversationController = {
                     const { Items } = await dynamoDbClient.query({
                         TableName: USERS_TABLE,
                         IndexName: 'conv',
-                        KeyConditionExpression: '#cId = :cId AND begins_with(#sk, :sk1) AND LT(#sk, :sk2',
+                        KeyConditionExpression: '#cId = :cId AND #sk BETWEEN :sk1 AND :sk2',
                         ExpressionAttributeNames: {
                             '#cId': 'cId',
                             '#sk': 'sk',
                         },
                         ExpressionAttributeValues: {
-                            ':cId': req.query.conversationId,
-                            ':sk1': markers.message,
-                            ':sk2': `${markers.message}${req.query.beforeTime ?? new Date().getTime()}`,
+                            ':cId': `${markers.conversation}${req.query.conversationId}`,
+                            ':sk1': `${markers.message}0!`, // ! is less than #. $ is more than it
+                            ':sk2': `${markers.message}${req.query.beforeTime ?? new Date().getTime()}$`,
                         },
                         ScanIndexForward: false,
                         Limit: 20,
@@ -68,6 +70,17 @@ export const conversationController = {
                         Item: backendMessage,
                     }).promise()
                     res.json(backendMessageToFrontend(backendMessage))
+                }, res)
+            })
+        })
+    },
+    getDetails: async (req: Request<GetConversationDetailsRequest>, res: Response<MyResponse<Conversation>>) => {
+        withJwtFromHeader(req, res, async ({ userId }) => {
+            validateHttpBody(req.params, res, validateGetDetailsRequest, async () => {
+                console.debug(`getting conversation details (id=${req.params.conversationId})`)
+                tryCatch(async () => {
+                    const conversation = await conversationService.get(userId, req.params.conversationId)
+                    res.json(conversation)
                 }, res)
             })
         })
@@ -108,4 +121,10 @@ function createBackendMessage(sendMessageRequest: SendMessageRequest, userId: st
         userId,
         time: now,
     }
+}
+
+function validateGetDetailsRequest(a: GetConversationDetailsRequest): a is GetConversationDetailsRequest {
+    verifyDefined(a.conversationId, 'conversationId')
+    verifyString(a.conversationId, 'conversationId')
+    return true
 }

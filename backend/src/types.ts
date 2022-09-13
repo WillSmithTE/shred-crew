@@ -9,7 +9,7 @@ export type UserDetails = BaseUserProfile & {
     bio?: string,
     createdAt?: number,
     otherImages?: string[],
-    // matches?: { [userId: string]: boolean },
+    matches?: { userId: string, convId: string }[],
     poked?: { [userId: string]: boolean },
     pushToken?: string,
     sesh?: SkiSession,
@@ -137,7 +137,7 @@ export type SetPokeRequest = {
     isPoked: boolean,
 }
 export type SetPokeResponse = {
-    poked: UserDetails['poked'],
+    user: UserDetails,
     newConvo?: Conversation,
 }
 
@@ -158,4 +158,8 @@ export type GetMessagesRequest = {
 export type SendMessageRequest = {
     conversationId: string,
     data: MessageData,
+}
+
+export type GetConversationDetailsRequest = {
+    conversationId: string,
 }

@@ -1,6 +1,6 @@
 import { dynamoDbClient, RESORTS_TABLE, USERS_TABLE } from "../database";
 import { Request, Response } from 'express';
-import { userService } from "../service/UserService";
+import { backendUserToFrontend, userService } from "../service/UserService";
 import { MyResponse, SetPokeRequest, SetPokeResponse, UserDetails } from "../types";
 import { validateHttpBody, verifyBool, verifyDefined, verifyString } from "../util/validateHttpBody";
 import { withJwtFromHeader } from "../service/AuthService";
@@ -49,23 +49,24 @@ export const userController = {
             validateHttpBody(req.body, res, validateSetPokeRequest, async () => {
                 tryCatch(async () => {
                     const otherUserId = req.body.userId
-                    const otherUser = await userService.get(otherUserId)
+                    let otherUser = await userService.get(otherUserId)
                     if (!otherUser) throw new HttpError(`user doesn't exist (user=${otherUserId})`, 400)
-                    const thisUser = await userService.get(jwtInfo.userId)
+                    let thisUser = await userService.get(jwtInfo.userId)
                     if (!thisUser) throw new HttpError(`user doesn't exist (user=${jwtInfo.userId})`, 400)
                     else {
                         if (req.body.isPoked && otherUser.poked && otherUser.poked[jwtInfo.userId] === true) { // it's a match!
                             console.debug(`match found (users=${thisUser.userId}, ${otherUserId})`)
-                            // delete from other user poked
-                            const poked = await userService.setPoked(thisUser, otherUser, false)
+
                             const thisUserNewConvo = await conversationService.create(thisUser, otherUser)
+                            otherUser = await userService.setPoked(otherUser, thisUser, false)
+                            thisUser = await userService.addMatch(thisUser, otherUser, thisUserNewConvo.id)
 
                             await notificationService.notify(otherUser.pushToken, { title: `New match!` })
-                            res.json({ newConvo: thisUserNewConvo, poked })
+                            res.json({ newConvo: thisUserNewConvo, user: backendUserToFrontend(thisUser) })
                         } else {
-                            const poked = await userService.setPoked(thisUser, otherUser, req.body.isPoked)
+                            thisUser = await userService.setPoked(thisUser, otherUser, req.body.isPoked)
                             // TODO notify others at resort?
-                            res.json({ poked })
+                            res.json({ user: backendUserToFrontend(thisUser) })
                         }
                     }
                 }, res)

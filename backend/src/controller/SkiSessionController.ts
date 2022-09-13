@@ -9,6 +9,7 @@ import { resortService } from "../service/ResortService";
 import { tryCatch } from "../util/tryCatch";
 import { removeDuplicates } from "../util/removeDuplicates";
 import { locationService } from '../service/LocationService'
+import { HttpError } from "../util/HttpError";
 
 export const skiSessionController = {
     add: async (req: Request<{}, {}, CreateSessionRequest>, res: Response<CreateSessionResponse>) => {
@@ -18,6 +19,7 @@ export const skiSessionController = {
                 console.debug(`adding session (userId=${jwtInfo.userId})`)
                 tryCatch(async () => {
                     const user = await userService.get(jwtInfo.userId)
+                    if (user === undefined) throw new HttpError(`user not found (id=${jwtInfo.userId})`, 400)
                     const newSession: SkiSession = {
                         userId: user.userId,
                         resort: body.resort,
@@ -62,11 +64,8 @@ export const skiSessionController = {
                             })
                     )))
                         .flat()
-                    console.debug({ users })
                     const withoutThisUser = removeUser(users, jwtInfo.userId)
-                    console.debug({ withoutThisUser })
                     const withoutDups = removeDuplicates(withoutThisUser, 'userId')
-                    console.debug({ withoutDups })
                     const sorted = locationService.sortByClosest(body.location, withoutDups, (user) => user.sesh.resort.location)
                     res.json({ people: sorted })
                 }, res)

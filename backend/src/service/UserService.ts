@@ -54,19 +54,40 @@ export const userService = {
         await dynamoDbClient.put(params).promise()
         return user
     },
-    setPoked: async function (userA: BackendUser, userB: BackendUser, isPoked: boolean): Promise<UserDetails['poked']> {
+    setPoked: async function (userA: BackendUser, userB: BackendUser, isPoked: boolean): Promise<BackendUser> {
         console.debug(`setting poked (userA=${userA.userId}, userB=${userB.userId}, poked=${isPoked})`)
         const poked = { ...userA.poked }
         if (isPoked) poked[userB.userId] = true
         else delete poked[userB.userId]
+        const newUserA = {
+            ...userA,
+            poked,
+        }
         await dynamoDbClient.put({
             TableName: USERS_TABLE,
-            Item: {
-                ...userA,
-                poked,
-            },
+            Item: newUserA,
         }).promise()
-        return poked
+        return newUserA
+    },
+    addMatch: async function (userA: BackendUser, userB: BackendUser, convId: string): Promise<BackendUser> {
+        console.debug(`addming match (userA=${userA.userId}, userB=${userB.userId})`)
+        const newUserA: BackendUser = {
+            ...userA,
+            matches: [{ userId: userB.userId, convId }, ...(userA.matches ?? [])],
+        }
+        const newUserB: BackendUser = {
+            ...userB,
+            matches: [{ userId: userA.userId, convId }, ...(userB.matches ?? [])],
+        }
+        await dynamoDbClient.put({
+            TableName: USERS_TABLE,
+            Item: newUserA,
+        }).promise()
+        await dynamoDbClient.put({
+            TableName: USERS_TABLE,
+            Item: newUserB,
+        }).promise()
+        return newUserA
     },
 }
 

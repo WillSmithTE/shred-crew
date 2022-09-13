@@ -4,7 +4,7 @@ service: aws-node-express-dynamodb-api
 frameworkVersion: '3'
 
 custom:
-  usersTableName: 'shred-crew-users-4-${sls:stage}'
+  usersTableName: 'shred-crew-users-5-${sls:stage}'
   resortsTableName: 'shred-crew-resort-2-${sls:stage}'
   skiSessionsTableName: 'shred-crew-sessions-${sls:stage}'
   betaRegisteredUsersTableName: 'shred-crew-beta-registered-users-2-${sls:stage}'
@@ -14,6 +14,7 @@ custom:
     stages:
       - dev
       - prod
+    dbPath: ./dynamodb/
   logRetentionInDays: 14
   serverless-offline:
     host: '0.0.0.0'
