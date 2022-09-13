@@ -51,7 +51,7 @@ provider:
 
 functions:
   api:
-    handler: dist/handler.handler
+    handler: handler.handler
     events:
       - httpApi: '*'
 
@@ -67,6 +67,7 @@ plugins:
   - serverless-dynamodb-seed
   - serverless-dotenv-plugin
   - serverless-plugin-log-retention
+  - serverless-bundle
 
 package:
   patterns:

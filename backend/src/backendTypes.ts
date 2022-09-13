@@ -1,9 +1,9 @@
 import { JwtPayload } from "jsonwebtoken";
-import { Conversation, MyLocation, SkiSession, UserDetails } from "./types";
+import { UserDetails } from "./types";
 
 export type BackendUser = UserDetails & {
     password: string,
-    seshLoc?: string,
+    gsi2sk?: string,
 }
 
 export type JwtUserInfo = {
@@ -27,6 +27,7 @@ export type BackendConversation = {
     name: string,
     img?: string,
     created: number,
+    gsi2sk: string,
 }
 export const markers = {
     conversation: 'c#',

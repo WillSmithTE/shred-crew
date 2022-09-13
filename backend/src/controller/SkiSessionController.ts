@@ -28,7 +28,7 @@ export const skiSessionController = {
                     }
                     const updatedUser: BackendUser = {
                         ...user,
-                        seshLoc: resortService.getHash(newSession.resort.location),
+                        gsi2sk: resortService.getHash(newSession.resort.location),
                         sesh: newSession,
                     }
                     await userService.upsert(updatedUser)
@@ -48,11 +48,11 @@ export const skiSessionController = {
                     const users = (await Promise.all(hashes.map((hash) =>
                         dynamoDbClient.query({
                             TableName: USERS_TABLE,
-                            IndexName: 'sesh',
+                            IndexName: 'gsi2',
                             KeyConditionExpression: '#sk = :sk AND begins_with(#seshLoc, :hash)',
                             ExpressionAttributeNames: {
                                 '#sk': 'sk',
-                                '#seshLoc': 'seshLoc'
+                                '#seshLoc': 'gsi2sk'
                             },
                             ExpressionAttributeValues: {
                                 ':sk': markers.user,

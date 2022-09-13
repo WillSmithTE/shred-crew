@@ -26,6 +26,7 @@
     "@types/nodemailer": "^6.4.5",
     "@types/nodemailer-express-handlebars": "^4.0.2",
     "jest": "^28.0.0",
+    "serverless-bundle": "^5.5.0",
     "serverless-dotenv-plugin": "^4.0.2",
     "serverless-dynamodb-local": "^0.2.40",
     "serverless-dynamodb-seed": "^0.3.0",

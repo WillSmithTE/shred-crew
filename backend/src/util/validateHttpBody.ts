@@ -27,7 +27,7 @@ export function verifyBool(a: any, fieldName: string): a is boolean {
     if (typeof a === 'boolean') return true
     throw new Error(`${fieldName} must be a boolean`)
 }
-export function verifyObject(a: any, fieldName: string): a is object {
+export function verifyObject(a: any, fieldName: string): a is Record<string, unknown> {
     if (typeof a === 'object') return true
     throw new Error(`${fieldName} must be an object`)
 }

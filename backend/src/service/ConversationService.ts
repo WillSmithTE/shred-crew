@@ -49,15 +49,13 @@ export const conversationService = {
 async function getConversationRows(conversationId: string): Promise<BackendConversation[]> {
     const { Items } = await dynamoDbClient.query({
         TableName: USERS_TABLE,
-        IndexName: 'conv',
-        KeyConditionExpression: '#cId = :cid AND begins_with(#sk, :sk)',
+        IndexName: 'gsi2',
+        KeyConditionExpression: '#sk = :sk',
         ExpressionAttributeNames: {
-            '#cId': 'cId',
             '#sk': 'sk',
         },
         ExpressionAttributeValues: {
-            ':cId': conversationId,
-            ':sk': markers.conversation,
+            ':sk': `${markers.conversation}${conversationId}`,
         },
     }).promise()
     return Items as BackendConversation[]
@@ -84,6 +82,7 @@ function createConversation(id: string, a: UserDetails, b: UserDetails): Backend
         name: b.name,
         img: b.imageUri,
         created: new Date().getTime(),
+        gsi2sk: 'c',
     }
 }
 export function backendConversationToFrontend(conversation: BackendConversation): Conversation {

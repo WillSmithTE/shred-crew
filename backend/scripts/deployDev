@@ -1,4 +1,3 @@
 #!/bin/bash
 
-tsc
 serverless deploy --stage dev

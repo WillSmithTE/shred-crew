@@ -3,27 +3,20 @@ import { dynamoDbClient, USERS_TABLE } from "../database"
 import { jsonString } from "./jsonString"
 
 async function main() {
-    const hashes = ['u0hu', 'u0hv']
-    const users = (await Promise.all(hashes.map((hash) =>
-        dynamoDbClient.query({
-            TableName: USERS_TABLE,
-            IndexName: 'sesh',
-            KeyConditionExpression: '#sk = :sk AND begins_with(#seshLoc, :hash)',
-            ExpressionAttributeNames: {
-                '#sk': 'sk',
-                '#seshLoc': 'seshLoc'
-            },
-            ExpressionAttributeValues: {
-                ':sk': markers.user,
-                ':hash': hash
-            },
-        }).promise()
-            .then((it: any) => {
-                return it.Items as BackendUser[]
-            })
-    )))
-        .flat()
+    const conversationId = 'qWi91oFN_60WEuLe7Avh1'
+    console.debug({USERS_TABLE})
+    const { Items } = await dynamoDbClient.query({
+        TableName: USERS_TABLE,
+        IndexName: 'gsi2',
+        KeyConditionExpression: '#sk = :sk',
+        ExpressionAttributeNames: {
+            '#sk': 'sk',
+        },
+        ExpressionAttributeValues: {
+            ':sk': `${markers.conversation}${conversationId}`,
+        },
+    }).promise()
 
-    console.debug(jsonString(users))
+    console.debug(jsonString(Items))
 }
 main()

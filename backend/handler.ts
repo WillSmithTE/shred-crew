@@ -72,7 +72,7 @@ app.post('/conversation/message', async function (req, res) {
 });
 
 app.get('/bonjour', async function (req, res) {
-  res.json({ message: `salut ${process.env.TEST_VAR}` })
+  res.json({ message: `salut ${process.env.TEST_VAR} 1` })
 })
 
 app.use((req, res, next) => {
