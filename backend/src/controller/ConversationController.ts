@@ -47,7 +47,7 @@ export const conversationController = {
                             '#sk': 'sk',
                         },
                         ExpressionAttributeValues: {
-                            ':cId': `${markers.conversation}${req.query.conversationId}`,
+                            ':cId': req.query.conversationId,
                             ':sk1': `${markers.message}0!`, // ! is less than #. $ is more than it
                             ':sk2': `${markers.message}${req.query.beforeTime ?? new Date().getTime()}$`,
                         },
@@ -115,7 +115,7 @@ function backendMessageToFrontend(backend: BackendMessage): Message {
 function createBackendMessage(sendMessageRequest: SendMessageRequest, userId: string): BackendMessage {
     const now = new Date().getTime()
     return {
-        sk: `${markers.message}#${now}#${myId()}`,
+        sk: `${markers.message}${now}#${myId()}`,
         cId: sendMessageRequest.conversationId,
         data: sendMessageRequest.data,
         userId,
