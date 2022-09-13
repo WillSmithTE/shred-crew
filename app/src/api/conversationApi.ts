@@ -1,4 +1,4 @@
-import { Conversation, GetConversationDetailsRequest, GetMessagesRequest, Message, SendMessageRequest, SetPokeRequest, SetPokeResponse, UserDetails } from '../model/types';
+import { Conversation, GetConversationDetailsRequest, GetMessagesRequest, MarkReadRequest, Message, SendMessageRequest, SetPokeRequest, SetPokeResponse, UserDetails } from '../model/types';
 import Constants from 'expo-constants';
 import { baseApiRequest, MyResponse, useBaseApi } from './api';
 
@@ -7,7 +7,7 @@ const devEnv = Constants.manifest?.releaseChannel === undefined || Constants.man
 export function useConversationApi() {
     const baseApi = useBaseApi()
     return {
-        getConversations: async () => await baseApiRequest<Conversation[]>(
+        getConversationsAndMatches: async () => await baseApiRequest<Conversation[]>(
             () => {
                 console.debug(`getting conversations`)
                 return baseApi.get<Conversation[]>(`/conversation`)
@@ -33,13 +33,20 @@ export function useConversationApi() {
                 return baseApi.get<Message[]>(`/conversation/message?${queryParams.toString()}`)
             },
             'error getting messages',
-        ),        
+        ),
         getConversationDetails: async (request: GetConversationDetailsRequest) => await baseApiRequest<Conversation>(
             () => {
                 console.debug(`getting conversation (id=${request.conversationId})`)
                 return baseApi.get<Conversation>(`/conversation/details/${request.conversationId})`)
             },
             'error getting conversation details',
+        ),
+        markAsRead: async (request: MarkReadRequest) => await baseApiRequest(
+            () => {
+                console.debug(`marking read (conversation=${request.conversationId})`)
+                return baseApi.post<Conversation>(`/conversation/read`, { body: JSON.stringify(request) })
+            },
+            'error marking conversation as read',
         ),
     }
 }

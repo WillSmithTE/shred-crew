@@ -13,23 +13,10 @@ import { showComingSoon } from '../components/Error';
 import Icon from '../components/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import { header } from '../services/styles';
-import { BaseUserProfile } from '../model/types';
+import { BaseUserProfile, Conversation } from '../model/types';
 import { photoPip, photoWill } from '../model/dummyData';
 import FastImage from 'react-native-fast-image'
 import { MyAvatar } from '../components/MyAvatar';
-
-const friends: BaseUserProfile[] = [
-  {
-    userId: '3',
-    name: 'Will Smith',
-    imageUri: photoWill,
-  },
-  {
-    userId: '4',
-    name: 'Pip Kramer',
-    imageUri: photoPip,
-  },
-]
 
 type Props = NativeStackScreenProps<RootTabParamList, 'Home'> & {
 };
@@ -38,9 +25,10 @@ export const Home = ({ route: { params } }: Props) => {
   const user = useSelector((state: RootState) => state.user.user)
   const { navigate, push } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const avatarSize = 75
+  const conversations = useSelector((state: RootState) => state.user.conversations) ?? []
 
-  const onPressUserAvatar = (user: BaseUserProfile) => {
-    push('MessagesToOnePerson', { otherUser: user })
+  const onPressUserAvatar = (conversation: Conversation) => {
+    push('MessagesToOnePerson', { conversation })
   }
 
   return (
@@ -53,18 +41,18 @@ export const Home = ({ route: { params } }: Props) => {
         </View>
         <ScrollView showsHorizontalScrollIndicator={false} horizontal style={{ flexGrow: 0, paddingTop: 5, marginBottom: 25 }}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', }}>
-            {friends.map((friend, i) =>
+            {conversations.map((it, i) =>
               <LinearGradient
                 colors={['#7ED6F2', '#EFF17F', '#FFAC3E', '#F4AB74', '#FFA768']}
                 style={[{ marginRight: 4, borderRadius: avatarSize, padding: 3, }]} key={i}
               >
-                <TouchableOpacity onPress={() => onPressUserAvatar(friend)} activeOpacity={.2}>
+                <TouchableOpacity onPress={() => onPressUserAvatar(it)} activeOpacity={.2}>
                   <View style={{ backgroundColor: colors.background, padding: 3, borderRadius: avatarSize }}>
-                    <MyAvatar size={avatarSize} image={{ uri: friend.imageUri }} name={friend.name} />
+                    <MyAvatar size={avatarSize} image={{ uri: it.img }} name={it.name} />
                   </View>
                 </TouchableOpacity>
               </LinearGradient>)}
-            {Array(6 - friends.length).fill(0).map((_, i) =>
+            {Array(6 - conversations.length).fill(0).map((_, i) =>
               <LinearGradient
                 colors={[colors.background, colors.background, colors.background]}
                 style={[{ marginRight: 4, borderRadius: avatarSize, padding: 3, }]} key={i}

@@ -33,7 +33,7 @@ export function useUserLoginCheck() {
                     console.debug({ response })
                     setDone(true)
                     if (response === undefined) dispatch(clearAuth())
-                    else dispatch(loginUser({ user: response.user, loginState: response.auth }))
+                    else dispatch(loginUser({ ...response, loginState: response.auth }))
                 }
                 catch (e: any) {
                     // showError(jsonString(e))

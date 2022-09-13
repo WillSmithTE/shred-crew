@@ -1,36 +1,28 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { StyleSheet, View, Text, Platform, Alert, Linking, KeyboardAvoidingView } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { StyleSheet, View, Text, Platform, KeyboardAvoidingView } from 'react-native';
 
 import { colors } from '../constants/colors';
 import { useDispatch, useSelector } from 'react-redux';
-import { logoutUser } from '../redux/userReducer';
 import { RootStackParams } from '../navigation/Navigation';
 import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootState } from '../redux/reduxStore';
 import { useNavigation } from '@react-navigation/native';
-import { header, subHeader } from '../services/styles';
+import { subHeader } from '../services/styles';
 import {
   Bubble,
   GiftedChat,
-  SystemMessage,
   IMessage,
   Send,
   SendProps,
 } from 'react-native-gifted-chat'
-import AccessoryBar from '../components/messages/AccessoryBar'
-import CustomActions from '../components/messages/CustomActions'
-import CustomView from '../components/messages/CustomView'
-import messagesData from '../components/messages/data/messages'
-import earlierMessages from '../components/messages/data/earlierMessages'
 import Icon from '../components/Icon';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Avatar } from 'react-native-paper';
 import { BackButton } from '../components/BackButton';
 import { MyAvatar } from '../components/MyAvatar';
 import { tryCatchAsync } from '../util/tryCatchAsync';
 import { useConversationApi } from '../api/conversationApi';
-import { iMessageToMessage, messageToIMessage } from '../model/frontendTypes';
-import { SendMessageRequest } from '../model/types';
+import { messageToIMessage } from '../model/frontendTypes';
+import { MarkReadRequest, SendMessageRequest } from '../model/types';
 
 const useLoader = () => {
   const conversationApi = useConversationApi()
@@ -45,6 +37,9 @@ const useLoader = () => {
         await conversationApi.sendMessage(request)
       )
     },
+    markAsRead: async function (request: MarkReadRequest): Promise<void> {
+      await conversationApi.markAsRead(request)
+    },
   }
 }
 type Props = NativeStackScreenProps<RootStackParams, 'MessagesToOnePerson'> & {
@@ -54,7 +49,7 @@ export const MessagesToOnePerson = ({ route: { params: { conversation } } }: Pro
   console.debug({ conversation })
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user.user)
-  const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
+  const { navigate, goBack } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const [messages, setMessages] = useState<IMessage[]>([])
   const [loadEarlier, setLoadEarlier] = useState(true)
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false)
@@ -75,14 +70,17 @@ export const MessagesToOnePerson = ({ route: { params: { conversation } } }: Pro
 
   useEffect(() => {
     getMoreMessages(undefined, () => setIsLoaded(true))
+    if (conversation.message) loader.markAsRead({ conversationId: conversation.id, time: conversation.message.time })
   }, [])
 
   const onLoadEarlier = () => {
-    setIsLoadingEarlier(true)
-    getMoreMessages(
-      messages[messages.length - 1].createdAt.valueOf(),
-      () => { setLoadEarlier(true); setLoadEarlier(false) }
-    )
+    if (messages.length > 0) {
+      setIsLoadingEarlier(true)
+      getMoreMessages(
+        messages[messages.length - 1].createdAt.valueOf(),
+        () => { setLoadEarlier(true); setLoadEarlier(false) }
+      )
+    }
   }
 
   const onSend = (newMessages: IMessage[] = []) => {
@@ -100,7 +98,7 @@ export const MessagesToOnePerson = ({ route: { params: { conversation } } }: Pro
   return <>
     < SafeAreaView style={[styles.container]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.orange }}>
-        <BackButton absolute={false} onPress={() => navigate('ConversationsList')} />
+        <BackButton absolute={false} onPress={goBack} />
         <MyAvatar image={{ uri: conversation.img }} name={conversation.name} style={{ marginRight: 13 }} />
         <Text style={[subHeader, { paddingTop: 0, }]}>{conversation.name}</Text>
       </View>
@@ -111,7 +109,7 @@ export const MessagesToOnePerson = ({ route: { params: { conversation } } }: Pro
         loadEarlier={loadEarlier}
         onLoadEarlier={onLoadEarlier}
         isLoadingEarlier={isLoadingEarlier}
-        user={{_id: user?.userId, name: user?.name, avatar: user?.imageUri}}
+        user={{ _id: user!!.userId, name: user?.name, avatar: user?.imageUri }}
         scrollToBottom
         onLongPressAvatar={user => alert(JSON.stringify(user))}
         keyboardShouldPersistTaps='never'

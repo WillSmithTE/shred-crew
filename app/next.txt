@@ -67,10 +67,15 @@ DONE - feat: use https://github.com/ai/nanoid for user ids cause shorter, save d
 - feat: markers on map stuff
 - maybe hide resort  info and trip plan behnind featture flag
 - bug: need to refresh user pokes on refresh at top, so it turns into successful match thing
-- bug: set some kind of "matched" display in people feed
+DONE - bug: set some kind of "matched" display in people feed
 - feat: something to show when no people in your sesh
 - bug: using name in PeopleFeed to see if matched. won't work if they change their name
 - bug: do i handle case when user doesn't provide any location? denies permission?
 - bug:  clicking mail  in people feed gets 500
 DONE - bug: messages appear on wrong side
-- bug: messages don't appear in other users conversation
+DONE - bug: messages don't appear in other users conversation
+- bug: no messages in conversations list
+- bug: conversations list doesn't refresh first time clicking on it
+- bug: conversations list doesnt update message on send
+- bug: conversations list message stays bold
+- feat: add me and pip to users' friends

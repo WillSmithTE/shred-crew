@@ -18,8 +18,8 @@ import { setConversations } from '../redux/userReducer';
 function useLoader() {
   const conversationApi = useConversationApi()
   return {
-    getConversations: async () => {
-      return await conversationApi.getConversations()
+    getConversationsAndMatches: async () => {
+      return await conversationApi.getConversationsAndMatches()
     }
   }
 }
@@ -37,12 +37,12 @@ export const ConversationsList = ({ }: Props) => {
   const onRefresh = async () => {
     setIsRefreshing(true)
     tryCatchAsync({
-      getter: loader.getConversations,
+      getter: loader.getConversationsAndMatches,
       onSuccess: (result) => dispatch(setConversations(result)),
       lastly: () => setIsRefreshing(false),
     })
   }
-
+  console.debug({ conversations })
   return <>
     < SafeAreaView style={[styles.container]}>
       <View style={{}}><Text style={[header, { marginBottom: 20, }]}>Messages</Text></View>
@@ -50,19 +50,20 @@ export const ConversationsList = ({ }: Props) => {
         style={{}}
         data={conversations}
         keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => push('MessagesToOnePerson', { conversation: item })} style={styles.row}>
+        renderItem={({ item }) => {
+          const isRead = item.message?.read[user!!.userId] === true || item.message?.user === user?.userId
+          return <TouchableOpacity onPress={() => push('MessagesToOnePerson', { conversation: item })} style={styles.row}>
             <MyAvatar image={{ uri: item.img }} name={item.name} />
             <View style={{ paddingHorizontal: 10 }}>
-              <Text style={[styles.rowTitleText]}>{item.name}</Text>
+              <Text style={[styles.rowTitleText, !isRead && styles.unreadText]}>{item.name}</Text>
               {item.message ?
-                <Text>{item.message.user === user?.userId ? 'You' : item.name?.split(' ')[0]}
+                <Text style={!isRead && styles.unreadText}>{item.message.user === user?.userId ? 'You' : item.name?.split(' ')[0]}:&nbsp;
                   {item.message.data.text}</Text> :
                 <Text>No messages (yet 😏)</Text>
               }
             </View>
           </TouchableOpacity>
-        )}
+        }}
         ItemSeparatorComponent={ListSeparator}
         ListHeaderComponent={ListSeparator}
         ListFooterComponent={ListSeparator}
@@ -84,19 +85,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   row: {
-    paddingHorizontal: 15,
+    // paddingHorizontal: 15,
     paddingVertical: 10,
     backgroundColor: colors.white,
-    borderRadius: 10,
+    borderRadius: 5,
     flexDirection: 'row',
     alignItems: 'center',
   },
   rowTitleText: {
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   separator: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: colors.border,
   },
+  unreadText: {
+    fontWeight: '800',
+  }
 });
 
