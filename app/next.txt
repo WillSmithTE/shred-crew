@@ -72,5 +72,5 @@ DONE - feat: use https://github.com/ai/nanoid for user ids cause shorter, save d
 - bug: using name in PeopleFeed to see if matched. won't work if they change their name
 - bug: do i handle case when user doesn't provide any location? denies permission?
 - bug:  clicking mail  in people feed gets 500
-- bug: messages appear on wrong slider
+DONE - bug: messages appear on wrong side
 - bug: messages don't appear in other users conversation

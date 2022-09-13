@@ -32,11 +32,6 @@ import { useConversationApi } from '../api/conversationApi';
 import { iMessageToMessage, messageToIMessage } from '../model/frontendTypes';
 import { SendMessageRequest } from '../model/types';
 
-const user = {
-  _id: 1,
-  name: 'Developer',
-}
-
 const useLoader = () => {
   const conversationApi = useConversationApi()
   return {
@@ -58,7 +53,7 @@ type Props = NativeStackScreenProps<RootStackParams, 'MessagesToOnePerson'> & {
 export const MessagesToOnePerson = ({ route: { params: { conversation } } }: Props) => {
   console.debug({ conversation })
   const dispatch = useDispatch()
-  // const user = useSelector((state: RootState) => state.user.user)
+  const user = useSelector((state: RootState) => state.user.user)
   const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
   const [messages, setMessages] = useState<IMessage[]>([])
   const [loadEarlier, setLoadEarlier] = useState(true)
@@ -116,7 +111,7 @@ export const MessagesToOnePerson = ({ route: { params: { conversation } } }: Pro
         loadEarlier={loadEarlier}
         onLoadEarlier={onLoadEarlier}
         isLoadingEarlier={isLoadingEarlier}
-        user={user}
+        user={{_id: user?.userId, name: user?.name, avatar: user?.imageUri}}
         scrollToBottom
         onLongPressAvatar={user => alert(JSON.stringify(user))}
         keyboardShouldPersistTaps='never'
