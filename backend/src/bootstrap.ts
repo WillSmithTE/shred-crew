@@ -1,9 +1,9 @@
 import { readFileSync } from "fs";
 import { allResortsFile } from "./constants";
 import { dynamoDbClient, RESORTS_TABLE } from "./database";
+import { userService } from "./service/UserService";
 import { Place } from "./types";
-
-bootstrapResorts()
+import { userPip, userWill } from "./util/bootstrapData";
 
 export async function bootstrapResorts() {
     const data = readFileSync(allResortsFile)
@@ -34,9 +34,19 @@ export async function bootstrapResorts() {
 }
 
 function chunkArrayInGroups<T>(arr: T[], size: number): T[][] {
-    var myArray = [];
-    for (var i = 0; i < arr.length; i += size) {
+    const myArray = [];
+    for (let i = 0; i < arr.length; i += size) {
         myArray.push(arr.slice(i, i + size));
     }
     return myArray;
 }
+
+export async function bootstrapUsers() {
+    [userWill, userPip].forEach(async (it) => {
+        await userService.upsert(it)
+    })
+}
+
+bootstrapResorts()
+bootstrapUsers()
+

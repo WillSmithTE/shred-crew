@@ -1,0 +1,7 @@
+{
+    // "extends": "strongloop",
+    "rules": {
+        "@typescript-eslint/ban-types": "warn"
+    }
+  }
+  

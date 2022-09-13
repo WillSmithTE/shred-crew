@@ -93800,6 +93800,9 @@ app.get('/conversation/message', async function (req, res) {
 app.post('/conversation/message', async function (req, res) {
     ConversationController_1.conversationController.addMessage(req, res);
 });
+app.post('/conversation/read', async function (req, res) {
+    ConversationController_1.conversationController.markRead(req, res);
+});
 app.get('/bonjour', async function (req, res) {
     res.json({ message: `salut ${process.env.TEST_VAR} 1` });
 });
@@ -93852,6 +93855,7 @@ const UserService_1 = __webpack_require__(/*! ../service/UserService */ "../../.
 const AuthService_1 = __webpack_require__(/*! ../service/AuthService */ "../../../src/service/AuthService.ts");
 const myConfig_1 = __webpack_require__(/*! ../myConfig */ "../../../src/myConfig.ts");
 const myId_1 = __webpack_require__(/*! ../service/myId */ "../../../src/service/myId.ts");
+const ConversationService_1 = __webpack_require__(/*! ../service/ConversationService */ "../../../src/service/ConversationService.ts");
 exports.authController = {
     login: async (req, res) => {
         const body = req.body;
@@ -93892,8 +93896,9 @@ exports.authController = {
                 };
                 try {
                     const userResponse = await UserService_1.userService.upsert(user);
+                    const conversations = await ConversationService_1.conversationService.createBootstrapConversations(user);
                     const loginState = AuthService_1.authService.generateTokens(user.userId, user.email);
-                    res.json({ user: userResponse, auth: loginState });
+                    res.json({ user: userResponse, auth: loginState, conversations });
                 }
                 catch (error) {
                     console.log(error);
@@ -93907,9 +93912,9 @@ exports.authController = {
         (0, validateHttpBody_1.validateHttpBody)(body, res, validateLoginState, async () => {
             const accessToken = AuthService_1.authService.verifyJwt(body.accessToken, myConfig_1.myConfig.accessTokenSecret);
             const refreshToken = AuthService_1.authService.verifyJwt(body.refreshToken, myConfig_1.myConfig.refreshTokenSecret);
-            const user = await UserService_1.userService.get(accessToken.userId);
-            console.debug({ user });
-            if (user === undefined || (accessToken === undefined && refreshToken === undefined)) {
+            const backendUser = await UserService_1.userService.get(accessToken.userId);
+            console.debug({ backendUser });
+            if (backendUser === undefined || (accessToken === undefined && refreshToken === undefined)) {
                 res.status(401).send();
             }
             else {
@@ -93917,8 +93922,9 @@ exports.authController = {
                 if (!accessToken) {
                     accessTokenToReturn = AuthService_1.authService.generateToken(refreshToken, myConfig_1.myConfig.accessTokenSecret, myConfig_1.myConfig.accessTokenLife);
                 }
-                const user = (0, UserService_1.backendUserToFrontend)(await UserService_1.userService.get(refreshToken.userId));
-                return res.json({ user, auth: { accessToken: accessTokenToReturn, refreshToken: body.refreshToken } });
+                const user = (0, UserService_1.backendUserToFrontend)(backendUser);
+                const conversations = await ConversationService_1.conversationService.getAllForUser(user.userId);
+                return res.json({ user, conversations, auth: { accessToken: accessTokenToReturn, refreshToken: body.refreshToken } });
             }
         });
     },
@@ -93930,8 +93936,11 @@ exports.authController = {
                 const preExistingUser = await UserService_1.userService.getByEmail(tokenDecoded.email, types_1.LoginType.GOOGLE);
                 const user = preExistingUser ??
                     await UserService_1.userService.upsertWithoutPassword(tokenDecoded);
+                const conversations = preExistingUser ?
+                    await ConversationService_1.conversationService.getAllForUser(user.userId) :
+                    await ConversationService_1.conversationService.createBootstrapConversations(user);
                 const loginState = AuthService_1.authService.generateTokens(user.userId, user.email);
-                res.json({ user, auth: loginState });
+                res.json({ user, conversations, auth: loginState });
             }
             catch (error) {
                 console.log(error);
@@ -94029,20 +94038,7 @@ exports.conversationController = {
         (0, AuthService_1.withJwtFromHeader)(req, res, async ({ userId }) => {
             console.debug(`getting conversations (userId=${userId})`);
             try {
-                const { Items } = await database_1.dynamoDbClient.query({
-                    TableName: database_1.USERS_TABLE,
-                    KeyConditionExpression: '#userId = :userId AND begins_with(#sk, :sk)',
-                    ExpressionAttributeNames: {
-                        '#userId': 'userId',
-                        '#sk': 'sk',
-                    },
-                    ExpressionAttributeValues: {
-                        ':userId': userId,
-                        ':sk': backendTypes_1.markers.conversation,
-                    },
-                    ScanIndexForward: false,
-                }).promise();
-                const conversations = Items.map(ConversationService_1.backendConversationToFrontend);
+                const conversations = await ConversationService_1.conversationService.getAllForUser(userId);
                 res.json(conversations);
             }
             catch (e) {
@@ -94092,8 +94088,19 @@ exports.conversationController = {
             (0, validateHttpBody_1.validateHttpBody)(req.params, res, validateGetDetailsRequest, async () => {
                 console.debug(`getting conversation details (id=${req.params.conversationId})`);
                 (0, tryCatch_1.tryCatch)(async () => {
-                    const conversation = await ConversationService_1.conversationService.get(userId, req.params.conversationId);
+                    const conversation = await ConversationService_1.conversationService.getById(userId, req.params.conversationId);
                     res.json(conversation);
+                }, res);
+            });
+        });
+    },
+    markRead: async (req, res) => {
+        (0, AuthService_1.withJwtFromHeader)(req, res, async ({ userId }) => {
+            (0, validateHttpBody_1.validateHttpBody)(req.body, res, validateMarkReadRequest, async () => {
+                console.debug(`marking read (conversation=${req.body.conversationId})`);
+                (0, tryCatch_1.tryCatch)(async () => {
+                    await ConversationService_1.conversationService.markRead(req.body, userId);
+                    res.status(200).send();
                 }, res);
             });
         });
@@ -94117,6 +94124,13 @@ function validateGetMessagesRequest(a) {
 function validateGetDetailsRequest(a) {
     (0, validateHttpBody_1.verifyDefined)(a.conversationId, 'conversationId');
     (0, validateHttpBody_1.verifyString)(a.conversationId, 'conversationId');
+    return true;
+}
+function validateMarkReadRequest(a) {
+    (0, validateHttpBody_1.verifyDefined)(a.conversationId, 'conversationId');
+    (0, validateHttpBody_1.verifyString)(a.conversationId, 'conversationId');
+    (0, validateHttpBody_1.verifyDefined)(a.time, 'time');
+    (0, validateHttpBody_1.verifyString)(a.time, 'time');
     return true;
 }
 
@@ -94561,6 +94575,8 @@ exports.backendMessageToFrontend = exports.backendConversationToFrontend = expor
 const database_1 = __webpack_require__(/*! ../database */ "../../../src/database.ts");
 const backendTypes_1 = __webpack_require__(/*! ../backendTypes */ "../../../src/backendTypes.ts");
 const myId_1 = __webpack_require__(/*! ./myId */ "../../../src/service/myId.ts");
+const HttpError_1 = __webpack_require__(/*! ../util/HttpError */ "../../../src/util/HttpError.ts");
+const bootstrapData_1 = __webpack_require__(/*! ../util/bootstrapData */ "../../../src/util/bootstrapData.ts");
 exports.conversationService = {
     create: async function (userA, userB) {
         console.debug(`creating conversation (users=${userA.userId}, ${userB.userId})`);
@@ -94581,7 +94597,10 @@ exports.conversationService = {
         }).promise();
         return backendConversationToFrontend(userAConversation);
     },
-    get: async (userId, conversationId) => {
+    getById: async function (userId, conversationId) {
+        return backendConversationToFrontend(await exports.conversationService.getByIdBackend(userId, conversationId));
+    },
+    getByIdBackend: async function (userId, conversationId) {
         const params = {
             TableName: database_1.USERS_TABLE,
             Key: {
@@ -94590,7 +94609,7 @@ exports.conversationService = {
             },
         };
         const { Item } = await database_1.dynamoDbClient.get(params).promise();
-        return backendConversationToFrontend(Item);
+        return Item;
     },
     addMessage: async function (request, userId) {
         const backendMessage = createBackendMessage(request, userId);
@@ -94601,7 +94620,49 @@ exports.conversationService = {
         const conversationRows = await getConversationRows(request.conversationId);
         await addMessageToConversations(conversationRows, backendMessage);
         return backendMessage;
-    }
+    },
+    markRead: async function (request, userId) {
+        const conversation = await exports.conversationService.getByIdBackend(userId, request.conversationId);
+        if (conversation === undefined)
+            throw new HttpError_1.HttpError(`conversation not found (id=${request.conversationId})`, 400);
+        if (conversation.message?.time === request.time) {
+            const newConversation = {
+                ...conversation,
+                message: conversation.message ?
+                    { ...conversation.message, read: { ...conversation.message.read, [userId]: true } } :
+                    undefined
+            };
+            console.debug({ newConversation });
+            await database_1.dynamoDbClient.put({
+                TableName: database_1.USERS_TABLE,
+                Item: newConversation,
+            }).promise();
+        }
+        else {
+            console.debug(`skipping, times didnt match (conversation=${conversation.message?.time}, received=${request.time})`);
+        }
+    },
+    getAllForUser: async function (userId) {
+        const { Items } = await database_1.dynamoDbClient.query({
+            TableName: database_1.USERS_TABLE,
+            KeyConditionExpression: '#userId = :userId AND begins_with(#sk, :sk)',
+            ExpressionAttributeNames: {
+                '#userId': 'userId',
+                '#sk': 'sk',
+            },
+            ExpressionAttributeValues: {
+                ':userId': userId,
+                ':sk': backendTypes_1.markers.conversation,
+            },
+            ScanIndexForward: false,
+        }).promise();
+        return Items.map(backendConversationToFrontend);
+    },
+    createBootstrapConversations: async function (user) {
+        console.debug(`creating bootstrap conversations (users=${user.userId})`);
+        const conversations = await Promise.all([bootstrapData_1.userWill, bootstrapData_1.userPip].map((otherUser) => exports.conversationService.create(user, otherUser)));
+        return conversations;
+    },
 };
 async function getConversationRows(conversationId) {
     const { Items } = await database_1.dynamoDbClient.query({
@@ -94775,6 +94836,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.notificationService = void 0;
 exports.notificationService = {
     notify: async (pushToken, notification) => {
+        console.debug(`notifying :)`);
     },
 };
 
@@ -94989,6 +95051,57 @@ class HttpError {
     }
 }
 exports.HttpError = HttpError;
+
+
+/***/ }),
+
+/***/ "../../../src/util/bootstrapData.ts":
+/*!******************************************!*\
+  !*** ../../../src/util/bootstrapData.ts ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.userPip = exports.userWill = void 0;
+const types_1 = __webpack_require__(/*! ../types */ "../../../src/types.ts");
+exports.userWill = {
+    name: 'Will Smith',
+    email: 'willsmithte@gmail.com',
+    userId: '1',
+    hasDoneInitialSetup: false,
+    imageUri: 'https://willsmithte-shred-crew-static.s3.eu-central-1.amazonaws.com/will.png',
+    loginType: types_1.LoginType.EMAIL,
+    ski: { disciplines: { snowboard: true }, styles: { "off-piste": true, backcountry: true }, skillLevel: 3 },
+    bio: `I've only been snowboarding for a few years but quickly fell in love with it. I love off-piste and mixing multiple hot chocolates into my day.`,
+    createdAt: 1663082221,
+    otherImages: undefined,
+    matches: [],
+    poked: {},
+    pushToken: undefined,
+    sesh: undefined,
+    password: '$2a$08$IrAD/55BGuP011ThPfHniuzu0NHTdBG7ZA4F2mq/j1EjvOy/aiYXq',
+    gsi2sk: undefined,
+};
+exports.userPip = {
+    name: 'Pip Kramer',
+    email: 'pipakramer@gmail.com',
+    userId: '2',
+    hasDoneInitialSetup: false,
+    imageUri: 'https://willsmithte-shred-crew-static.s3.eu-central-1.amazonaws.com/pip.png',
+    loginType: types_1.LoginType.EMAIL,
+    ski: { disciplines: { ski: true }, styles: { "off-piste": true, backcountry: true, moguls: true }, skillLevel: 5 },
+    bio: '',
+    createdAt: 1663082225,
+    otherImages: undefined,
+    matches: [],
+    poked: {},
+    pushToken: undefined,
+    sesh: undefined,
+    password: '$2a$08$26AJ7Z0fqXd61DdQ1Y5lBuhdxscJDhHAVfeV2unFeQVfijmX7g8WC',
+    gsi2sk: undefined,
+};
 
 
 /***/ }),

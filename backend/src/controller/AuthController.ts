@@ -7,6 +7,8 @@ import { userService, backendUserToFrontend } from "../service/UserService";
 import { authService } from "../service/AuthService";
 import { myConfig } from "../myConfig";
 import { myId } from "../service/myId";
+import { conversationService } from "../service/ConversationService";
+import { BackendUser } from "../backendTypes";
 
 export const authController = {
     login: async (req: Request<{}, LoginRequest>, res: Response<LoginRegisterResponse>) => {
@@ -36,7 +38,7 @@ export const authController = {
             else {
                 const salt = await bcrypt.genSalt(10);
                 const saltedPassword = await bcrypt.hash(body.password, salt);
-                const user = {
+                const user: BackendUser = {
                     userId: myId(),
                     name: body.name,
                     password: saltedPassword,
@@ -46,8 +48,9 @@ export const authController = {
                 }
                 try {
                     const userResponse = await userService.upsert(user)
+                    const conversations = await conversationService.createBootstrapConversations(user)
                     const loginState = authService.generateTokens(user.userId, user.email)
-                    res.json({ user: userResponse, auth: loginState });
+                    res.json({ user: userResponse, auth: loginState, conversations });
                 } catch (error) {
                     console.log(error);
                     res.status(500).json({ error: `Could not register: ${error}` } as any);
@@ -60,17 +63,18 @@ export const authController = {
         validateHttpBody(body, res, validateLoginState, async () => {
             const accessToken = authService.verifyJwt(body.accessToken, myConfig.accessTokenSecret)
             const refreshToken = authService.verifyJwt(body.refreshToken, myConfig.refreshTokenSecret)
-            const user = await userService.get(accessToken.userId)
-            console.debug({user})
-            if (user === undefined || (accessToken === undefined && refreshToken === undefined)) {
+            const backendUser = await userService.get(accessToken.userId)
+            console.debug({ backendUser })
+            if (backendUser === undefined || (accessToken === undefined && refreshToken === undefined)) {
                 res.status(401).send()
             } else {
                 let accessTokenToReturn = body.accessToken
                 if (!accessToken) {
                     accessTokenToReturn = authService.generateToken(refreshToken, myConfig.accessTokenSecret, myConfig.accessTokenLife)
                 }
-                const user = backendUserToFrontend(await userService.get(refreshToken.userId))
-                return res.json({ user, auth: { accessToken: accessTokenToReturn, refreshToken: body.refreshToken } })
+                const user = backendUserToFrontend(backendUser)
+                const conversations = await conversationService.getAllForUser(user.userId)
+                return res.json({ user, conversations, auth: { accessToken: accessTokenToReturn, refreshToken: body.refreshToken } })
             }
         })
     },
@@ -82,9 +86,12 @@ export const authController = {
                 const preExistingUser = await userService.getByEmail(tokenDecoded.email, LoginType.GOOGLE)
                 const user = preExistingUser ??
                     await userService.upsertWithoutPassword(tokenDecoded)
+                const conversations = preExistingUser ?
+                    await conversationService.getAllForUser(user.userId) :
+                    await conversationService.createBootstrapConversations(user)
 
                 const loginState = authService.generateTokens(user.userId, user.email)
-                res.json({ user, auth: loginState });
+                res.json({ user, conversations, auth: loginState });
             } catch (error) {
                 console.log(error);
                 res.status(500).json({ error: `Could not sign in with google: ${error}` } as any);

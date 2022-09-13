@@ -4,7 +4,7 @@ import { withJwtFromHeader } from "../service/AuthService";
 import { Conversation, GetConversationDetailsRequest, GetMessagesRequest, Message, MyResponse, SendMessageRequest } from "../types";
 import { tryCatch } from "../util/tryCatch";
 import { validateHttpBody, verifyBool, verifyDefined, verifyNumber, verifyString } from "../util/validateHttpBody";
-import { BackendMessage, markers } from "../backendTypes";
+import { BackendMessage, markers, MarkReadRequest } from "../backendTypes";
 import { myId } from "../service/myId";
 import { backendConversationToFrontend, backendMessageToFrontend, conversationService } from "../service/ConversationService";
 
@@ -13,20 +13,7 @@ export const conversationController = {
         withJwtFromHeader(req, res, async ({ userId }) => {
             console.debug(`getting conversations (userId=${userId})`)
             try {
-                const { Items } = await dynamoDbClient.query({
-                    TableName: USERS_TABLE,
-                    KeyConditionExpression: '#userId = :userId AND begins_with(#sk, :sk)',
-                    ExpressionAttributeNames: {
-                        '#userId': 'userId',
-                        '#sk': 'sk',
-                    },
-                    ExpressionAttributeValues: {
-                        ':userId': userId,
-                        ':sk': markers.conversation,
-                    },
-                    ScanIndexForward: false,
-                }).promise()
-                const conversations = Items.map(backendConversationToFrontend)
+                const conversations = await conversationService.getAllForUser(userId)
                 res.json(conversations)
             } catch (e) {
                 res.status(500).json({ error: e.toString() })
@@ -75,8 +62,19 @@ export const conversationController = {
             validateHttpBody(req.params, res, validateGetDetailsRequest, async () => {
                 console.debug(`getting conversation details (id=${req.params.conversationId})`)
                 tryCatch(async () => {
-                    const conversation = await conversationService.get(userId, req.params.conversationId)
+                    const conversation = await conversationService.getById(userId, req.params.conversationId)
                     res.json(conversation)
+                }, res)
+            })
+        })
+    },
+    markRead: async (req: Request<{}, {}, MarkReadRequest>, res: Response<MyResponse<{}>>) => {
+        withJwtFromHeader(req, res, async ({ userId }) => {
+            validateHttpBody(req.body, res, validateMarkReadRequest, async () => {
+                console.debug(`marking read (conversation=${req.body.conversationId})`)
+                tryCatch(async () => {
+                    await conversationService.markRead(req.body, userId)
+                    res.status(200).send()
                 }, res)
             })
         })
@@ -103,5 +101,13 @@ function validateGetMessagesRequest(a: GetMessagesRequest): a is GetMessagesRequ
 function validateGetDetailsRequest(a: GetConversationDetailsRequest): a is GetConversationDetailsRequest {
     verifyDefined(a.conversationId, 'conversationId')
     verifyString(a.conversationId, 'conversationId')
+    return true
+}
+
+function validateMarkReadRequest(a: MarkReadRequest): a is MarkReadRequest {
+    verifyDefined(a.conversationId, 'conversationId')
+    verifyString(a.conversationId, 'conversationId')
+    verifyDefined(a.time, 'time')
+    verifyString(a.time, 'time')
     return true
 }

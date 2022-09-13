@@ -70,6 +70,9 @@ app.get('/conversation/message', async function (req: Request<{}, {}, {}, GetMes
 app.post('/conversation/message', async function (req, res) {
   conversationController.addMessage(req, res)
 });
+app.post('/conversation/read', async function (req, res) {
+  conversationController.markRead(req, res)
+});
 
 app.get('/bonjour', async function (req, res) {
   res.json({ message: `salut ${process.env.TEST_VAR} 1` })

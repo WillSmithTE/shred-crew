@@ -1,7 +1,9 @@
 import { dynamoDbClient, USERS_TABLE } from "../database";
 import { Conversation, LoginType, Message, SendMessageRequest, UserDetails } from "../types";
-import { BackendConversation, markers, BackendUser, BackendMessage } from "../backendTypes";
+import { BackendConversation, markers, BackendUser, BackendMessage, MarkReadRequest } from "../backendTypes";
 import { myId } from "./myId";
+import { HttpError } from "../util/HttpError";
+import { userWill, userPip } from '../util/bootstrapData'
 
 export const conversationService = {
     create: async function (userA: UserDetails, userB: UserDetails): Promise<Conversation> {
@@ -23,7 +25,10 @@ export const conversationService = {
         }).promise();
         return backendConversationToFrontend(userAConversation)
     },
-    get: async (userId: string, conversationId: string) => {
+    getById: async function (userId: string, conversationId: string): Promise<Conversation> {
+        return backendConversationToFrontend(await conversationService.getByIdBackend(userId, conversationId))
+    },
+    getByIdBackend: async function (userId: string, conversationId: string): Promise<BackendConversation> {
         const params = {
             TableName: USERS_TABLE,
             Key: {
@@ -32,7 +37,7 @@ export const conversationService = {
             },
         };
         const { Item } = await dynamoDbClient.get(params).promise();
-        return backendConversationToFrontend(Item as BackendConversation)
+        return Item as BackendConversation
     },
     addMessage: async function (request: SendMessageRequest, userId: string): Promise<BackendMessage> {
         const backendMessage = createBackendMessage(request, userId)
@@ -43,7 +48,48 @@ export const conversationService = {
         const conversationRows = await getConversationRows(request.conversationId)
         await addMessageToConversations(conversationRows, backendMessage)
         return backendMessage
-    }
+    },
+    markRead: async function (request: MarkReadRequest, userId: string): Promise<void> {
+        const conversation = await conversationService.getByIdBackend(userId, request.conversationId)
+        if (conversation === undefined) throw new HttpError(`conversation not found (id=${request.conversationId})`, 400)
+        if (conversation.message?.time === request.time) {
+            const newConversation: BackendConversation = {
+                ...conversation,
+                message: conversation.message ?
+                    { ...conversation.message, read: { ...conversation.message.read, [userId]: true } } :
+                    undefined
+            }
+            console.debug({ newConversation })
+            await dynamoDbClient.put({
+                TableName: USERS_TABLE,
+                Item: newConversation,
+            }).promise()
+        } else {
+            console.debug(`skipping, times didnt match (conversation=${conversation.message?.time}, received=${request.time})`)
+        }
+    },
+    getAllForUser: async function (userId: string): Promise<Conversation[]> {
+        const { Items } = await dynamoDbClient.query({
+            TableName: USERS_TABLE,
+            KeyConditionExpression: '#userId = :userId AND begins_with(#sk, :sk)',
+            ExpressionAttributeNames: {
+                '#userId': 'userId',
+                '#sk': 'sk',
+            },
+            ExpressionAttributeValues: {
+                ':userId': userId,
+                ':sk': markers.conversation,
+            },
+            ScanIndexForward: false,
+        }).promise()
+        return Items.map(backendConversationToFrontend)
+    },
+    createBootstrapConversations: async function (user: UserDetails): Promise<Conversation[]> {
+        console.debug(`creating bootstrap conversations (users=${user.userId})`)
+        const conversations = await Promise.all([userWill, userPip].map((otherUser) =>
+            conversationService.create(user, otherUser)))
+        return conversations
+    },
 }
 
 async function getConversationRows(conversationId: string): Promise<BackendConversation[]> {

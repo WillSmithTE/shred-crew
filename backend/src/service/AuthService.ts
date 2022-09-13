@@ -40,7 +40,7 @@ export const authService = {
             userId: `google:${payload.sub}`,
             imageUri: payload.picture,
             createdAt: new Date().getTime(),
-            email: payload.email!!,
+            email: payload.email,
             loginType: LoginType.GOOGLE,
             name: payload.name ?? '',
             ski: defaultSkiDetails,

@@ -2,6 +2,7 @@
 
 tsc
 export RESORTS_TABLE=shred-crew-resort-2-dev
+export USERS_TABLE=shred-crew-users-6-dev
 unset IS_OFFLINE
-node dist/src/bootstrapResorts.js
+node dist/src/bootstrap.js
 

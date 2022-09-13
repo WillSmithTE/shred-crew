@@ -42,3 +42,8 @@ export type BackendMessage = {
     cId: string,
     time: number,
 }
+
+export type MarkReadRequest = {
+    conversationId: string,
+    time: number,
+}
