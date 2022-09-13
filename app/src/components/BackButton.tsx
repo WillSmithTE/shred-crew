@@ -6,10 +6,11 @@ import { IconButton } from "react-native-paper"
 type Props = {
     customStyles?: StyleProp<ViewStyle>,
     absolute?: boolean,
+    onPress?: () => void,
 }
-export const BackButton = ({ customStyles = {}, absolute = true }: Props) => {
+export const BackButton = ({ customStyles = {}, absolute = true, onPress }: Props) => {
     const { goBack } = useNavigation()
-    return <IconButton onPress={goBack} icon='long-arrow-alt-left' size={40}
+    return <IconButton onPress={onPress ? onPress : goBack} icon='long-arrow-alt-left' size={40}
         style={[absolute ? styles.backButton : {}, customStyles]} />
 }
 

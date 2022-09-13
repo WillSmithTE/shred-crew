@@ -55,9 +55,10 @@ export const ConversationsList = ({ }: Props) => {
             <MyAvatar image={{ uri: item.img }} name={item.name} />
             <View style={{ paddingHorizontal: 10 }}>
               <Text style={[styles.rowTitleText]}>{item.name}</Text>
-              {item.message &&
-                <Text>{item.message.user === user?.userId ? 'You' : item.name?.split(' ')[0]}:&nbsp;
-                  {item.message.data.text}</Text>
+              {item.message ?
+                <Text>{item.message.user === user?.userId ? 'You' : item.name?.split(' ')[0]}
+                  {item.message.data.text}</Text> :
+                <Text>No messages (yet 😏)</Text>
               }
             </View>
           </TouchableOpacity>

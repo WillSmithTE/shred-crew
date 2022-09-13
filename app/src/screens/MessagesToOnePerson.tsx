@@ -41,6 +41,7 @@ const useLoader = () => {
   const conversationApi = useConversationApi()
   return {
     getMessages: async function (conversationId: string, beforeTime?: number): Promise<IMessage[]> {
+      console.debug({ conversationId, beforeTime })
       return (await conversationApi.getMessages({ conversationId, beforeTime }))
         .map(messageToIMessage)
     },
@@ -55,6 +56,7 @@ type Props = NativeStackScreenProps<RootStackParams, 'MessagesToOnePerson'> & {
 
 };
 export const MessagesToOnePerson = ({ route: { params: { conversation } } }: Props) => {
+  console.debug({ conversation })
   const dispatch = useDispatch()
   // const user = useSelector((state: RootState) => state.user.user)
   const { navigate } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
@@ -103,7 +105,7 @@ export const MessagesToOnePerson = ({ route: { params: { conversation } } }: Pro
   return <>
     < SafeAreaView style={[styles.container]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.orange }}>
-        <BackButton absolute={false} />
+        <BackButton absolute={false} onPress={() => navigate('ConversationsList')} />
         <MyAvatar image={{ uri: conversation.img }} name={conversation.name} style={{ marginRight: 13 }} />
         <Text style={[subHeader, { paddingTop: 0, }]}>{conversation.name}</Text>
       </View>

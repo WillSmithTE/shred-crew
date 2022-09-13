@@ -1,4 +1,4 @@
-import { Conversation, GetMessagesRequest, Message, SendMessageRequest, SetPokeRequest, SetPokeResponse, UserDetails } from '../model/types';
+import { Conversation, GetConversationDetailsRequest, GetMessagesRequest, Message, SendMessageRequest, SetPokeRequest, SetPokeResponse, UserDetails } from '../model/types';
 import Constants from 'expo-constants';
 import { baseApiRequest, MyResponse, useBaseApi } from './api';
 
@@ -24,14 +24,22 @@ export function useConversationApi() {
         getMessages: async (request: GetMessagesRequest) => await baseApiRequest<Message[]>(
             () => {
                 console.debug(`getting messages`)
+                const encodedConvId = decodeURI(request.conversationId)
                 const queryParams = new URLSearchParams(request.beforeTime === undefined ?
-                    { conversationId: request.conversationId } :
-                    { conversationId: request.conversationId, beforeTime: request.beforeTime.toString() }
+                    { conversationId: encodedConvId } :
+                    { conversationId: encodedConvId, beforeTime: request.beforeTime.toString() }
                 )
                 if (request.beforeTime === undefined) delete request.beforeTime
-                return baseApi.get<Message[]>(`/conversation/message?conversationId=${queryParams.toString()}`)
+                return baseApi.get<Message[]>(`/conversation/message?${queryParams.toString()}`)
             },
             'error getting messages',
+        ),        
+        getConversationDetails: async (request: GetConversationDetailsRequest) => await baseApiRequest<Conversation>(
+            () => {
+                console.debug(`getting conversation (id=${request.conversationId})`)
+                return baseApi.get<Conversation>(`/conversation/details/${request.conversationId})`)
+            },
+            'error getting conversation details',
         ),
     }
 }

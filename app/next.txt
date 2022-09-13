@@ -66,3 +66,11 @@ DONE - feat: use https://github.com/ai/nanoid for user ids cause shorter, save d
 - feat: only google OR email login? if google fails, take to home with an error on screen
 - feat: markers on map stuff
 - maybe hide resort  info and trip plan behnind featture flag
+- bug: need to refresh user pokes on refresh at top, so it turns into successful match thing
+- bug: set some kind of "matched" display in people feed
+- feat: something to show when no people in your sesh
+- bug: using name in PeopleFeed to see if matched. won't work if they change their name
+- bug: do i handle case when user doesn't provide any location? denies permission?
+- bug:  clicking mail  in people feed gets 500
+- bug: messages appear on wrong slider
+- bug: messages don't appear in other users conversation

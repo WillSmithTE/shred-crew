@@ -22,17 +22,23 @@ import { useNavigation } from "@react-navigation/native"
 import { dummyConversation, dummyPeopleFeedPeople } from "../model/dummyData"
 import { useSkiSessionApi } from "../api/skiSessionApi"
 import { tryCatchAsync } from "../util/tryCatchAsync"
-import { addConversation, logoutUser, setPoked } from "../redux/userReducer"
+import { addConversation, logoutUser, setPoked, setUserState } from "../redux/userReducer"
 import { useUserApi } from "../api/userApi"
 import { MyAvatar } from "../components/MyAvatar"
 import { ListSeparator } from "../components/List"
+import { useConversationApi } from "../api/conversationApi"
+import FastImage from 'react-native-fast-image'
 
 function useLoader() {
     const skiSessionApi = useSkiSessionApi()
+    const conversationApi = useConversationApi()
     return {
         findNearbyPeople: async (request: GetPeopleFeedRequest) => {
             return await skiSessionApi.findNearbyPeople(request)
-        }
+        },
+        getConversationDetails: async function (conversationId: string): Promise<Conversation> {
+            return await conversationApi.getConversationDetails({ conversationId })
+        },
     }
 }
 function useActions() {
@@ -48,6 +54,7 @@ type Props = NativeStackScreenProps<RootTabParamList, 'PeopleFeed'> & {
 };
 export const PeopleFeed = ({ route: { params } }: Props) => {
     const dispatch = useDispatch()
+    const conversations = useSelector((root: RootState) => root.user.conversations)
     const user = useSelector((root: RootState) => root.user.user)
     const skiSession = user?.sesh
     const poked = useSelector((root: RootState) => root.user.user)?.poked ?? {}
@@ -58,6 +65,7 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
     const [loadingPokes, setLoadingPokes] = useState<{ [key: string]: boolean }>({})
     const [newMatch, setNewMatch] = useState<Conversation>()
     const [isRefreshing, setIsRefreshing] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const loader = useLoader()
     const actions = useActions()
@@ -90,10 +98,21 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
                     dispatch(addConversation(response.newConvo))
                     setNewMatch(response.newConvo)
                 }
-                dispatch(setPoked(response.poked))
+                dispatch(setUserState(response.user))
             },
             lastly: () => setLoadingPokes({ ...loadingPokes, userId: false })
         })
+    }
+
+    const onMessage = (conversationId: string) => {
+        console.debug('sending message')
+        setLoading(true)
+        tryCatchAsync({
+            getter: () => loader.getConversationDetails(conversationId),
+            onSuccess: (conversation) => push('MessagesToOnePerson', { conversation }),
+            onError: () => setLoading(false)
+        })
+
     }
 
     const onRefresh = async () => {
@@ -102,59 +121,75 @@ export const PeopleFeed = ({ route: { params } }: Props) => {
     }
 
     return <>
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-            <View style={styles.banner}>
-                <MyAvatar image={{ uri: user?.imageUri }} name={user!!.name} size={56} />
-                <View style={{ flex: 1, paddingRight: 10, paddingLeft: 13 }}>
-                    <Text style={styles.bannerHeader}>Shred Crew Feed</Text>
-                    <TouchableOpacity onPress={() => onPressLocation(skiSession)}><Text style={{ textDecorationLine: 'underline' }}>{skiSession?.resort?.name ?? 'No resort'}</Text></TouchableOpacity>
-                </View>
-                <TouchableOpacity onPress={() => setShowFilters(true)} style={{}}><Icon name='sliders-h' family='FontAwesome5' size={20} /></TouchableOpacity>
-            </View>
-            {skiSession === undefined ?
-                <TouchableOpacity onPress={() => onPressLocation(skiSession)} style={{ marginTop: 20, backgroundColor: colors.primary, alignItems: 'center', width: '40%', borderRadius: 10, alignSelf: 'center' }}>
-                    <Text style={[subHeader, { color: 'white', textAlign: 'center', alignSelf: 'center', flexWrap: 'wrap', flexShrink: 1, padding: 20 }]}>Pick a resort</Text>
-                </TouchableOpacity> :
-                people === undefined ?
-                    <FullScreenLoader background={false} /> :
-                    <FlatList
-                        style={{}}
-                        data={people}
-                        keyExtractor={item => item.userId}
-                        renderItem={({ item: person }) => {
-                            const { userId, name } = person
-                            const isPoked = poked && poked[userId] === true
-                            const onPressSeeMore = showComingSoon
+        {loading ? <FullScreenLoader /> :
 
-                            return <View key={userId} style={{ flex: 1, minHeight: 360 }}>
-                                <ImageSwiper person={person} />
-                                <View style={{ flexDirection: 'row', paddingTop: 15, minHeight: 70, }}>
-                                    <View style={{ backgroundColor: '#2FCE5C', width: 10, height: 10, borderRadius: 5, marginHorizontal: 10, marginTop: 5, }}></View>
-                                    <View>
-                                        <Text style={{ fontWeight: '700' }}>{name}</Text>
-                                        <TouchableOpacity onPress={onPressSeeMore}>
-                                            <Text style={{ textDecorationLine: 'underline' }}>See more</Text>
+            <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+                <View style={styles.banner}>
+                    <MyAvatar image={{ uri: user?.imageUri }} name={user!!.name} size={56} />
+                    <View style={{ flex: 1, paddingRight: 10, paddingLeft: 13 }}>
+                        <Text style={styles.bannerHeader}>Shred Crew Feed</Text>
+                        <TouchableOpacity onPress={() => onPressLocation(skiSession)}><Text style={{ textDecorationLine: 'underline' }}>{skiSession?.resort?.name ?? 'No resort'}</Text></TouchableOpacity>
+                    </View>
+                    <TouchableOpacity onPress={() => setShowFilters(true)} style={{}}><Icon name='sliders-h' family='FontAwesome5' size={20} /></TouchableOpacity>
+                </View>
+                {skiSession === undefined ?
+                    <TouchableOpacity onPress={() => onPressLocation(skiSession)} style={{ marginTop: 20, backgroundColor: colors.primary, alignItems: 'center', width: '40%', borderRadius: 10, alignSelf: 'center' }}>
+                        <Text style={[subHeader, { color: 'white', textAlign: 'center', alignSelf: 'center', flexWrap: 'wrap', flexShrink: 1, padding: 20 }]}>Pick a resort</Text>
+                    </TouchableOpacity> :
+                    people === undefined ?
+                        <FullScreenLoader background={false} /> :
+                        <FlatList
+                            style={{}}
+                            data={people}
+                            keyExtractor={item => item.userId}
+                            ListEmptyComponent={() => <View style={{width:  '70%', alignItems: 'center', flex: 1, alignSelf: 'center', padding: 10}}>
+                                <FastImage
+                                    source={require('../../assets/crying-bear.png')}
+                                    style={{ width: '100%', minHeight: 200}}
+                                    resizeMode='contain'
+                                />
+                                <Text style={[subHeader, {textAlign: 'center'}]}>Looks like noone's here yet. Try again later.</Text>
+
+                            </View>
+                            }
+                            renderItem={({ item: person }) => {
+                                const match = user?.matches?.find((it) => it.userId === person.userId)
+                                const { userId, name } = person
+                                const isPoked = poked && poked[userId] === true
+                                const onPressSeeMore = showComingSoon
+
+                                return <View key={userId} style={{ flex: 1, minHeight: 360 }}>
+                                    <ImageSwiper person={person} />
+                                    <View style={{ flexDirection: 'row', paddingTop: 15, minHeight: 70, }}>
+                                        <View style={{ backgroundColor: '#2FCE5C', width: 10, height: 10, borderRadius: 5, marginHorizontal: 10, marginTop: 5, }}></View>
+                                        <View>
+                                            <Text style={{ fontWeight: '700' }}>{name}</Text>
+                                            <TouchableOpacity onPress={onPressSeeMore}>
+                                                <Text style={{ textDecorationLine: 'underline' }}>See more</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <TouchableOpacity onPress={() => match ? onMessage(match.convId) : onPoke(userId, !isPoked)}
+                                            style={{
+                                                width: 44, height: 44, backgroundColor: match ? colors.orange : (isPoked ? colors.secondary : colors.lightGray),
+                                                flex: 0, marginLeft: 'auto', justifyContent: 'center', alignItems: 'center', marginRight: 12,
+                                                borderRadius: 7,
+                                            }}>
+                                            <Image style={{ width: 24, height: 24 }} resizeMode='contain'
+                                                source={match ? require('../../assets/mail.png') : require('../../assets/horns.png')} />
                                         </TouchableOpacity>
                                     </View>
-                                    <TouchableOpacity onPress={() => onPoke(userId, !isPoked)} style={{
-                                        width: 44, height: 44, backgroundColor: isPoked ? colors.secondary : colors.lightGray,
-                                        flex: 0, marginLeft: 'auto', justifyContent: 'center', alignItems: 'center', marginRight: 12,
-                                        borderRadius: 7,
-                                    }}>
-                                        <Image style={{ width: 24, height: 24 }} source={require('../../assets/horns.png')} resizeMode='contain' />
-                                    </TouchableOpacity>
                                 </View>
-                            </View>
-                        }}
-                        ItemSeparatorComponent={ListSeparator}
-                        ListHeaderComponent={ListSeparator}
-                        ListFooterComponent={ListSeparator}
-                        refreshing={isRefreshing}
-                        onRefresh={onRefresh}
-                    />}
-            {newMatch && <NewMatchModal newMatch={newMatch} onClose={() => setNewMatch(undefined)} />}
-            <FilterDrawer {...{ filters, setFilters, show: showFilters, setShow: setShowFilters, confirmNext: () => { setShowFilters(false) } }} />
-        </SafeAreaView>
+                            }}
+                            ItemSeparatorComponent={ListSeparator}
+                            ListHeaderComponent={ListSeparator}
+                            ListFooterComponent={ListSeparator}
+                            refreshing={isRefreshing}
+                            onRefresh={onRefresh}
+                        />}
+                {newMatch && <NewMatchModal newMatch={newMatch} onClose={() => setNewMatch(undefined)} />}
+                <FilterDrawer {...{ filters, setFilters, show: showFilters, setShow: setShowFilters, confirmNext: () => { setShowFilters(false) } }} />
+            </SafeAreaView>
+        }
     </>
 }
 const styles = StyleSheet.create({
@@ -288,11 +323,15 @@ type NewMatchModalProps = {
     onClose: () => void,
 }
 const NewMatchModal = ({ newMatch, onClose }: NewMatchModalProps) => {
+    const { navigate, getState, push } = useNavigation<NativeStackNavigationProp<RootStackParams>>()
+    const goToMessage = () => {
+        push('MessagesToOnePerson', { conversation: newMatch })
+    }
     return <Modal visible={true} onDismiss={onClose} contentContainerStyle={newMatchModalStyles.container}>
         <Text style={[header, { color: 'black', textAlign: 'center' }]}>Ooooohhh yeaaaaah</Text>
         <Text style={[subHeader, { fontSize: 20, textAlign: 'center' }]}>Time to Shred</Text>
         <MyAvatar name={newMatch!!.name} image={{ uri: newMatch?.img }} size={80} style={{ marginTop: 20 }} />
-        <Button onPress={showComingSoon} style={[newMatchModalStyles.button, { backgroundColor: colors.orange }]} mode='contained'>Send a message</Button>
+        <Button onPress={goToMessage} style={[newMatchModalStyles.button, { backgroundColor: colors.orange }]} mode='contained'>Send a message</Button>
         <Button mode='outlined' style={[newMatchModalStyles.button,]} onPress={onClose}>Back to Feed</Button>
     </Modal>
 }

@@ -11,7 +11,6 @@ function useLoader() {
     const { refreshAuth: refreshAuthApi } = useAuthApi()
     return {
         refreshAuth: async function (auth: LoginState): Promise<LoginRegisterResponse> {
-            console.debug(1)
             return await refreshAuthApi(auth);
         },
     }
@@ -37,7 +36,7 @@ export function useUserLoginCheck() {
                     else dispatch(loginUser({ user: response.user, loginState: response.auth }))
                 }
                 catch (e: any) {
-                    showError(jsonString(e))
+                    // showError(jsonString(e))
                     setDone(true)
                     dispatch(clearAuth())
                 }

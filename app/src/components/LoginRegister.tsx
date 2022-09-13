@@ -85,12 +85,14 @@ export const LoginRegister = ({ mode }: Props) => {
                     </TouchableOpacity>
                     <Button style={styles.button} icon='envelope' mode='contained' onPress={onEmailPress}> {mode === 'login' ? 'Login' : 'Sign up'} with Email</Button>
                 </View>
-                <Text>{mode === 'login' ? `Don't` : 'Already'} have an account?&nbsp;</Text>
-                <TouchableOpacity onPress={() => navigate(mode === 'login' ? 'Register' : 'Login')} style={{ padding: 10 }}>
-                    <Text style={{ textDecorationLine: 'underline', color: 'black' }}>
-                        {mode === 'login' ? 'Sign up' : 'Login'}
-                    </Text>
-                </TouchableOpacity>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text>{mode === 'login' ? `Don't` : 'Already'} have an account?&nbsp;</Text>
+                    <TouchableOpacity onPress={() => navigate(mode === 'login' ? 'Register' : 'Login')} style={{ paddingVertical: 10, marginRight: 10 }}>
+                        <Text style={{ textDecorationLine: 'underline', color: 'black' }}>
+                            {mode === 'login' ? 'Sign up' : 'Login'}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </ImageBackground>
         {loading && <FullScreenLoader />}
