@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+export  const getEmailTemplate = () => `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -12,6 +12,5 @@
   <p><i>As we speak</i> the little birdies are putting together the final pieces of our app's beta program, and you'll be the first to know once it's ready.</p>
   <p>In the meantime, check out our <a href="https://shred.willsmithte.com/blog">blog</a> or follow us on our <a href='https://www.instagram.com/shredcrew.app'>insta</a> to keep up-to-date.</p>
   <p>Cheers,<br/>Your Shredders team</p>
-  <image src="cid:icon" style="height:200px"/>
 </body>
-</html>
+</html>`

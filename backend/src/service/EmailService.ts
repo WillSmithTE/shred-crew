@@ -1,6 +1,8 @@
 import hbs, { NodemailerExpressHandlebarsOptions } from 'nodemailer-express-handlebars'
 import nodemailer from 'nodemailer'
 import path from 'path'
+import Mail from 'nodemailer/lib/mailer'
+import { getEmailTemplate } from '../emailViews/email'
 
 const createTransport = () => nodemailer.createTransport(
     {
@@ -11,12 +13,14 @@ const createTransport = () => nodemailer.createTransport(
         }
     }
 );
+const baseFilePath = './src/emailViews/'
+const resolvedFilePath = path.resolve(baseFilePath)
 const createHandlebarOptions: () => NodemailerExpressHandlebarsOptions = () => ({
     viewEngine: {
-        partialsDir: path.resolve('./src/emailViews/'),
+        partialsDir: resolvedFilePath,
         defaultLayout: false,
     },
-    viewPath: path.resolve('./src/emailViews/'),
+    viewPath: path.resolve(resolvedFilePath),
 })
 
 export const emailService = {
@@ -25,19 +29,11 @@ export const emailService = {
         const transport = createTransport()
         const handlebarOptions = createHandlebarOptions()
         transport.use('compile', hbs(handlebarOptions))
-        const mailOptions = {
+        const mailOptions: Mail.Options = {
             from: `"Shred Crew" <${process.env.EMAIL_USERNAME}>`,
             to: email,
             subject: 'Welcome to the Shred Crew',
-            template: 'email',
-            context: {
-                // name: "Adebola", // replace {{name}} with Adebola
-            },
-            // attachments: [{
-            //     filename: 'icon.png',
-            //     path: `./src/emailViews/icon.png`,
-            //     cid: 'icon'
-            // }],
+            html: getEmailTemplate(),
         };
         const info = await transport.sendMail(mailOptions);
         console.debug(`email sent (response=${info.response})`)
