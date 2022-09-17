@@ -59,7 +59,8 @@ function CookieConsent(props) {
         ) {
           setIsVisible(false);
         } else {
-          setIsVisible(true);
+          // ALWAYS  SET FALSE
+          setIsVisible(false);
         }
       })
       .catch(() => {
